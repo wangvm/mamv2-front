@@ -1,24 +1,5 @@
-# mamv2
+# 媒资编目系统前端
 
-## Project setup
-```
-yarn install
-```
+## 项目概述
 
-### Compiles and hot-reloads for development
-```
-yarn serve
-```
-
-### Compiles and minifies for production
-```
-yarn build
-```
-
-### Lints and fixes files
-```
-yarn lint
-```
-
-### Customize configuration
-See [Configuration Reference](https://cli.vuejs.org/config/).
+主要负责媒资编目系统前端界面
