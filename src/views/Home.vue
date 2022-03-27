@@ -1,77 +1,92 @@
 <template>
   <el-container class="home">
-    <el-header class="home-header"><p>媒资编目系统</p></el-header>
-    <el-main class="home-main">
-      <div>
-        <p>用户登录</p>
-        <div class="login-input">
-          <label>账号：</label>
-          <el-input v-model="username" placeholder="请输入登录账户"></el-input>
-        </div>
-        <div class="login-input">
-          <label>密码：</label>
+    <commonHeader title="媒资编目系统"/>
+    <el-row>
+      <el-form class="login-card">
+        <h3>用户登录</h3>
+        <el-form-item>
+          <el-input v-model="account" placeholder="用户名"></el-input>
+        </el-form-item>
+        <el-form-item>
           <el-input
-            placeholder="请输入密码"
+            type="password"
             v-model="password"
-            show-password
+            placeholder="密码"
           ></el-input>
-        </div>
-      </div>
-    </el-main>
+        </el-form-item>
+        <el-form-item>
+          <el-button type="primary" @click="loginSubmit">登录</el-button>
+        </el-form-item>
+      </el-form>
+    </el-row>
   </el-container>
 </template>
 
 <script>
 // @ is an alias to /src
+import { mapActions, mapState } from "vuex";
+import { debounce } from "lodash-es";
+import commonHeader from "../components/commonHeader.vue";
+// import $api from "@/network/api";
 
 export default {
   name: "home",
+  components: {
+    commonHeader,
+  },
   data() {
     return {
-      username: "",
+      account: "",
       password: "",
     };
   },
-  components: {},
+  computed: {
+    ...mapState("common", ["authority"]),
+  },
+  methods: {
+    ...mapActions("common", ["loginAction"]),
+    // 登录防抖函数
+    loginSubmit: debounce(function () {
+      const { account, password } = this;
+      if (!account) return this.$message.error("账号不能为空");
+      if (!password) return this.$message.error("密码不能为空");
+      this.login();
+    }, 300),
+    // 登录逻辑
+    async login() {
+      let regNum = /^\d*$/;
+      const { account, password } = this;
+      const params = { account, password };
+      if (regNum.test(account)) {
+        await this.loginAction(params);
+        if (this.authority) this.$router.push("/manage");
+      } else {
+        this.$message.error("请输入正确的账号");
+      }
+    },
+  },
 };
 </script>
 
 <style lang="less" scoped>
 .home {
-  color: #333;
+  font-family: Helvetica, Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-align: center;
+  color: #2c3e50;
+
+  display: flex;
+  flex-direction: column;
   font-size: 15px;
+  height: 100vh;
   // font-family: "SimSun", "微软雅黑", "Arial Narrow";
 
-  .el-header {
-    position: relative;
-    z-index: 2;
-    display: flex;
-    align-items: center;
-    cursor: default;
-    background: #366adbcc;
-    font-size: 20px;
-    font-weight: bold;
-    user-select: none;
-    letter-spacing: 10px;
-
-    p {
-      width: 20%;
-      text-align: left;
-      margin: 15px;
-    }
-  }
-
-  .el-main {
-    height: 100%;
-    background-color: #e9eef3;
-    color: #333;
-    text-align: center;
-    line-height: 160px;
-    font-size: 20px;
-
-    .login-input {
-      display: flex;
-    }
+  // 登录框样式
+  .login-card {
+    line-height: 80px;
+    margin: 100px auto;
+    width: 400px;
   }
 }
 </style>

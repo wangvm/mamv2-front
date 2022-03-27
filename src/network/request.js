@@ -6,19 +6,19 @@ import { message } from "../assets/js/message";
 let baseUrl = "http://localserver:8080/mamv2";
 // let baseUrl = 'http://121.196.100.229:8080/mam'
 
-let instance = axios.create({
+let $http = axios.create({
   headers: {},
-  timeout: 10000,
+  timeout: 5000,
   baseURL: baseUrl,
   crossDomain: true,
-  withCredentials: false,
+  withCredentials: true,
 });
 
 // 跨域配置cookie
-// axios.defaults.withCredentials = true
+axios.defaults.withCredentials = true;
 
 //http request拦截器
-instance.interceptors.request.use(
+$http.interceptors.request.use(
   (config) => {
     // const token = getUserToken()
     //debugger
@@ -36,15 +36,16 @@ export default function (url, data, method = "GET") {
   return new Promise((resolve, reject) => {
     let promise;
     if (method === "GET") {
-      promise = instance.get(baseUrl + url, {
+      promise = $http.get(baseUrl + url, {
         params: data,
+        withCredentials: true,
       });
     } else {
-      promise = instance.post(baseUrl + url, data);
+      promise = $http.post(baseUrl + url, data);
     }
     promise
       .then((res) => {
-        res.data.code === 200 ? message.success(res.data.message) : message.error(res.data.message);
+        res.data.code === 200 ? null : message.error(res.data.message);
         resolve(res.data);
       })
       .catch((err) => {
