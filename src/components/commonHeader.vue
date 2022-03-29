@@ -8,7 +8,6 @@
 <script>
 export default {
   name: "commonHeader",
-  props: ["title"],
 };
 </script>
 
@@ -17,7 +16,7 @@ export default {
 .header {
   display: flex;
   align-items: center;
-  background: #90A4AE;
+  background: #90a4ae;
   font-size: 20px;
   color: #333;
   // font-family: "SimSun", "微软雅黑", "Arial Narrow";

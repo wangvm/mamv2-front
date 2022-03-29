@@ -7,6 +7,7 @@
     background-color="#CFD8DC"
     text-color="#000000"
     active-text-color="#d13013"
+    @select="selectHandler"
   >
     <!-- <el-submenu index="1">
       <template slot="title">
@@ -26,15 +27,15 @@
         <el-menu-item index="1-4-1">选项1</el-menu-item>
       </el-submenu>
     </el-submenu> -->
-    <el-menu-item index="project">
+    <el-menu-item index="/project">
       <i class="el-icon-menu"></i>
       <span slot="title">项目管理</span>
     </el-menu-item>
-    <el-menu-item index="user" v-show="menuControl">
+    <el-menu-item index="/user" v-show="menuControl">
       <i class="el-icon-user"></i>
       <span slot="title">用户管理</span>
     </el-menu-item>
-    <el-menu-item index="file" v-show="menuControl">
+    <el-menu-item index="/file" v-show="menuControl">
       <i class="el-icon-files"></i>
       <span slot="title">文件管理</span>
     </el-menu-item>
@@ -58,6 +59,10 @@ export default {
     handleClose(key, keyPath) {
       console.log(key, keyPath);
     },
+    // 选中回调时间
+    selectHandler(index, indexPath){
+      console.log(index, indexPath);
+    }
   },
 };
 </script>

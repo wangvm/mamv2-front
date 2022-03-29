@@ -1,6 +1,10 @@
 <template>
   <el-container class="home">
-    <commonHeader title="媒资编目系统"/>
+    <commonHeader>
+      <template v-slot:left>
+        <p>媒资编目系统</p>
+      </template>
+    </commonHeader>
     <el-row>
       <el-form class="login-card">
         <h3>用户登录</h3>

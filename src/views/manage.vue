@@ -11,7 +11,7 @@
     <el-container>
       <el-aside><manageMenu /></el-aside>
       <el-main>
-        <project></project>
+        <router-view></router-view>
       </el-main>
     </el-container>
   </el-container>
@@ -20,7 +20,6 @@
 <script>
 import commonHeader from "@/components/commonHeader.vue";
 import manageMenu from "@/components/manageMenu.vue";
-import project from "@/views/project/project.vue";
 import $api from "@/network/api";
 
 export default {
@@ -28,7 +27,6 @@ export default {
   components: {
     commonHeader,
     manageMenu,
-    project,
   },
   methods: {
     async logout() {
@@ -38,7 +36,6 @@ export default {
       } catch (e) {
         this.$catch = e;
       }
-      // if (res.data.code === "200")
     },
   },
 };

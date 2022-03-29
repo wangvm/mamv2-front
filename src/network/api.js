@@ -1,8 +1,18 @@
-import request from "@/network/request"
+import request from "@/network/request";
 
 const $api = {
-    login: (account, password) => request('/login', { account, password }, 'POST'),//ok
-    register: (userList) => request('/user/add', { userList }, 'POST'),//ok
-    logout: () => request('/logout'),
-}
-export default $api
+  login: (account, password) => request("/login", { account, password }, "POST"), //ok
+  logout: () => request("/logout"),
+  // 项目接口
+  addProject: (projectData) => request("/project/add", projectData, "POST"),
+  deleteProject: (id, name) => request("/project/delete", { id, name }, "POST"),
+  updateLeader: (id, leader, leaderName) => request("/project/update/leader", { id, leader, leaderName }, "POST"),
+  updateProjectName: (id, name) => request("/project/update/leader", { id, name }, "POST"),
+  updateTaskNumber: (projectId) => request("/project/task/add", projectId),
+  finishedTask: (projectId) => request("/project/task/finished", projectId),
+  queryProjectList: (status = 0, order = "account", isAsc = 1, pageNumber = 0, pageSize = 10) =>
+    request("project/query", { status, order, isAsc, pageNumber, pageSize }),
+  queryProjectListByUser: (pageNumber = 0, pageSize = 10) => request("/project/query/user", { pageNumber, pageSize }),
+  queryProjectByName: (name) => request("/project/query/name", { name }),
+};
+export default $api;
