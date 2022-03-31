@@ -11,7 +11,7 @@ const $api = {
   updateTaskNumber: (projectId) => request("/project/task/add", projectId),
   finishedTask: (projectId) => request("/project/task/finished", projectId),
   queryProjectList: (status = 0, order = "account", isAsc = 1, pageNumber = 0, pageSize = 10) =>
-    request("project/query", { status, order, isAsc, pageNumber, pageSize }),
+    request("/project/query", { status, order, isAsc, pageNumber, pageSize }),
   queryProjectListByUser: (pageNumber = 0, pageSize = 10) => request("/project/query/user", { pageNumber, pageSize }),
   queryProjectByName: (name) => request("/project/query/name", { name }),
 };

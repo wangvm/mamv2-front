@@ -12,19 +12,24 @@
         <el-table-column prop="status" label="项目状态"></el-table-column>
       </el-table>
     </el-main>
-    <div class="pagination">
+    <el-footer class="pagination">
       <el-pagination
         @current-change="handleCurrentChange"
         :current-page.sync="currentPage"
         :page-size="5"
         layout="prev, pager, next, jumper"
-        :total="1"
+        :total="total"
       >
       </el-pagination>
-    </div>
+    </el-footer>
     <!-- 添加项目表单 -->
     <el-dialog title="创建项目" :visible.sync="dialogVisible" width="25%">
-      <el-form :model="projectForm" :rules="projectRules" ref="projectForm" label-width="100px">
+      <el-form
+        :model="projectForm"
+        :rules="projectRules"
+        ref="projectForm"
+        label-width="100px"
+      >
         <el-form-item label="项目名称" prop="name">
           <el-input v-model="projectForm.name"></el-input>
         </el-form-item>
@@ -54,6 +59,7 @@
 <script>
 import { mapState } from "vuex";
 import $api from "@/network/api";
+import { message } from "@/assets/js/message";
 
 export default {
   name: "project",
@@ -61,6 +67,8 @@ export default {
     return {
       // 当前分页页数
       currentPage: 1,
+      // 查询的总数
+      total: 0,
       // 控制添加项目浮窗显示
       dialogVisible: false,
       // 添加项目表单数据
@@ -111,25 +119,72 @@ export default {
     // 控制分页切换逻辑
     handleCurrentChange() {
       // todo 请求后端拿去数据
-
-      this.currentPage += 1;
+      console.log(this.currentPage)
     },
     // 验证规则并提交创建项目数据
-    submitForm(formName){
-        this.$refs[formName].validate((valid) => {
-          if (valid) {
-            $api.queryProjectList();
-            alert('submit!');
-          } else {
-            console.log('error submit!!');
-            return false;
+    submitForm(formName) {
+      this.$refs[formName].validate(async (valid) => {
+        if (valid) {
+          try {
+            let res = await $api.addProject(this.projectForm);
+            if (res.code === 200) {
+              this.dialogVisible = false;
+              this.projectForm = {
+                name: "",
+                leader: "",
+                leaderName: "",
+                createTime: "",
+                status: "",
+              };
+              this.getProjectData();
+            } else {
+              message.error(res.message);
+            }
+          } catch (e) {
+            this.$catch = e;
           }
-        });
+        } else {
+          return false;
+        }
+      });
     },
     // 重置
-    resetForm(formName){
+    resetForm(formName) {
       this.$refs[formName].resetFields();
+    },
+    // 从后端获取数据
+    async getProjectData(status = 0, order = "createTime", isAsc = 1,  pageSize = 5){
+      try {
+      let res = await $api.queryProjectList(status,order,isAsc,this.currentPage-1,pageSize);
+      if (res.code === 200) {
+        console.log(res)
+        // 展示之前做处理，添加index和status
+        let start = (this.currentPage-1)*pageSize+1;
+        res.data.records.map(record=>{
+          // 插入index
+          record.index = start++;
+          // 插入status
+          if(record.finishedTask === record.taskCount && record.finishedTask >0){
+            record.status = "已完成"
+          }else{
+            record.status = "进行中"
+          }
+          // 转换时间戳
+          record.createTime = new Date(record.createTime).toLocaleString()
+          return record;
+        });
+        this.tableData = res.data.records;
+        this.total = res.data.total;
+      } else {
+        message.error(res.message);
+      }
+    } catch (e) {
+      message.error(e);
     }
+    }
+  },
+  mounted: async function () {
+    this.getProjectData();
   },
 };
 </script>

@@ -3,8 +3,10 @@ import axios from "axios";
 // import { getUserToken } from "../config/storage"
 import { message } from "../assets/js/message";
 
-let baseUrl = "http://localserver:8080/mamv2";
-// let baseUrl = 'http://121.196.100.229:8080/mam'
+// let baseUrl = "http://192.168.111.128:8080/mamv2";
+// let baseUrl = 'http://localhost:8080/mamv2'
+let baseUrl = 'http://localhost:8080'
+
 
 let $http = axios.create({
   headers: {},
@@ -41,7 +43,7 @@ export default function (url, data, method = "GET") {
         withCredentials: true,
       });
     } else {
-      promise = $http.post(baseUrl + url, data);
+      promise = $http.post(baseUrl + url, data, { withCredentials: true });
     }
     promise
       .then((res) => {
