@@ -109,6 +109,7 @@ export default {
   },
   methods: {
     // 打开添加项目浮窗，初始化数据
+    // todo 添加权限验证
     addProject() {
       this.dialogVisible = true;
       this.projectForm.leader = this.account;
@@ -119,9 +120,12 @@ export default {
     // 控制分页切换逻辑
     handleCurrentChange() {
       // todo 请求后端拿去数据
-      console.log(this.currentPage)
+      console.log("currentPage:",this.currentPage)
+      this.getProjectData();
+
     },
     // 验证规则并提交创建项目数据
+    // 添加权限验证
     submitForm(formName) {
       this.$refs[formName].validate(async (valid) => {
         if (valid) {
@@ -153,34 +157,34 @@ export default {
       this.$refs[formName].resetFields();
     },
     // 从后端获取数据
-    async getProjectData(status = 0, order = "createTime", isAsc = 1,  pageSize = 5){
+    async getProjectData(status = 0, order = "createTime", isAsc = 0,  pageSize = 5){
       try {
-      let res = await $api.queryProjectList(status,order,isAsc,this.currentPage-1,pageSize);
-      if (res.code === 200) {
-        console.log(res)
-        // 展示之前做处理，添加index和status
-        let start = (this.currentPage-1)*pageSize+1;
-        res.data.records.map(record=>{
-          // 插入index
-          record.index = start++;
-          // 插入status
-          if(record.finishedTask === record.taskCount && record.finishedTask >0){
-            record.status = "已完成"
-          }else{
-            record.status = "进行中"
-          }
-          // 转换时间戳
-          record.createTime = new Date(record.createTime).toLocaleString()
-          return record;
-        });
-        this.tableData = res.data.records;
-        this.total = res.data.total;
-      } else {
-        message.error(res.message);
+        let res = await $api.queryProjectList(status,order,isAsc,this.currentPage,pageSize);
+        if (res.code === 200) {
+          console.log(res)
+          // 展示之前做处理，添加index和status
+          let start = (this.currentPage-1)*pageSize+1;
+          res.data.records.map(record=>{
+            // 插入index
+            record.index = start++;
+            // 插入status
+            if(record.finishedTask === record.taskCount && record.finishedTask >0){
+              record.status = "已完成"
+            }else{
+              record.status = "进行中"
+            }
+            // 转换时间戳
+            record.createTime = new Date(record.createTime).toLocaleString()
+            return record;
+          });
+          this.tableData = res.data.records;
+          this.total = res.data.total;
+        } else {
+          message.error(res.message);
+        }
+      } catch (e) {
+        message.error(e);
       }
-    } catch (e) {
-      message.error(e);
-    }
     }
   },
   mounted: async function () {
