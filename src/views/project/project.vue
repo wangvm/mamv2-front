@@ -4,12 +4,24 @@
       <el-button type="primary" @click="addProject">新建项目</el-button>
     </el-header>
     <el-main>
-      <el-table :data="tableData" stripe style="width: 100%">
+      <el-table :data="tableData" stripe :style="{width:100+'%'}">
         <el-table-column prop="index" label="序号"></el-table-column>
-        <el-table-column prop="name" label="项目名称"></el-table-column>
+        <el-table-column prop="name" label="项目名称">
+          <template slot-scope="scope">
+            <el-input v-model="scope.row.name" v-show="scope.row.isEdit" autofocus=true size='mini'></el-input>
+            <span v-show="!scope.row.isEdit">{{scope.row.name}}</span>
+          </template>
+        </el-table-column>
         <el-table-column prop="leaderName" label="项目负责人"></el-table-column>
         <el-table-column prop="createTime" label="创建时间"></el-table-column>
         <el-table-column prop="status" label="项目状态"></el-table-column>
+        <el-table-column label="" min-width="100%">
+          <template slot-scope="scope">
+            <el-button size="mini" @click="handleEdit(scope.row)">{{scope.row.isEdit?'保存':'编辑'}}</el-button>
+            <el-button size="mini" type="danger" @click="handleDelete(scope.$index,scope.row)">删除</el-button>
+            <el-button size="mini" type="primary" @click="enterProject(scope.row)">进入项目</el-button>
+          </template>
+        </el-table-column>
       </el-table>
     </el-main>
     <el-footer class="pagination">
@@ -46,9 +58,7 @@
           <el-input :value="projectForm.status" disabled></el-input>
         </el-form-item>
         <el-form-item>
-          <el-button type="primary" @click="submitForm('projectForm')"
-            >提交</el-button
-          >
+          <el-button type="primary" @click="submitForm('projectForm')">提交</el-button>
           <el-button @click="resetForm('projectForm')">重置</el-button>
         </el-form-item>
       </el-form>
@@ -65,6 +75,8 @@ export default {
   name: "project",
   data() {
     return {
+      // 是否显示操作按钮
+      isDisplay: "none",
       // 当前分页页数
       currentPage: 1,
       // 查询的总数
@@ -108,6 +120,19 @@ export default {
     },
   },
   methods: {
+    handleEdit(row){
+      if(row.isEdit){
+        // 保存数据到后端
+      }
+      row.isEdit = !row.isEdit;
+    },
+    handleDelete(index, row){
+      console.log(row)
+      console.log(row.id)
+    },
+    enterProject(row){
+      console.log(row.id)
+    },
     // 打开添加项目浮窗，初始化数据
     // todo 添加权限验证
     addProject() {
@@ -120,9 +145,8 @@ export default {
     // 控制分页切换逻辑
     handleCurrentChange() {
       // todo 请求后端拿去数据
-      console.log("currentPage:",this.currentPage)
+      console.log("currentPage:", this.currentPage);
       this.getProjectData();
-
     },
     // 验证规则并提交创建项目数据
     // 添加权限验证
@@ -157,24 +181,36 @@ export default {
       this.$refs[formName].resetFields();
     },
     // 从后端获取数据
-    async getProjectData(status = 0, order = "createTime", isAsc = 0,  pageSize = 5){
+    async getProjectData(
+      status = 0,
+      order = "createTime",
+      isAsc = 0,
+      pageSize = 5
+    ) {
       try {
-        let res = await $api.queryProjectList(status,order,isAsc,this.currentPage,pageSize);
+        let res = await $api.queryProjectList(
+          status,
+          order,
+          isAsc,
+          this.currentPage,
+          pageSize
+        );
         if (res.code === 200) {
-          console.log(res)
+          console.log(res);
           // 展示之前做处理，添加index和status
-          let start = (this.currentPage-1)*pageSize+1;
-          res.data.records.map(record=>{
+          let start = (this.currentPage - 1) * pageSize + 1;
+          res.data.records.map((record) => {
             // 插入index
             record.index = start++;
             // 插入status
-            if(record.finishedTask === record.taskCount && record.finishedTask >0){
-              record.status = "已完成"
-            }else{
-              record.status = "进行中"
+            if (record.finishedTask === record.taskCount && record.finishedTask > 0) {
+              record.status = "已完成";
+            } else {
+              record.status = "进行中";
             }
+            record.isEdit = false;
             // 转换时间戳
-            record.createTime = new Date(record.createTime).toLocaleString()
+            record.createTime = new Date(record.createTime).toLocaleString();
             return record;
           });
           this.tableData = res.data.records;
@@ -185,7 +221,7 @@ export default {
       } catch (e) {
         message.error(e);
       }
-    }
+    },
   },
   mounted: async function () {
     this.getProjectData();
