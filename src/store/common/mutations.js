@@ -5,4 +5,11 @@ export default {
     state.authority = data.role;
     state.username = data.username;
   },
+  updateProjectInfo(state, currentPage, currentProject) {
+    state.currentPage = currentPage;
+    state.currentProject = currentProject;
+  },
+  storedTaskInfo(state, id, name) {
+    state.currentTask = { id, name };
+  },
 };

@@ -22,6 +22,11 @@ const routes = [
         path: "/manage/project",
         name: "project",
         component: () => import(/* webpackChunkName: "about" */ "@/views/project/project.vue"),
+      },
+      {
+        path: "/manage/task",
+        name: "task",
+        component: () => import(/* webpackChunkName: "about" */ "@/views/project/task.vue"),
       }
     ]
   },

@@ -110,12 +110,7 @@ export default {
         ],
       },
       // 项目列表数据
-      tableData: [
-        {
-          date: "2016-05-02",
-          name: "王小虎",
-        },
-      ],
+      tableData: [],
     };
   },
   computed: {
@@ -150,13 +145,13 @@ export default {
       }
     },
     async enterProject(row){
-      let res = await $api.queryTaskByProject(row.id)
-      if(res.code === 200){
-        this.$router.push("/manage/task");
-      }
+      // 保存currentProject数据和当前页数currentPage
+      let {id, name} = row;
+      this.$store.commit("updateProjectInfo", this.currentPage, {id, name})
+      this.$router.push("/manage/task");
     },
     // 打开添加项目浮窗，初始化数据
-    // todo 添加权限验证
+    // TODO 添加权限验证
     addProject() {
       this.dialogVisible = true;
       this.projectForm.leader = this.account;
@@ -166,7 +161,7 @@ export default {
     },
     // 控制分页切换逻辑
     handleCurrentChange() {
-      // todo 请求后端拿去数据
+      // TODO 请求后端拿去数据
       this.getProjectData();
     },
     // 验证规则并提交创建项目数据
