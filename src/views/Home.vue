@@ -1,10 +1,10 @@
 <template>
   <el-container class="home">
-    <commonHeader>
+    <BaseHeader>
       <template v-slot:left>
         <p>媒资编目系统</p>
       </template>
-    </commonHeader>
+    </BaseHeader>
     <el-row>
       <el-form class="login-card">
         <h3>用户登录</h3>
@@ -30,13 +30,13 @@
 // @ is an alias to /src
 import { mapActions, mapState } from "vuex";
 import { debounce } from "lodash-es";
-import commonHeader from "../components/commonHeader.vue";
+import BaseHeader from "@/components/BaseHeader.vue";
 // import $api from "@/network/api";
 
 export default {
   name: "home",
   components: {
-    commonHeader,
+    BaseHeader,
   },
   data() {
     return {

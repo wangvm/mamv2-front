@@ -1,8 +1,10 @@
 <template>
   <el-container>
-    <el-header>
-      <el-button type="primary" @click="addProject">新建项目</el-button>
-    </el-header>
+    <BaseHeader >
+      <template v-slot:right>
+        <el-button type="primary" @click="addProject" >新建项目</el-button>
+      </template>
+    </BaseHeader>
     <el-main>
       <el-table :data="tableData" stripe :style="{width:100+'%'}">
         <el-table-column prop="index" label="序号"></el-table-column>
@@ -70,9 +72,13 @@
 import { mapState } from "vuex";
 import $api from "@/network/api";
 import { message } from "@/assets/js/message";
+import BaseHeader from "@/components/BaseHeader.vue";
 
 export default {
   name: "project",
+  components:{
+    BaseHeader
+  },
   data() {
     return {
       // 是否显示操作按钮
@@ -122,16 +128,32 @@ export default {
   methods: {
     handleEdit(row){
       if(row.isEdit){
-        // 保存数据到后端
+        this.updateProjectName(row.id, row.name)
       }
       row.isEdit = !row.isEdit;
     },
-    handleDelete(index, row){
-      console.log(row)
-      console.log(row.id)
+    async updateProjectName(id, name){
+      // 保存数据到后端
+      let res = await $api.updateProjectName(id, name)
+      if(res.code === 200){
+        this.getProjectData();
+      }else{
+        message.error(res.message)
+      }
     },
-    enterProject(row){
-      console.log(row.id)
+    async handleDelete(index, row){
+      let res = await $api.deleteProject(row.id)
+      if(res.code === 200){
+        this.getProjectData();
+      }else{
+        message.error(res.message)
+      }
+    },
+    async enterProject(row){
+      let res = await $api.queryTaskByProject(row.id)
+      if(res.code === 200){
+        this.$router.push("/manage/task");
+      }
     },
     // 打开添加项目浮窗，初始化数据
     // todo 添加权限验证
@@ -145,7 +167,6 @@ export default {
     // 控制分页切换逻辑
     handleCurrentChange() {
       // todo 请求后端拿去数据
-      console.log("currentPage:", this.currentPage);
       this.getProjectData();
     },
     // 验证规则并提交创建项目数据
@@ -196,7 +217,6 @@ export default {
           pageSize
         );
         if (res.code === 200) {
-          console.log(res);
           // 展示之前做处理，添加index和status
           let start = (this.currentPage - 1) * pageSize + 1;
           res.data.records.map((record) => {
