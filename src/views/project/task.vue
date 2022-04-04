@@ -66,7 +66,7 @@
           <el-autocomplete
             v-model="taskForm.auditorName"
             :fetch-suggestions="queryAuditors"
-            placeholder="查询编目员"
+            placeholder="查询审核员"
             @select="handleSelectAuditor"
           ></el-autocomplete>
         </el-form-item>
@@ -89,6 +89,7 @@
 import $api from "@/network/api";
 import { message } from "@/assets/js/message";
 import BaseHeader from "@/components/BaseHeader.vue";
+import {mapState} from "vuex"
 // TODO 测试正确性
 export default {
   name:"task",
@@ -97,15 +98,15 @@ export default {
   },
   data() {
     return {
-            // 是否显示操作按钮
+      // 是否显示操作按钮
       isDisplay: "none",
       // 当前分页页数
       currentPage: 1,
       // 查询的总数
       total: 0,
-      // 控制添加项目浮窗显示
+      // 控制添加任务浮窗显示
       dialogVisible: false,
-      // 添加项目表单数据
+      // 添加任务表单数据
       taskForm: {
         name: "",
         project: null,
@@ -117,7 +118,8 @@ export default {
         createTime: "",
         status: "",
       },
-      projectRules: {
+      // 添加任务表单验证规则
+      taskRules: {
         name: [
           { required: true, message: "请输入项目名称" },
           {
@@ -134,21 +136,39 @@ export default {
           { required: true, message: "请指定编目员" },
         ]
       },
-      tableData:[]
-    }
+      // 任务列表数据
+      tableData:[],
+    };
   },
   computed: {
     // 创建时间的时间戳转化为时间
+    ...mapState("common",["currentProject","currentTaskPage"]),
     createTime() {
       return new Date(this.projectForm.createTime).toLocaleString();
     },
   },
   methods: {
+    // back返回项目管理页面
+    back(){
+      this.$router.push("/manage/project");
+    },
     // @see: https://element.eleme.cn/#/zh-CN/component/input#yuan-cheng-sou-suo
     queryCatalogers(queryString, cb){
+      try{
+        let res = this.$api.queryCatalogerByName(queryString);
+        console.log(res)
+      }catch(e){
+        console.log(e)
+      }
       // 从服务器查询编目员
     },
     queryAuditors(queryString, cb){
+      try{
+        let res = this.$api.queryAuditorByName(queryString);
+        console.log(res)
+      }catch(e){
+        console.log(e)
+      }
       // 从服务器查询审核员
     },
     handleSelectCataloger(item){
@@ -187,15 +207,15 @@ export default {
     // 进入编目操作
     async enterTask(row){
       console.log("进入编目")
-      this.$store.commit("storedTaskInfo", row.id, row.name)
+      this.$store.commit("storedTaskInfo", {currentPage: this.currentPage, id: row.id, name: row.name})
         // this.$router.push("/catalog");
     },
     // 打开添加项目浮窗，初始化数据
     // TODO 添加权限验证
     addTask() {
       this.dialogVisible = true;
-      this.taskForm.project = this.currentProject;
-      this.taskForm.projectName = this.currentProjectName;
+      this.taskForm.project = this.currentProject.id;
+      this.taskForm.projectName = this.currentProject.name;
       this.taskForm.createTime = new Date().getTime();
       this.taskForm.status = "创建中";
     },
@@ -257,6 +277,7 @@ export default {
         );
         if (res.code === 200) {
           // 展示之前做处理，添加index和status
+          if(res.data === null) return;
           let start = (this.currentPage - 1) * pageSize + 1;
           res.data.records.map((record) => {
             // 插入index
@@ -274,17 +295,19 @@ export default {
             record.createTime = new Date(record.createTime).toLocaleString();
             return record;
           });
-          this.tableData = res.data.records;
+          this.tableData = res.data.records ?res.data.records : [];
           this.total = res.data.total;
         } else {
           message.error(res.message);
         }
       } catch (e) {
-        message.error(e);
+        console.log(e);
+        message.error(e.message);
       }
     },
   },
   mounted: async function () {
+    this.currentPage = this.currentTaskPage;
     this.getTaskData();
   },
 }

@@ -114,7 +114,7 @@ export default {
     };
   },
   computed: {
-    ...mapState("common", ["username", "account"]),
+    ...mapState("common", ["username", "account", "currentProjectPage"]),
     // 创建时间的时间戳转化为时间
     createTime() {
       return new Date(this.projectForm.createTime).toLocaleString();
@@ -146,8 +146,7 @@ export default {
     },
     async enterProject(row){
       // 保存currentProject数据和当前页数currentPage
-      let {id, name} = row;
-      this.$store.commit("updateProjectInfo", this.currentPage, {id, name})
+      this.$store.commit("common/updateProjectInfo", {currentPage:this.currentPage, id:row.id, name:row.name})
       this.$router.push("/manage/task");
     },
     // 打开添加项目浮窗，初始化数据
@@ -239,6 +238,7 @@ export default {
     },
   },
   mounted: async function () {
+    this.currentPage = this.currentProjectPage;
     this.getProjectData();
   },
 };
