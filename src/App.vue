@@ -1,5 +1,5 @@
 <template>
-  <div id="app" :style="{'min-width':1600+'px'}">
+  <div id="app" :style="{'min-width':1800+'px'}">
     <keep-alive>
       <transition name="el-fade-in">
         <router-view />

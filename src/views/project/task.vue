@@ -34,7 +34,7 @@
             <el-button
               size="mini"
               type="danger"
-              @click="handleDelete(scope.$index, scope.row)"
+              @click="handleDelete(scope.row)"
               >删除</el-button
             >
             <el-button size="mini" type="primary" @click="enterTask(scope.row)"
@@ -63,7 +63,7 @@
         label-width="100px"
       >
         <el-form-item label="任务名称" prop="name">
-          <el-input :value="taskForm.name"></el-input>
+          <el-input v-model="taskForm.name"></el-input>
         </el-form-item>
         <el-form-item label="归属项目" prop="projectName">
           <el-input :value="taskForm.projectName" disabled></el-input>
@@ -140,7 +140,7 @@ export default {
       // 添加任务表单验证规则
       taskRules: {
         name: [
-          { required: true, message: "请输入项目名称" },
+          { required: true, message: "请输入任务名称" },
           {
             min: 3,
             max: 30,
@@ -159,7 +159,7 @@ export default {
     // 创建时间的时间戳转化为时间
     ...mapState("common", ["currentProject", "currentTaskPage"]),
     createTime() {
-      return new Date(this.projectForm.createTime).toLocaleString();
+      return new Date(this.taskForm.createTime).toLocaleString();
     },
   },
   methods: {
@@ -168,58 +168,118 @@ export default {
       this.$router.push("/manage/project");
     },
     // @see: https://element.eleme.cn/#/zh-CN/component/input#yuan-cheng-sou-suo
+    // 从服务器查询编目员
     async queryCatalogers(queryString, cb) {
       try {
         if (queryString) {
           let res = await $api.queryCatalogerByName(queryString);
-          console.log(res);
           if (res.code === 200 && res.data.length !== 0) {
             res.data.map((record) => {
               record.value = record.username + "(" + record.account + ")";
             });
             cb(res.data);
+          } else {
+            message.error(res.message);
           }
         }
       } catch (e) {
-        console.log(e);
+        message.error(e.message);
       }
-      // 从服务器查询编目员
     },
+    // 从服务器查询审核员
     async queryAuditors(queryString, cb) {
       try {
         if (queryString) {
           let res = await $api.queryAuditorByName(queryString);
-          console.log(res);
           if (res.code === 200 && res.data.length !== 0) {
             res.data.map((record) => {
               record.value = record.username + "(" + record.account + ")";
             });
             cb(res.data);
+          } else {
+            message.error(res.message);
           }
         }
       } catch (e) {
-        console.log(e);
+        message.error(e.message);
       }
-      // 从服务器查询审核员
     },
     handleSelectCataloger(item) {
       // 选择编目员操作
-      console.log("选择编目员",item);
+      console.log("选择编目员", item);
+      this.taskForm.cataloger = parseInt(item.account);
+      this.taskForm.catalogerName = item.username;
     },
     handleSelectAuditor(item) {
       // 选择审核员操作
       console.log(item);
+      this.taskForm.auditor = parseInt(item.account);
+      this.taskForm.auditorName = item.username;
+    },
+    // 验证规则并提交创建项目数据
+    // 添加权限验证
+    submitForm(formName) {
+      this.$refs[formName].validate(async (valid) => {
+        if (valid) {
+          try {
+            console.log(this.taskForm);
+            this.taskForm.status = 0;
+            let res = await $api.addTask(this.taskForm);
+            if (res.code === 200) {
+              this.dialogVisible = false;
+              this.taskForm = {
+                name: "",
+                project: null,
+                projectName: "",
+                cataloger: null,
+                catalogerName: "",
+                auditor: null,
+                auditorName: "",
+                createTime: "",
+                status: "",
+              };
+              this.getTaskData();
+            } else {
+              message.error(res.message);
+            }
+          } catch (e) {
+            this.$catch = e;
+          }
+        } else {
+          return false;
+        }
+      });
     },
     // 更新操作
     handleEdit(row) {
       if (row.isEdit) {
-        this.updateTaskInfo(row.id, row);
+        this.updateTaskInfo(row);
       }
       row.isEdit = !row.isEdit;
     },
-    async updateTaskInfo(id, row) {
+    async updateTaskInfo(row) {
       // 保存数据到后端
-      let res = await $api.updateTaskInfo(id);
+      console.log(row);
+      switch (row.status) {
+        case "创建":
+          row.status = 0;
+          break;
+        case "编目中":
+          row.status = 1;
+          break;
+        case "审核中":
+          row.status = 2;
+          break;
+        case "完成":
+          row.status = 3;
+          break;
+        default:
+          row.status = "error";
+          break;
+      }
+      let {isEdit,index,...payload} = row
+      console.log(payload)
+      let res = await $api.updateTaskInfo(payload);
       if (res.code === 200) {
         this.getTaskData();
       } else {
@@ -227,7 +287,7 @@ export default {
       }
     },
     // 删除操作
-    async handleDelete(index, row) {
+    async handleDelete(row) {
       let res = await $api.deleteTask(row.id);
       if (res.code === 200) {
         this.getTaskData();
@@ -259,61 +319,15 @@ export default {
       // TODO 请求后端拿去数据
       this.getTaskData();
     },
-    // 验证规则并提交创建项目数据
-    // 添加权限验证
-    submitForm(formName) {
-      this.$refs[formName].validate(async (valid) => {
-        if (valid) {
-          try {
-            let res = await $api.addTask(this.taskForm);
-            if (res.code === 200) {
-              this.dialogVisible = false;
-              this.taskForm = {
-                name: "",
-                project: null,
-                projectName: "",
-                cataloger: null,
-                catalogerName: "",
-                auditor: null,
-                auditorName: "",
-                createTime: "",
-                status: "",
-              };
-              this.getTaskData();
-            } else {
-              message.error(res.message);
-            }
-          } catch (e) {
-            this.$catch = e;
-          }
-        } else {
-          return false;
-        }
-      });
-    },
-    // 重置
-    resetForm(formName) {
-      this.$refs[formName].resetFields();
-    },
     // 从后端获取数据
-    async getTaskData(
-      status = 0,
-      order = "createTime",
-      isAsc = 0,
-      pageSize = 5
-    ) {
+    async getTaskData() {
       try {
-        let res = await $api.queryTaskByProject(
-          status,
-          order,
-          isAsc,
-          this.currentPage,
-          pageSize
-        );
+        let res = await $api.queryTaskByProject(this.currentProject.id);
         if (res.code === 200) {
+          console.log(res);
           // 展示之前做处理，添加index和status
           if (res.data === null) return;
-          let start = (this.currentPage - 1) * pageSize + 1;
+          let start = (this.currentPage - 1) * 5 + 1;
           res.data.records.map((record) => {
             // 插入index
             record.index = start++;
@@ -340,6 +354,7 @@ export default {
             record.createTime = new Date(record.createTime).toLocaleString();
             return record;
           });
+          console.log("222", res.data);
           this.tableData = res.data.records ? res.data.records : [];
           this.total = res.data.total;
         } else {
@@ -349,6 +364,10 @@ export default {
         console.log(e);
         message.error(e.message);
       }
+    },
+    // 重置
+    resetForm(formName) {
+      this.$refs[formName].resetFields();
     },
   },
   mounted: async function () {
