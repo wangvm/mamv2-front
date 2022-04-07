@@ -27,7 +27,17 @@ const routes = [
         path: "/manage/task",
         name: "task",
         component: () => import(/* webpackChunkName: "about" */ "@/views/project/task.vue"),
-      }
+      },
+      {
+        path: "/manage/file",
+        name: "file",
+        component: () => import(/* webpackChunkName: "about" */ "@/views/file/file.vue"),
+      },
+      {
+        path: "/manage/user",
+        name: "user",
+        component: () => import(/* webpackChunkName: "about" */ "@/views/user/user.vue"),
+      },
     ]
   },
 ];

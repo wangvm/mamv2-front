@@ -9,7 +9,7 @@
       </template>
     </BaseHeader>
     <el-container>
-      <el-aside><manageMenu /></el-aside>
+      <el-aside><ManageMenu /></el-aside>
       <el-main>
         <keep-alive>
           <router-view></router-view>
@@ -21,14 +21,14 @@
 
 <script>
 import BaseHeader from "@/components/BaseHeader.vue";
-import manageMenu from "@/components/manageMenu.vue";
+import ManageMenu from "@/components/ManageMenu.vue";
 import $api from "@/network/api";
 
 export default {
   name: "manage",
   components: {
     BaseHeader,
-    manageMenu,
+    ManageMenu,
   },
   methods: {
     async logout() {
