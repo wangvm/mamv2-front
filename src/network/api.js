@@ -9,17 +9,31 @@ export default {
   updateProjectName: (id, name) => request("/project/update/name", { id, name }, "POST"),
   updateTaskNumber: (projectId) => request("/project/task/add", projectId),
   finishedTask: (projectId) => request("/project/task/finished", projectId),
-  queryProjectList: (status = 0, order = "account", isAsc = 1, current = 1, pageSize = 10) =>
+  queryProjectList: (status = 0, order = "account", isAsc = 1, current = 1, pageSize = 5) =>
     request("/project/query", { status, order, isAsc, current, pageSize }),
-  queryProjectListByUser: (current = 1, pageSize = 10) => request("/project/query/user", { current, pageSize }),
+  queryProjectListByUser: (current = 1, pageSize = 5) => request("/project/query/user", { current, pageSize }),
   queryProjectByName: (name) => request("/project/query/name", { name }),
   // 任务接口
-  queryTaskByProject:(id, current = 1, pageSize = 5)=>request("/task/query/project", {projectId:id,current,pageSize}),
-  updateTaskInfo:(taskData)=>request("/task/update", taskData,"POST"),
-  deleteTask:(taskId)=>request("/task/delete", {id:taskId},"POST"),
-  addTask:(taskData)=>request("/task/add", taskData,"POST"),
-  queryCatalogerByName:(name)=>request("/user/query/cataloger",{username:name}),
-  queryAuditorByName:(name)=>request("/user/query/auditor",{username:name}),
+  queryTaskByProject: (id, current = 1, pageSize = 5) =>
+    request("/task/query/project", { projectId: id, current, pageSize }),
+  updateTaskInfo: (taskData) => request("/task/update", taskData, "POST"),
+  deleteTask: (taskId) => request("/task/delete", { id: taskId }, "POST"),
+  addTask: (taskData) => request("/task/add", taskData, "POST"),
+  queryCatalogerByName: (name) => request("/user/query/cataloger", { username: name }),
+  queryAuditorByName: (name) => request("/user/query/auditor", { username: name }),
 
-  // 
+  // 用户接口
+  addUser: (user) => request("/user/add", user, "POST"),
+  deleteUser: (account) => request("/user/delete", { account }, "POST"),
+  updateUserInfo: (user) => request("/user/update", user, "POST"),
+  queryUserList: (status = 0, order = "account", isAsc = 1, current = 1, pageSize = 5) =>
+    request("/user/query/list", { status, order, isAsc, current, pageSize }),
+  queryUserByName: (username, current, pageSize) => request("/user/query/name", { username, current, pageSize }),
+  // 文件接口
+
+  uploadVideo: (file) => request("/file/upload/video", file, "POST"),
+  uploadKeyFrame: (file) => request("file/upload/keyframe", file, "POST"),
+  getVideoList: (pageSize = 5, pageIndex = 1) => request("/file/videoList", { pageSize, pageIndex }),
+  searchVideoByName: (filename, pageSize = 5, pageIndex = 1) =>
+    request("/file/search", { filename, pageSize, pageIndex }),
 };
