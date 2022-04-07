@@ -162,6 +162,7 @@ export default {
     handleCurrentChange() {
       // TODO 请求后端拿去数据
       this.getProjectData();
+      this.$store.commit("storedProjectPage",this.currentPage);
     },
     // 验证规则并提交创建项目数据
     // 添加权限验证

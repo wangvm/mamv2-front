@@ -250,32 +250,33 @@ export default {
     // 更新操作
     handleEdit(row) {
       if (row.isEdit) {
-        this.updateTaskInfo(row);
+        // 删除不必要的信息，如deleted，index，转换status
+        let {deleted, isEdit, index,...record} = row
+        switch (record.status) {
+          case "创建":
+            record.status = 0;
+            break;
+          case "编目中":
+            record.status = 1;
+            break;
+          case "审核中":
+            record.status = 2;
+            break;
+          case "完成":
+            record.status = 3;
+            break;
+          default:
+            record.status = "error";
+            break;
+        }
+        record.createTime = new Date(row.createTime).getTime();
+        this.updateTaskInfo(record);
       }
       row.isEdit = !row.isEdit;
     },
-    async updateTaskInfo(row) {
+    async updateTaskInfo(record) {
       // 保存数据到后端
-      let {isEdit,index,...payload} = row
-      switch (payload.status) {
-        case "创建":
-          payload.status = 0;
-          break;
-        case "编目中":
-          payload.status = 1;
-          break;
-        case "审核中":
-          payload.status = 2;
-          break;
-        case "完成":
-          payload.status = 3;
-          break;
-        default:
-          payload.status = "error";
-          break;
-      }
-      payload.createTime = new Date(row.createTime).getTime();
-      let res = await $api.updateTaskInfo(payload);
+      let res = await $api.updateTaskInfo(record);
       if (res.code === 200) {
         this.getTaskData();
       } else {
@@ -315,6 +316,7 @@ export default {
     handleCurrentChange() {
       // TODO 请求后端拿去数据
       this.getTaskData();
+      this.$store.commit("storedTaskPage",this.currentPage);
     },
     // 从后端获取数据
     async getTaskData() {
