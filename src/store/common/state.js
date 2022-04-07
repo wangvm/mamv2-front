@@ -14,4 +14,6 @@ export default {
     id: null,
     name: "",
   },
+  // 用户数据
+  currentUserPage:1,
 };
