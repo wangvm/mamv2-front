@@ -206,13 +206,11 @@ export default {
     },
     handleSelectCataloger(item) {
       // 选择编目员操作
-      console.log("选择编目员", item);
       this.taskForm.cataloger = parseInt(item.account);
       this.taskForm.catalogerName = item.username;
     },
     handleSelectAuditor(item) {
       // 选择审核员操作
-      console.log(item);
       this.taskForm.auditor = parseInt(item.account);
       this.taskForm.auditorName = item.username;
     },
@@ -222,7 +220,6 @@ export default {
       this.$refs[formName].validate(async (valid) => {
         if (valid) {
           try {
-            console.log(this.taskForm);
             this.taskForm.status = 0;
             let res = await $api.addTask(this.taskForm);
             if (res.code === 200) {
@@ -259,26 +256,25 @@ export default {
     },
     async updateTaskInfo(row) {
       // 保存数据到后端
-      console.log(row);
-      switch (row.status) {
+      let {isEdit,index,...payload} = row
+      switch (payload.status) {
         case "创建":
-          row.status = 0;
+          payload.status = 0;
           break;
         case "编目中":
-          row.status = 1;
+          payload.status = 1;
           break;
         case "审核中":
-          row.status = 2;
+          payload.status = 2;
           break;
         case "完成":
-          row.status = 3;
+          payload.status = 3;
           break;
         default:
-          row.status = "error";
+          payload.status = "error";
           break;
       }
-      let {isEdit,index,...payload} = row
-      console.log(payload)
+      payload.createTime = new Date(row.createTime).getTime();
       let res = await $api.updateTaskInfo(payload);
       if (res.code === 200) {
         this.getTaskData();
@@ -297,6 +293,7 @@ export default {
     },
     // 进入编目操作
     async enterTask(row) {
+      // TODO 等待编目界面完成
       console.log("进入编目");
       this.$store.commit("storedTaskInfo", {
         currentPage: this.currentPage,
@@ -324,7 +321,6 @@ export default {
       try {
         let res = await $api.queryTaskByProject(this.currentProject.id);
         if (res.code === 200) {
-          console.log(res);
           // 展示之前做处理，添加index和status
           if (res.data === null) return;
           let start = (this.currentPage - 1) * 5 + 1;
@@ -354,14 +350,12 @@ export default {
             record.createTime = new Date(record.createTime).toLocaleString();
             return record;
           });
-          console.log("222", res.data);
           this.tableData = res.data.records ? res.data.records : [];
           this.total = res.data.total;
         } else {
           message.error(res.message);
         }
       } catch (e) {
-        console.log(e);
         message.error(e.message);
       }
     },

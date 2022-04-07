@@ -15,7 +15,7 @@ export default {
   queryProjectByName: (name) => request("/project/query/name", { name }),
   // 任务接口
   queryTaskByProject:(id, current = 1, pageSize = 5)=>request("/task/query/project", {projectId:id,current,pageSize}),
-  updateTaskInfo:(taskData)=>request("/task/update", {task:taskData},"POST"),
+  updateTaskInfo:(taskData)=>request("/task/update", taskData,"POST"),
   deleteTask:(taskId)=>request("/task/delete", {id:taskId},"POST"),
   addTask:(taskData)=>request("/task/add", taskData,"POST"),
   queryCatalogerByName:(name)=>request("/user/query/cataloger",{username:name}),
