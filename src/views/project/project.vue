@@ -37,7 +37,7 @@
       </el-pagination>
     </el-footer>
     <!-- 添加项目表单 -->
-    <el-dialog title="创建项目" :visible.sync="dialogVisible" width="25%">
+    <el-dialog title="创建项目" :visible.sync="dialogVisible" width="400px">
       <el-form
         :model="projectForm"
         :rules="projectRules"

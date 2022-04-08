@@ -49,7 +49,7 @@
       </el-pagination>
     </el-footer>
     <!-- 添加项目表单 -->
-    <el-dialog title="添加用户" :visible.sync="dialogVisible" width="18%">
+    <el-dialog title="添加用户" :visible.sync="dialogVisible" width="400px">
       <el-form
         :model="userForm"
         :rules="userFormRules"
