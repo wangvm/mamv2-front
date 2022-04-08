@@ -31,7 +31,7 @@ export default {
   queryUserByName: (username, current, pageSize) => request("/user/query/name", { username, current, pageSize }),
   // 文件接口
 
-  uploadVideo: (file) => request("/file/upload/video", file, "POST"),
+  // uploadVideo: (file) => request("/file/upload/video", file, "POST"),
   uploadKeyFrame: (file) => request("file/upload/keyframe", file, "POST"),
   getVideoList: (pageSize = 5, pageIndex = 1) => request("/file/videoList", { pageSize, pageIndex }),
   searchVideoByName: (filename, pageSize = 5, pageIndex = 1) =>

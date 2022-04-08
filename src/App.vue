@@ -10,5 +10,9 @@
 
 <style lang="less">
 @import "~@/assets/css/common.less";
-
+.el-dialog .el-dialog__body{
+      display: flex;
+      justify-content: center;
+      align-items: center;
+}
 </style>
