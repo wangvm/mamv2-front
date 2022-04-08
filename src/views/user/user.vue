@@ -6,6 +6,7 @@
       </template>
     </BaseHeader>
     <el-main>
+      <!-- TODO 加上密码修改选项 -->
       <el-table :data="tableData" stripe :style="{width:100+'%'}">
         <el-table-column prop="index" label="序号"></el-table-column>
         <el-table-column prop="account" label="账号"></el-table-column>
@@ -16,7 +17,19 @@
           </template>
         </el-table-column>
         <el-table-column prop="createTime" label="创建时间"></el-table-column>
-        <el-table-column prop="role" label="权限"></el-table-column>
+        <el-table-column prop="role" label="权限">
+          <template slot-scope="scope">
+            <el-select v-model="scope.row.role" placeholder="请选择" v-show="scope.row.isEdit">
+            <el-option
+              v-for="item in options"
+              :key="item.value"
+              :label="item.label"
+              :value="item.value">
+            </el-option>
+          </el-select>
+          <span v-show="!scope.row.isEdit">{{scope.row.role}}</span>
+          </template>
+        </el-table-column>
         <el-table-column label="" min-width="100%">
           <template slot-scope="scope">
             <el-button size="mini" @click="handleEdit(scope.row)">{{scope.row.isEdit?'保存':'编辑'}}</el-button>
@@ -36,7 +49,7 @@
       </el-pagination>
     </el-footer>
     <!-- 添加项目表单 -->
-    <el-dialog title="添加用户" :visible.sync="dialogVisible" width="25%">
+    <el-dialog title="添加用户" :visible.sync="dialogVisible" width="18%">
       <el-form
         :model="userForm"
         :rules="userFormRules"
@@ -47,7 +60,7 @@
           <el-input v-model="userForm.account"></el-input>
         </el-form-item>
         <el-form-item label="用户名" prop="username">
-          <el-input :value="userForm.username"></el-input>
+          <el-input v-model="userForm.username"></el-input>
         </el-form-item>
         <el-form-item label="创建时间" prop="createTime">
           <el-input
@@ -56,7 +69,14 @@
           ></el-input>
         </el-form-item>
         <el-form-item label="权限" prop="role">
-          <el-input :value="userForm.status" disabled></el-input>
+          <el-select v-model="userForm.role" placeholder="请选择">
+            <el-option
+              v-for="item in options"
+              :key="item.value"
+              :label="item.label"
+              :value="item.value">
+            </el-option>
+          </el-select>
         </el-form-item>
         <el-form-item>
           <el-button type="primary" @click="submitForm('userForm')">提交</el-button>
@@ -74,7 +94,7 @@ import { message } from "@/assets/js/message";
 import BaseHeader from "@/components/BaseHeader.vue";
 
 export default {
-  name: "project",
+  name: "user",
   components:{
     BaseHeader
   },
@@ -96,6 +116,11 @@ export default {
         createTime: "",
         role: "",
       },
+      options:[
+        {value:"ROLE_ADMIN",label:"管理员"},
+        {value:"ROLE_CATALOGER",label:"编目员"},
+        {value:"ROLE_AUDITOR",label:"审核员"},
+      ],
       // 添加项目的验证规则
       userFormRules: {
         name: [
@@ -145,7 +170,7 @@ export default {
       }
     },
     async handleDelete(row){
-      let res = await Api.deleteProject(row.account)
+      let res = await Api.deleteUser(row.account)
       if(res.code === 200){
         this.getUserList();
       }else{
@@ -164,6 +189,7 @@ export default {
       this.$refs[formName].validate(async (valid) => {
         if (valid) {
           try {
+            this.userForm.password = this.userForm.account;
             let res = await Api.addUser(this.userForm);
             if (res.code === 200) {
               this.dialogVisible = false;
@@ -200,7 +226,7 @@ export default {
     async getUserList(
       status = 0,
       order = "account",
-      isAsc = 0,
+      isAsc = 1,
       pageSize = 5
     ) {
       try {
