@@ -55,12 +55,13 @@
       </el-pagination>
     </el-footer>
     <!-- 添加项目表单 -->
-    <el-dialog title="创建任务" :visible.sync="dialogVisible" width="400px">
+    <el-dialog title="创建任务" :visible.sync="dialogVisible" width="500px" destroy-on-close>
       <el-form
         :model="taskForm"
         :rules="taskRules"
         ref="taskForm"
         label-width="100px"
+        :style="{width: 400 + 'px'}"
       >
         <el-form-item label="任务名称" prop="name">
           <el-input v-model="taskForm.name"></el-input>
@@ -74,6 +75,7 @@
             :fetch-suggestions="queryCatalogers"
             placeholder="查询编目员"
             @select="handleSelectCataloger"
+            :style="{width: 300 + 'px'}"
           ></el-autocomplete>
         </el-form-item>
         <el-form-item label="审核员" prop="auditorName">
@@ -82,6 +84,16 @@
             :fetch-suggestions="queryAuditors"
             placeholder="查询审核员"
             @select="handleSelectAuditor"
+            :style="{width: 300 + 'px'}"
+          ></el-autocomplete>
+        </el-form-item>
+        <el-form-item label="视频">
+          <el-autocomplete
+            v-model="videoInfo.fileName"
+            :fetch-suggestions="queryVideo"
+            placeholder="搜索视频"
+            @select="handleSelectVideo"
+            :style="{width: 300 + 'px'}"
           ></el-autocomplete>
         </el-form-item>
         <el-form-item label="创建时间" prop="createTime">
@@ -136,6 +148,14 @@ export default {
         auditorName: "",
         createTime: "",
         status: "",
+      },
+      videoInfo: {
+        fileName:"",
+        aspectRatio:"",
+        duration:0,
+        frameRate:0,
+        address:"",
+        audioChannel:0
       },
       // 添加任务表单验证规则
       taskRules: {
@@ -204,15 +224,40 @@ export default {
         message.error(e.message);
       }
     },
+    // 搜索视频
+    async queryVideo(queryString, cb){
+      try{
+        if(queryString){
+          let res = await $api.searchVideoByName(queryString);
+          if (res.code === 200 && res.data.length !== 0) {
+            res.data.map((record) => {
+              record.value = record.fileName;
+            });
+            cb(res.data);
+          } else {
+            message.error(res.message);
+          }
+        }
+      } catch (e) {
+        message.error(e.message);
+      }
+    },
     handleSelectCataloger(item) {
       // 选择编目员操作
       this.taskForm.cataloger = parseInt(item.account);
       this.taskForm.catalogerName = item.username;
     },
     handleSelectAuditor(item) {
+      console.log(123123123)
       // 选择审核员操作
       this.taskForm.auditor = parseInt(item.account);
       this.taskForm.auditorName = item.username;
+    },
+    handleSelectVideo(item) {
+      // 选择视频操作
+      console.log("item",item)
+      this.videoInfo = item;
+      console.log("videoInfo", this.videoInfo);
     },
     // 验证规则并提交创建项目数据
     // 添加权限验证
@@ -221,7 +266,7 @@ export default {
         if (valid) {
           try {
             this.taskForm.status = 0;
-            let res = await $api.addTask(this.taskForm);
+            let res = await $api.addTask({taskInfo:this.taskForm, videoInfo:this.videoInfo});
             if (res.code === 200) {
               this.dialogVisible = false;
               this.taskForm = {
@@ -234,6 +279,14 @@ export default {
                 auditorName: "",
                 createTime: "",
                 status: "",
+              };
+              this.videoInfo = {
+                fileName:"",
+                aspectRatio:"",
+                duration:0,
+                frameRate:0,
+                address:"",
+                audioChannel:0
               };
               this.getTaskData();
             } else {
@@ -295,13 +348,12 @@ export default {
     // 进入编目操作
     async enterTask(row) {
       // TODO 等待编目界面完成
-      console.log("进入编目");
-      this.$store.commit("storedTaskInfo", {
+      this.$store.commit("common/storedTaskInfo", {
         currentPage: this.currentPage,
         id: row.id,
         name: row.name,
       });
-      // this.$router.push("/catalog");
+      this.$router.push("/catalog/edit");
     },
     // 打开添加项目浮窗，初始化数据
     // TODO 添加权限验证
