@@ -36,4 +36,14 @@ export default {
   getVideoList: (pageSize = 5, pageIndex = 1) => request("/file/videoList", { pageSize, pageIndex }),
   searchVideoByName: (filename, pageSize = 5, pageIndex = 1) =>
     request("/file/search", { filename, pageSize, pageIndex }),
+
+  // 编目接口
+  addFragmentRecord: (fragmentData) => request("/catalog/add/fragment", fragmentData, "POST"),
+  addScenesRecord: (sceneseData) => request("/catalog/add/scenes", sceneseData, "POST"),
+  deleteCatalogRecord: (record, catalogId) => request("/catalog/delete/" + record, { catalogId }),
+  getCatalogRecord: (record, catalogId) => request("/catalog/get/" + record, { catalogId }),
+  getMenu: (taskId) => request("/catalog/get/menu", { taskId }),
+  updateProgramRecord: (programData) => request("/catalog/update/program", programData, "POST"),
+  updateFragmentRecord: (fragmentData) => request("/catalog/update/fragment", fragmentData, "POST"),
+  updateScenesRecord: (sceneseData) => request("/catalog/update/scenes", sceneseData, "POST"),
 };

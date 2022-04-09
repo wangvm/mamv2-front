@@ -24,4 +24,21 @@ export default {
   storedUserPage(state, payload) {
     state.currentUserPage = payload;
   },
+
+  // 与视频播放相关
+  setVideoSrc(state, val) {
+    state.videoSrc = val;
+  },
+  setScreenshotList(state, val) {
+    state.screenshotList = val;
+  },
+  
+  // 设置入点时间
+  setLoginTime(state, val) {
+    state.entryPoint = val;
+  },
+  // 设置时长
+  setLogTime(state, val) {
+    state.logTime = val;
+  }
 };

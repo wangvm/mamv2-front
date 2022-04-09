@@ -1,4 +1,6 @@
 import $api from "@/network/api";
+// 引用loadsh
+import _ from "lodash"
 
 export default {
   // 用户登录
@@ -15,4 +17,14 @@ export default {
       this.$catch = e;
     }
   },
+
+  //获取截图并更新
+  updateScreenshotList({ commit, state }, val) {
+    let imageList = _.cloneDeep(state.screenshotList);
+    imageList.push({
+      title: "",
+      src: val
+    })
+    commit('setScreenshotList', imageList);
+  }
 };
