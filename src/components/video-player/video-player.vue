@@ -14,10 +14,11 @@
       <div class="video_content">
         <!--http://10.1.71.155/static/video/test.mp4-->
         <!--@/assets/video/test.mp4-->
+        <!-- TODO 还需要调试修改 -->
         <video
           class="player"
           ref="player"
-          :src="videoSrc"
+          :src="videoInfo.address"
           width="100%"
           height="100%"
           preload="auto"
@@ -29,6 +30,7 @@
           @mouseout="videoEvent('mouseout')"
         ></video>
       </div>
+      <!-- 操作按钮 -->
       <div class="video_btn">
         <!--     i：按钮封装       -->
         <i
@@ -182,7 +184,7 @@ export default {
     getPlayerDuration() {
       return this.player.duration;
     },
-    ...mapState("common", ["videoSrc", "taskName"]),
+    ...mapState("common", ["videoSrc", "currentTask"]),
   },
   methods: {
     ...mapActions("common", ["updateScreenshotList"]),
@@ -230,10 +232,12 @@ export default {
               );
               this.$refs.progress.value = this.player.currentTime;
             }, this.videoInfo.frameRate);
+            console.log(this.timer)
           }
           break;
         case "pause":
           //播放器暂停
+          console.log(this.timer);
           clearInterval(this.timer);
           this.timer = null;
           this.$refs.time.innerText = timeFormat(
@@ -432,14 +436,15 @@ export default {
       this.ifPreview = false;
       this.$refs.preview.style.display = "none";
     },
-    // 截图
+    // 截图操作
     async screenshot() {
       this.playerBtnEvent("pause");
       this.loading = true;
+      // TODO 改成本地截图上传
       try {
         let res = await $api.getscreenshotList(
           this.player.currentTime,
-          this.taskName
+          this.currentTask.id
         );
         if (res.code === 200) {
           this.updateScreenshotList(res.data);
