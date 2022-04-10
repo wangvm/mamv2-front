@@ -18,6 +18,22 @@ export default {
     }
   },
 
+  async getVideoInfoAction({ commit }, taskId) {
+    try {
+      // 修改接口实现获取视频信息
+      let res = await $api.getVideoInfo(taskId);
+      if(res.code === 200){
+        // TODO 暂时测试，使用测试数据，正式需要使用一下操作
+        // commit("setVideoInfo", res.data)
+      }else{
+        commit("setVideoInfo", {});
+      }
+      console.log(this.videoInfo)
+    } catch (e) {
+      this.$catch = e;
+    }
+  },
+
   //获取截图并更新
   updateScreenshotList({ commit, state }, val) {
     let imageList = _.cloneDeep(state.screenshotList);

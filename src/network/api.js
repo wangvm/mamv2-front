@@ -39,11 +39,13 @@ export default {
 
   // 编目接口
   addFragmentRecord: (fragmentData) => request("/catalog/add/fragment", fragmentData, "POST"),
-  addScenesRecord: (sceneseData) => request("/catalog/add/scenes", sceneseData, "POST"),
-  deleteCatalogRecord: (record, catalogId) => request("/catalog/delete/" + record, { catalogId }),
+  addScenesRecord: (scenesData) => request("/catalog/add/scenes", scenesData, "POST"),
+  deleteCatalogRecord: (record, catalogId) => request("/catalog/delete/" + record, { catalogId: catalogId }),
+  deleteBulkScenes: (scenesIds) => request("/catalog/delete/bulk/scenes", scenesIds, "POST"),
   getCatalogRecord: (record, catalogId) => request("/catalog/get/" + record, { catalogId }),
   getMenu: (taskId) => request("/catalog/get/menu", { taskId }),
+  getVideoInfo: (taskId) => request("/file/videoInfo",{taskId}),
   updateProgramRecord: (programData) => request("/catalog/update/program", programData, "POST"),
   updateFragmentRecord: (fragmentData) => request("/catalog/update/fragment", fragmentData, "POST"),
-  updateScenesRecord: (sceneseData) => request("/catalog/update/scenes", sceneseData, "POST"),
+  updateScenesRecord: (scenesData) => request("/catalog/update/scenes", scenesData, "POST"),
 };

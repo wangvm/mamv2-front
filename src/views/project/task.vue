@@ -120,7 +120,7 @@
 import $api from "@/network/api";
 import { message } from "@/assets/js/message";
 import BaseHeader from "@/components/BaseHeader.vue";
-import { mapState } from "vuex";
+import { mapState, mapActions} from "vuex";
 // TODO 测试正确性
 export default {
   name: "task",
@@ -183,6 +183,7 @@ export default {
     },
   },
   methods: {
+    ...mapActions("common", ["getVideoInfoAction"]),
     // back返回项目管理页面
     back() {
       this.$router.push("/manage/project");
@@ -233,9 +234,10 @@ export default {
             res.data.map((record) => {
               record.value = record.fileName;
             });
+            console.log(res)
             cb(res.data);
           } else {
-            message.error(res.message);
+            message.error(res.data.length===0?"未搜索到视频":res.message);
           }
         }
       } catch (e) {
@@ -248,7 +250,6 @@ export default {
       this.taskForm.catalogerName = item.username;
     },
     handleSelectAuditor(item) {
-      console.log(123123123)
       // 选择审核员操作
       this.taskForm.auditor = parseInt(item.account);
       this.taskForm.auditorName = item.username;
@@ -347,7 +348,10 @@ export default {
     },
     // 进入编目操作
     async enterTask(row) {
-      // TODO 等待编目界面完成
+      // 等待编目界面完成
+      // 获取并视频信息
+      this.getVideoInfoAction(row.id)
+      // 保存当前任务信息
       this.$store.commit("common/storedTaskInfo", {
         currentPage: this.currentPage,
         id: row.id,

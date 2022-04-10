@@ -5,7 +5,7 @@ export default {
     state.authority = data.role;
     state.username = data.username;
   },
-  storedProjectPage(state,payload){
+  storedProjectPage(state, payload) {
     state.currentProjectPage = payload;
   },
   updateProjectInfo(state, payload) {
@@ -13,7 +13,7 @@ export default {
     state.currentProject.id = payload.id;
     state.currentProject.name = payload.name;
   },
-  storedTaskPage(state,payload){
+  storedTaskPage(state, payload) {
     state.currentTaskPage = payload;
   },
   storedTaskInfo(state, payload) {
@@ -26,13 +26,13 @@ export default {
   },
 
   // 与视频播放相关
-  setVideoSrc(state, val) {
-    state.videoSrc = val;
-  },
   setScreenshotList(state, val) {
     state.screenshotList = val;
   },
-  
+  setVideoInfo(state, payload) {
+    state.videoInfo = payload;
+  },
+
   // 设置入点时间
   setLoginTime(state, val) {
     state.entryPoint = val;
@@ -40,5 +40,5 @@ export default {
   // 设置时长
   setLogTime(state, val) {
     state.logTime = val;
-  }
+  },
 };

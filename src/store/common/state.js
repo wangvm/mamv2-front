@@ -18,14 +18,13 @@ export default {
   currentUserPage: 1,
 
   // 视频播放组件
-  videoSrc: "http://192.168.111.128/vod/test.mp4",
   screenshotList: [],
-  videoInfo:{
+  videoInfo: {
     fileName:"",
     aspectRatio:"",
     duration: 0,
     frameRate: 0,
-    address: "",
+    address: "http://192.168.111.128/vod/test.mp4",
     audioChannel: 0,
   },
 

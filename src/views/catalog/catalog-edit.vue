@@ -1,6 +1,6 @@
 <template>
   <div class="home">
-        <!-- 右上角操作按钮 -->
+    <!-- 右上角操作按钮 -->
     <div class="onload">
       <el-button type="success" size="small" @click="saveCatalog()"
         >保存</el-button
@@ -15,7 +15,7 @@
         <videoPlayer :video-info="videoInfo" :logReset="logRemove" />
       </div>
       <!-- 编目条目菜单 -->
-      <!-- TODO 改成使用Tree树形控件实现 -->
+      <!-- 使用Tree树形控件实现 -->
       <div class="home-list">
         <el-tree
           :data="menuData"
@@ -25,91 +25,32 @@
           highlight-current
           @node-click="handleMenuClick"
           @current-change="handleMenuChange"
-          >
+        >
           <span class="custom-tree-node" slot-scope="{ node, data }">
-            <span>{{ node.label }}</span>
+            <span>{{ data.content }}</span>
             <span>
+              <span :style="{ 'margin-right': 10 + 'px' }">{{
+                data.level
+              }}</span>
               <el-button
                 type="primary"
                 size="mini"
-                @click="() => append(node, data)">
+                @click="() => append(node, data)"
+              >
                 添加
               </el-button>
               <el-button
                 type="danger"
                 size="mini"
-                :disabled="data.level==='节目层'"
-                @click="() => remove(node, data)">
+                :disabled="data.level === '节目层'"
+                @click="() => remove(node, data)"
+              >
                 删除
               </el-button>
             </span>
           </span>
         </el-tree>
       </div>
-      <!-- <el-card class="home-list" shadow="hover">
-        <el-table
-          :data="catalogList"
-          style="width: 100%"
-          row-key="id"
-          border
-          lazy
-          default-expand-all
-          @row-click="lookClick"
-          :tree-props="{ children: 'children', hasChildren: 'hasChildren' }"
-        >
-          <el-table-column prop="title.value" label="标题" width="450">
-          </el-table-column>
-          <el-table-column label="操作">
-            <template slot-scope="scope">
-              <el-tooltip
-                v-if="scope.row.edit === false"
-                class="item"
-                effect="light"
-                content="编辑"
-                placement="left"
-              >
-                <el-button
-                  type="primary"
-                  size="mini"
-                  icon="el-icon-edit"
-                  @click.stop="editItem(scope.row)"
-                  circle
-                ></el-button>
-              </el-tooltip>
-              <el-tooltip
-                v-show="scope.row.state !== '场景'"
-                class="item"
-                effect="light"
-                content="增加"
-                placement="top"
-              >
-                <el-button
-                  type="success"
-                  size="mini"
-                  icon="el-icon-plus"
-                  @click.stop="addItem(scope.row)"
-                  circle
-                ></el-button>
-              </el-tooltip>
-              <el-tooltip
-                v-show="scope.row.state !== '节目'"
-                class="item"
-                effect="light"
-                content="删除"
-                placement="right"
-              >
-                <el-button
-                  type="danger"
-                  size="mini"
-                  icon="el-icon-delete"
-                  @click.stop="deleteItem(scope.row)"
-                  circle
-                ></el-button>
-              </el-tooltip>
-            </template>
-          </el-table-column>
-        </el-table>
-      </el-card> -->
     </div>
     <!-- 编写三个Component，然后通过v-if和v-else-if实现切换不同层级的编目内容 -->
     <div class="home-right">
@@ -421,7 +362,8 @@ import { message } from "@/assets/js/message";
 import menuConverter from "@/utils/menuConverter";
 
 // 引用loadsh
-import _ from "lodash"
+import _ from "lodash";
+import catalogVue from '../catalog.vue';
 
 export default {
   name: "catalog-edit",
@@ -466,10 +408,163 @@ export default {
       // 当前用于新建menu的id
       menuId: 0,
       currentMenuInfo: null,
-      
+      // 节目层数据
+      programData: {
+        menu: {
+          id: 1,
+          content: "",
+          level: "",
+          check: 0,
+          parent: null,
+        },
+        taskId: 4,
+        title: {
+          value: "",
+          check: 0,
+        },
+        description: {
+          value: "",
+          check: 0,
+        },
+        debutDate: {
+          value: "",
+          check: 0,
+        },
+        programType: {
+          value: "",
+          check: 0,
+        },
+        creator: {
+          value: "",
+          check: 0,
+        },
+        contributor: {
+          value: "",
+          check: 0,
+        },
+        column: {
+          value: "",
+          check: 0,
+        },
+        color: {
+          value: "",
+          check: 0,
+        },
+        system: {
+          value: "",
+          check: 0,
+        },
+        audioChannel: {
+          value: "1",
+        },
+        aspectRatio: {
+          value: "320x240",
+        },
+        startPoint: {
+          value: "",
+          check: 0,
+        },
+        outPoint: {
+          value: "",
+          check: 0,
+        },
+        sourceAcquiringMethod: {
+          value: "",
+          check: 0,
+        },
+        sourceProvider: {
+          value: "",
+          check: 0,
+        },
+      },
+      // 片段层数据
+      fragmentData: {
+        menu: {
+          id: 0,
+          content: "",
+          level: "",
+          check: 0,
+          parent: 1,
+        },
+        taskId: 1,
+        title: {
+          value: "",
+          check: 0,
+        },
+        description: {
+          value: "",
+          check: 0,
+        },
+        creator: {
+          value: "",
+          check: 0,
+        },
+        contributor: {
+          value: "",
+          check: 0,
+        },
+        subtitleForm: {
+          value: "",
+          check: 0,
+        },
+        startPoint: {
+          value: "",
+          check: 0,
+        },
+        outPoint: {
+          value: "",
+          check: 0,
+        },
+        sourceAcquiringMethod: {
+          value: "",
+          check: 0,
+        },
+        sourceProvider: {
+          value: "",
+          check: 0,
+        },
+      },
+      // 场景层数据
+      scenesData: {
+        id: "",
+        menu: {
+          id: 0,
+          content: "",
+          level: "",
+          check: 0,
+          parent: 1,
+        },
+        taskId: 1,
+        title: {
+          value: "",
+          check: 0,
+        },
+        description: {
+          value: "",
+          check: 0,
+        },
+        subtitleForm: {
+          value: "",
+          check: 0,
+        },
+        startPoint: {
+          value: "",
+          check: 0,
+        },
+        outPoint: {
+          value: "",
+          check: 0,
+        },
+      },
+      // 片段层数据的map存储，从服务获取以后保存到这个里面，避免重复请求
+      // key为数据的id,值是整个fragmentData
+      fragmentMap: null,
+      // 片段层数据的map存储，从服务获取以后保存到这个里面，避免重复请求
+      // key为数据的id,值是整个fragmentData
+      scenesMap: null,
     };
   },
-  created(){
+  created() {
     this.getMenuData();
   },
   components: {
@@ -493,83 +588,136 @@ export default {
   },
   methods: {
     ...mapMutations("common", ["setscreenshotList", "setTaskStatus"]),
-    handleMenuClick(data, node){
+    // =============================================================================
+    handleMenuClick(data, node) {
+      // 进入时保存一个版本号（hash）
       // 获取编目信息，并保存到vc的data中
       // 该信息分为节目层、片段层、场景层
       // 不同层传递到不同的编目组件中，分别为programData、fragmentData、scenesData
       // 使用map保存编目数据，id为key，对应key的编目数据为value
-      // 
-      console.log("123", data, node)
     },
-    handleMenuChange(data, node){
-      console.log("456", data, node)
+    handleMenuChange(data, node) {
+      // 离开时对比版本号（hash），确定是否需要更新
     },
     // 添加一个节点
     append(node, data) {
       let currentLevel = null;
-      switch(data.level){
-        case "节目层": currentLevel = "片段层";break;
-        case "片段层": currentLevel = "场景层";break;
-        case "场景层": currentLevel = "场景层";break;
-        default: break;
+      switch (data.level) {
+        case "节目层":
+          currentLevel = "片段层";
+          break;
+        case "片段层":
+          currentLevel = "场景层";
+          break;
+        case "场景层":
+          currentLevel = "场景层";
+          break;
+        default:
+          break;
       }
-      let parentId = currentLevel === "场景层" ? data.parent : data.id ;
+      let parentId = data.level === "场景层" ? data.parent : data.id;
       const newChild = {
         id: ++this.menuId,
         check: 0,
-        content: currentLevel+" new",
-        label: currentLevel+" new",
+        content: currentLevel + " new" + this.menuId,
         level: currentLevel,
         parent: parentId,
-        children:[],
+        children: [],
       };
-      if(data.level === "场景层"){
-        node.parent.data.children.push(newChild);
-      }else{
-        newChild.children = [];
-        data.children.push(newChild);
-      }
-      // TODO 添加一个编目数据记录，根据level添加不同数据
+      // 添加一个编目数据记录，根据level添加不同数据
+      this.addCatalogRecord(newChild, node, data);
     },
-    // TODO 删除菜单节点 
-    remove(node, data) {
-      const parent = node.parent;
-      const children = parent.data.children || parent.data;
-      const index = children.findIndex(d => d.id === data.id);
-      children.splice(index, 1);
+    async addCatalogRecord(newChild, node, data) {
+      let res = null;
+      // 暂时做简单实现，直接从服务器获取数据覆盖本地fragmentData和scenesData
+      // 后续改成新建的时候通过对象构造器构造，然后保存到map中
+      try{
+        switch (newChild.level) {
+          case "片段层":
+            this.fragmentData.menu = newChild;
+            this.fragmentData.taskId = this.currentTask.id;
+            this.fragmentData.title.value = newChild.content;
+            res = await API.addFragmentRecord(this.fragmentData);
+            break;
+          case "场景层":
+            this.scenesData.menu = newChild;
+            this.scenesData.taskId = this.currentTask.id;
+            this.scenesData.title.value = newChild.content;
+            res = await API.addScenesRecord(this.scenesData);
+            break;
+        }
+        if(res.code === 200){
+          if (data.level === "场景层") {
+            node.parent.data.children.push(newChild);
+          } else {
+            newChild.children = [];
+            data.children.push(newChild);
+          }
+          newChild.catalogId = res.data.id;
+        }else{
+          message.error(res.message)
+        }
+      }catch(e){
+        message.error(e.message)
+      }
+    },
+    // 删除菜单节点
+    async remove(node, data) {
+      if(data.level === '片段层'){
+        let scenesIds = [];
+        data.children.forEach(element => {
+          scenesIds.push(element.catalogId);
+        });
+        // 删除子节点
+        try{
+          await API.deleteBulkScenes(scenesIds);
+        }catch(e){
+          message.error(e.message);
+        }
+      }
+      try{
+        let record = data.level==="片段层"?"fragment":"scenes";
+        let res = await API.deleteCatalogRecord(record, data.catalogId);
+        if(res.code === 200){
+          const parent = node.parent;
+          const children = parent.data.children || parent.data;
+          const index = children.findIndex((d) => d.id === data.id);
+          children.splice(index, 1);
+        }else{
+          message.error(res.message);
+        }
+      }catch(e){
+        message.error(e.message)
+      }
+      
     },
 
-    // 获取编目左侧菜单数据
-    async getMenuData(){
+    // 初始化界面数据
+    async getMenuData() {
       let taskId = this.currentTask.id;
-      try{
+      try {
         let res = await API.getMenu(taskId);
-        let menuList = [];
-        res.data.forEach(element => {
-          this.menuId = element.menu.id > this.menuId 
-            ? element.menu.id 
-            : this.menuId;
-          menuList.push({
-            catalogId:element.catalogId, 
-            label:element.menu.content, 
-            ...element.menu
+        if(res.code === 200){
+          let menuList = [];
+          res.data.forEach((element) => {
+            this.menuId =
+              element.menu.id > this.menuId ? element.menu.id : this.menuId;
+            menuList.push({
+              catalogId: element.catalogId,
+              ...element.menu,
+            });
           });
-        });
-        let menuTree = menuConverter(menuList);
-        this.menuData = menuTree;
-      }catch(e){
-        message.error(e.message)
+          let menuTree = menuConverter(menuList);
+          this.menuData = menuTree;
+        }else{
+          message.error(res.message);
+        }
+      } catch (e) {
+        message.error(e.message);
       }
     },
-    async getVideoInfo(){
-      try{
-        // 修改接口实现获取视频信息
-        // let res = await API.getMenu(this.currentTask.taskId);
-        console.log(123)
-      }catch(e){
-        message.error(e.message)
-      }
-    },
+    
+    // =============================================
     // 点击查看详情
     lookClick(row) {
       if (this.editAndView === true) {
@@ -1018,12 +1166,9 @@ export default {
     font-size: 18px;
     padding-right: 8px;
   }
-  .el-tree{
+  .el-tree {
     height: 45px;
     margin: 10px;
   }
-}
-.el-tree-node__content{
-  height: 40px;
 }
 </style>

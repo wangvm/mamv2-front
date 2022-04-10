@@ -184,7 +184,7 @@ export default {
     getPlayerDuration() {
       return this.player.duration;
     },
-    ...mapState("common", ["videoSrc", "currentTask"]),
+    ...mapState("common", ["currentTask"]),
   },
   methods: {
     ...mapActions("common", ["updateScreenshotList"]),
