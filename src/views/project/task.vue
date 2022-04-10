@@ -121,7 +121,6 @@ import $api from "@/network/api";
 import { message } from "@/assets/js/message";
 import BaseHeader from "@/components/BaseHeader.vue";
 import { mapState, mapActions} from "vuex";
-// TODO 测试正确性
 export default {
   name: "task",
   components: {
@@ -370,7 +369,6 @@ export default {
     },
     // 控制分页切换逻辑
     handleCurrentChange() {
-      // TODO 请求后端拿去数据
       this.getTaskData();
       this.$store.commit("storedTaskPage",this.currentPage);
     },

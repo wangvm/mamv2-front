@@ -28,7 +28,6 @@ export default {
       }else{
         commit("setVideoInfo", {});
       }
-      console.log(this.videoInfo)
     } catch (e) {
       this.$catch = e;
     }

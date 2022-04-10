@@ -6,7 +6,6 @@
       </template>
     </BaseHeader>
     <el-main>
-      <!-- TODO 加上密码修改选项 -->
       <el-table :data="tableData" stripe :style="{width:100+'%'}">
         <el-table-column prop="index" label="序号"></el-table-column>
         <el-table-column prop="fileName" label="文件名"></el-table-column>
@@ -115,7 +114,6 @@ export default {
     },
     // 控制分页切换逻辑
     handleCurrentChange() {
-      // TODO 请求后端拿去数据
       this.getVideoList();
     },
     // 从后端获取数据

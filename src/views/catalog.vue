@@ -15,7 +15,6 @@ export default {
     // ...mapState("common", [ "currentTask"]),
   },
   methods: {
-    ...mapMutations("common", ["setTitleStats"]),
     goBack() {
       this.$router.push("/manage/task")
     },

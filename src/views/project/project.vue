@@ -160,7 +160,6 @@ export default {
     },
     // 控制分页切换逻辑
     handleCurrentChange() {
-      // TODO 请求后端拿去数据
       this.getProjectData();
       this.$store.commit("storedProjectPage",this.currentPage);
     },
