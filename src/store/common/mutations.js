@@ -41,4 +41,16 @@ export default {
   setLogTime(state, val) {
     state.logTime = val;
   },
+
+  // 编目数据提交
+
+  setProgramData(state, programData) {
+    state.programData = programData;
+  },
+  setFragmentData(state, fragmentData) {
+    state.fragmentData = fragmentData;
+  },
+  setScenesData(state, scenesData) {
+    state.scenesData = scenesData;
+  },
 };

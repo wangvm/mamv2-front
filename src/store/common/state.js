@@ -35,4 +35,155 @@ export default {
   outPoint: null,
   // 打点时长
   logTime: null,
+
+
+  // 编目数据
+  programData: {
+    menu: {
+      id: 1,
+      content: "",
+      level: "",
+      check: 0,
+      parent: null,
+    },
+    taskId: 4,
+    title: {
+      value: "",
+      check: 0,
+    },
+    description: {
+      value: "",
+      check: 0,
+    },
+    debutDate: {
+      value: "",
+      check: 0,
+    },
+    programType: {
+      value: "",
+      check: 0,
+    },
+    creator: {
+      value: "",
+      check: 0,
+    },
+    contributor: {
+      value: "",
+      check: 0,
+    },
+    column: {
+      value: "",
+      check: 0,
+    },
+    color: {
+      value: "",
+      check: 0,
+    },
+    system: {
+      value: "",
+      check: 0,
+    },
+    audioChannel: {
+      value: "1",
+      check: 0,
+    },
+    aspectRatio: {
+      value: "0x0",
+    },
+    startPoint: {
+      value: "",
+      check: 0,
+    },
+    outPoint: {
+      value: "",
+      check: 0,
+    },
+    sourceAcquiringMethod: {
+      value: "",
+      check: 0,
+    },
+    sourceProvider: {
+      value: "",
+      check: 0,
+    },
+  },
+  // 片段层数据
+  fragmentData: {
+    menu: {
+      id: 0,
+      content: "",
+      level: "",
+      check: 0,
+      parent: 1,
+    },
+    taskId: 1,
+    title: {
+      value: "",
+      check: 0,
+    },
+    description: {
+      value: "",
+      check: 0,
+    },
+    creator: {
+      value: "",
+      check: 0,
+    },
+    contributor: {
+      value: "",
+      check: 0,
+    },
+    subtitleForm: {
+      value: "",
+      check: 0,
+    },
+    startPoint: {
+      value: "",
+      check: 0,
+    },
+    outPoint: {
+      value: "",
+      check: 0,
+    },
+    sourceAcquiringMethod: {
+      value: "",
+      check: 0,
+    },
+    sourceProvider: {
+      value: "",
+      check: 0,
+    },
+  },
+  // 场景层数据
+  scenesData: {
+    id: "",
+    menu: {
+      id: 0,
+      content: "",
+      level: "",
+      check: 0,
+      parent: null,
+    },
+    taskId: 1,
+    title: {
+      value: "",
+      check: 0,
+    },
+    description: {
+      value: "",
+      check: 0,
+    },
+    subtitleForm: {
+      value: "",
+      check: 0,
+    },
+    startPoint: {
+      value: "",
+      check: 0,
+    },
+    outPoint: {
+      value: "",
+      check: 0,
+    },
+  },
 };

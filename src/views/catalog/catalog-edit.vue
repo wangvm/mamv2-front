@@ -24,7 +24,6 @@
           :expand-on-click-node="false"
           highlight-current
           @node-click="handleMenuClick"
-          @current-change="handleMenuChange"
         >
           <span class="custom-tree-node" slot-scope="{ node, data }">
             <span>{{ data.content }}</span>
@@ -36,17 +35,15 @@
                 type="primary"
                 size="mini"
                 @click="() => append(node, data)"
+                >添加</el-button
               >
-                添加
-              </el-button>
               <el-button
                 type="danger"
                 size="mini"
                 :disabled="data.level === '节目层'"
                 @click="() => remove(node, data)"
+                >删除</el-button
               >
-                删除
-              </el-button>
             </span>
           </span>
         </el-tree>
@@ -54,208 +51,63 @@
     </div>
     <!-- 编写三个Component，然后通过v-if和v-else-if实现切换不同层级的编目内容 -->
     <div class="home-right">
-      <template v-if="currentLevel==='节目层'">
-        <program :program-data="programData"></program>
+      <template v-if="currentLevel === '节目层'">
+        <Program ref="program"></Program>
       </template>
-      <template v-else-if="currentLevel==='片段层'">
-
-      </template>
-      <template v-else-if="currentLevel==='场景层'">
-
-      </template>
+      <template v-else-if="currentLevel === '片段层'">
+        <Fragment ref="fragment"></Fragment
+      ></template>
+      <template v-else-if="currentLevel === '场景层'">
+        <Scenes ref="scenes"></Scenes
+      ></template>
     </div>
   </div>
 </template>
 
 <script>
+import Scenes from "@/components/catalog-layer/scenes";
+import Fragment from "@/components/catalog-layer/fragment";
+import Program from "@/components/catalog-layer/program.vue";
 /*
  * 目前处于点击左侧显示右侧对应信息
  * */
 import videoPlayer from "@/components/video-player/video-player";
-import { mapState, mapMutations } from "vuex";
+import { mapState, mapMutations, mapActions } from "vuex";
 import API from "@/network/api";
 import { message } from "@/assets/js/message";
 import menuConverter from "@/utils/menuConverter";
 
 // 引用loadsh
 import _ from "lodash";
-import program from '@/components/catalog-layer/program.vue';
+import catalogVue from "../catalog.vue";
 
 export default {
   name: "catalog-edit",
   data() {
     return {
       // 当前选中的层次
-      currentLevel:"节目层",
+      currentLevel: "节目层",
       //重置时间帧入点和出点
       logRemove: false,
       menuData: null,
       // 当前用于新建menu的id
       menuId: 0,
       currentMenuInfo: null,
-      // TODO 替换为vuex来传递三个层次的数据
-      // 节目层数据
-      programData: {
-        menu: {
-          id: 1,
-          content: "",
-          level: "",
-          check: 0,
-          parent: null,
-        },
-        taskId: 4,
-        title: {
-          value: "",
-          check: 0,
-        },
-        description: {
-          value: "",
-          check: 0,
-        },
-        debutDate: {
-          value: "",
-          check: 0,
-        },
-        programType: {
-          value: "",
-          check: 0,
-        },
-        creator: {
-          value: "",
-          check: 0,
-        },
-        contributor: {
-          value: "",
-          check: 0,
-        },
-        column: {
-          value: "",
-          check: 0,
-        },
-        color: {
-          value: "",
-          check: 0,
-        },
-        system: {
-          value: "",
-          check: 0,
-        },
-        audioChannel: {
-          value: "1",
-        },
-        aspectRatio: {
-          value: "320x240",
-        },
-        startPoint: {
-          value: "",
-          check: 0,
-        },
-        outPoint: {
-          value: "",
-          check: 0,
-        },
-        sourceAcquiringMethod: {
-          value: "",
-          check: 0,
-        },
-        sourceProvider: {
-          value: "",
-          check: 0,
-        },
-      },
-      // 片段层数据
-      fragmentData: {
-        menu: {
-          id: 0,
-          content: "",
-          level: "",
-          check: 0,
-          parent: 1,
-        },
-        taskId: 1,
-        title: {
-          value: "",
-          check: 0,
-        },
-        description: {
-          value: "",
-          check: 0,
-        },
-        creator: {
-          value: "",
-          check: 0,
-        },
-        contributor: {
-          value: "",
-          check: 0,
-        },
-        subtitleForm: {
-          value: "",
-          check: 0,
-        },
-        startPoint: {
-          value: "",
-          check: 0,
-        },
-        outPoint: {
-          value: "",
-          check: 0,
-        },
-        sourceAcquiringMethod: {
-          value: "",
-          check: 0,
-        },
-        sourceProvider: {
-          value: "",
-          check: 0,
-        },
-      },
-      // 场景层数据
-      scenesData: {
-        id: "",
-        menu: {
-          id: 0,
-          content: "",
-          level: "",
-          check: 0,
-          parent: 1,
-        },
-        taskId: 1,
-        title: {
-          value: "",
-          check: 0,
-        },
-        description: {
-          value: "",
-          check: 0,
-        },
-        subtitleForm: {
-          value: "",
-          check: 0,
-        },
-        startPoint: {
-          value: "",
-          check: 0,
-        },
-        outPoint: {
-          value: "",
-          check: 0,
-        },
-      },
       // 片段层数据的map存储，从服务获取以后保存到这个里面，避免重复请求
       // key为数据的id,值是整个fragmentData
       fragmentMap: null,
-      // 片段层数据的map存储，从服务获取以后保存到这个里面，避免重复请求
-      // key为数据的id,值是整个fragmentData
       scenesMap: null,
     };
   },
   created() {
     this.getMenuData();
   },
+
   components: {
+    Scenes,
+    Fragment,
     videoPlayer,
-    program
+    Program,
   },
   watch: {
     screenshotList: "updateFormImageList",
@@ -271,20 +123,92 @@ export default {
       "entryPoint",
       "outPoint",
       "logTime",
+      "programData",
+      "fragmentData",
+      "scenesData",
     ]),
   },
   methods: {
-    ...mapMutations("common", ["setscreenshotList", "setTaskStatus"]),
+    ...mapMutations("common", [
+      "setscreenshotList",
+      "setTaskStatus",
+      "setProgramData",
+      "setFragmentData",
+      "setScenesData",
+    ]),
     // ==================== 菜单操作 =================================
-    handleMenuClick(data, node) {
+    async handleMenuClick(data, node) {
+      this.saveData();
+      // 获取对应数据
+      this.getCatalogRecord(data);
+      this.currentLevel = data.level;
       // 进入时保存一个版本号（hash）
       // 获取编目信息，并保存到vc的data中
       // 该信息分为节目层、片段层、场景层
       // 不同层传递到不同的编目组件中，分别为programData、fragmentData、scenesData
       // 使用map保存编目数据，id为key，对应key的编目数据为value
     },
-    handleMenuChange(data, node) {
-      // 离开时对比版本号（hash），确定是否需要更新
+    async saveData(){
+      let res = {};
+      // 保存数据
+      switch (this.currentLevel) {
+        case "节目层":
+          try {
+            res = await API.updateProgramRecord(this.programData);
+          } catch (e) {
+            message.error(e.message);
+          }
+          break;
+        case "片段层":
+          try {
+            res = await API.updateFragmentRecord(this.fragmentData);
+          } catch (e) {
+            message.error(e.message);
+          }
+          // submitData = this.$refs.program.programData;
+          // res = await API.updateFragmentRecord(submitData);
+          break;
+        case "场景层":
+          try {
+            res = await API.updateScenesRecord(this.scenesData);
+          } catch (e) {
+            message.error(e.message);
+          }
+          // submitData = this.$refs.program.programData;
+          // res = await API.updateScenesRecord(submitData);
+          break;
+        default:
+          break;
+      }
+    },
+    async getCatalogRecord(data){
+      let res;
+      switch (data.level) {
+        case "片段层":
+          try {
+            res = await API.getCatalogRecord("fragment", data.catalogId);
+            if (res.code === 200) {
+              console.log(res.data);
+              this.setFragmentData(res.data)
+            }
+          } catch (e) {
+            message.error(e.message);
+          }
+          break;
+        case "场景层":
+          try {
+            res = await API.getCatalogRecord("scenes", data.catalogId);
+            if (res.code === 200) {
+              console.log(res.data);
+              this.setScenesData(res.data);
+            }
+          } catch (e) {
+            message.error(e.message);
+          }
+          break;
+        default:
+          break;
+      }
     },
     // 添加一个节点
     append(node, data) {
@@ -318,7 +242,7 @@ export default {
       let res = null;
       // 暂时做简单实现，直接从服务器获取数据覆盖本地fragmentData和scenesData
       // 后续改成新建的时候通过对象构造器构造，然后保存到map中
-      try{
+      try {
         switch (newChild.level) {
           case "片段层":
             this.fragmentData.menu = newChild;
@@ -333,7 +257,7 @@ export default {
             res = await API.addScenesRecord(this.scenesData);
             break;
         }
-        if(res.code === 200){
+        if (res.code === 200) {
           if (data.level === "场景层") {
             node.parent.data.children.push(newChild);
           } else {
@@ -341,42 +265,41 @@ export default {
             data.children.push(newChild);
           }
           newChild.catalogId = res.data.id;
-        }else{
-          message.error(res.message)
+        } else {
+          message.error(res.message);
         }
-      }catch(e){
-        message.error(e.message)
+      } catch (e) {
+        message.error(e.message);
       }
     },
     // 删除菜单节点
     async remove(node, data) {
-      if(data.level === '片段层'){
+      if (data.level === "片段层") {
         let scenesIds = [];
-        data.children.forEach(element => {
+        data.children.forEach((element) => {
           scenesIds.push(element.catalogId);
         });
         // 删除子节点
-        try{
+        try {
           await API.deleteBulkScenes(scenesIds);
-        }catch(e){
+        } catch (e) {
           message.error(e.message);
         }
       }
-      try{
-        let record = data.level==="片段层"?"fragment":"scenes";
+      try {
+        let record = data.level === "片段层" ? "fragment" : "scenes";
         let res = await API.deleteCatalogRecord(record, data.catalogId);
-        if(res.code === 200){
+        if (res.code === 200) {
           const parent = node.parent;
           const children = parent.data.children || parent.data;
           const index = children.findIndex((d) => d.id === data.id);
           children.splice(index, 1);
-        }else{
+        } else {
           message.error(res.message);
         }
-      }catch(e){
-        message.error(e.message)
+      } catch (e) {
+        message.error(e.message);
       }
-      
     },
 
     // 初始化界面数据
@@ -384,7 +307,7 @@ export default {
       let taskId = this.currentTask.id;
       try {
         let res = await API.getMenu(taskId);
-        if(res.code === 200){
+        if (res.code === 200) {
           let menuList = [];
           res.data.forEach((element) => {
             this.menuId =
@@ -396,8 +319,7 @@ export default {
           });
           let menuTree = menuConverter(menuList);
           this.menuData = menuTree;
-          this.getProgramData()
-        }else{
+        } else {
           message.error(res.message);
         }
       } catch (e) {
@@ -405,24 +327,15 @@ export default {
       }
     },
     // =============================================
-
-    // ===================     编目组件操作      ======================
-    async getProgramData(){
-      // TODO 修改为进入任务之前传入
-      try{
-        let res = await API.getCatalogRecord("program", this.menuData[0].catalogId);
-        // TODO 使用vuex存储
-        console.log(res);
-      }catch(e){
-        message.error(e.message);
-      }
-    }
+    saveCatalog() {},
+    commitAudit() {},
   },
 };
 </script>
 
 <style scoped lang="less">
 .home {
+  background: rgb(209, 209, 209);
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -439,6 +352,7 @@ export default {
     min-width: 635px;
 
     .home-video {
+      background: rgb(235, 234, 234);
       display: flex;
       justify-content: center;
       align-items: center;
@@ -446,6 +360,7 @@ export default {
     }
 
     .home-list {
+      background: rgb(235, 234, 234);
       width: 635px;
       height: 45%;
       overflow-y: scroll;
@@ -458,6 +373,7 @@ export default {
     min-width: 50%;
 
     .home-right-card {
+      background: rgb(235, 234, 234);
       width: 100%;
       height: 100%;
       overflow-y: scroll;

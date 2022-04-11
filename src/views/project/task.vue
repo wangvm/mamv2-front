@@ -233,7 +233,6 @@ export default {
             res.data.map((record) => {
               record.value = record.fileName;
             });
-            console.log(res)
             cb(res.data);
           } else {
             message.error(res.data.length===0?"未搜索到视频":res.message);
@@ -255,9 +254,7 @@ export default {
     },
     handleSelectVideo(item) {
       // 选择视频操作
-      console.log("item",item)
       this.videoInfo = item;
-      console.log("videoInfo", this.videoInfo);
     },
     // 验证规则并提交创建项目数据
     // 添加权限验证
@@ -356,7 +353,7 @@ export default {
         id: row.id,
         name: row.name,
       });
-      this.$router.push("/catalog/edit");
+      this.$router.push({ path: '/catalog/edit', query: {task : row.id }});
     },
     // 打开添加项目浮窗，初始化数据
     // TODO 添加权限验证
@@ -419,11 +416,31 @@ export default {
     resetForm(formName) {
       this.$refs[formName].resetFields();
     },
+    // 获取节目层数据
+    async getProgramData(taskId, catalogId){
+      try{
+        let res = await $api.getProgramRecord(catalogId,taskId);
+        if(res.code === 200){
+          // res.data.programForm = {value:null, check: null}
+          // res.data.subtitleForm  = {value:null, check: null}
+          // res.data.keyFrames = []
+          this.$store.commit("common/setProgramData",res.data);
+        }
+      }catch(e){
+        message.error(e.message);
+      }
+    }
   },
   mounted: async function () {
     this.currentPage = this.currentTaskPage;
     this.getTaskData();
   },
+  beforeRouteLeave (to, from, next) {
+    if(to.name === "editCatalog"){
+      this.getProgramData(to.query.task);
+    }
+    next();
+  }
 };
 </script>
 

@@ -43,6 +43,7 @@ export default {
   deleteCatalogRecord: (record, catalogId) => request("/catalog/delete/" + record, { catalogId: catalogId }),
   deleteBulkScenes: (scenesIds) => request("/catalog/delete/bulk/scenes", scenesIds, "POST"),
   getCatalogRecord: (record, catalogId) => request("/catalog/get/" + record, { catalogId: catalogId }),
+  getProgramRecord: (catalogId, taskId) => request("/catalog/get/program", { catalogId: catalogId, taskId: taskId }),
   getMenu: (taskId) => request("/catalog/get/menu", { taskId }),
   getVideoInfo: (taskId) => request("/file/videoInfo", { taskId }),
   updateProgramRecord: (programData) => request("/catalog/update/program", programData, "POST"),

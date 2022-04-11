@@ -1,287 +1,193 @@
 <template>
-  <div>
-    <el-card class="home-right-card" shadow="hover">
-      <el-input v-model="programData.title.value"></el-input>
-      <el-form ref="form" :model="form" size="small" label-width="110px">
-        <el-form-item class="right-card-btns">
-          <el-button type="primary" v-show="editAndView" @click="saveClick">保存</el-button>
-          <el-button @click="cancelClick" v-show="editAndView">取消</el-button>
-        </el-form-item>
-        <el-form-item
-          label="正题名"
-          :class="{ 'exame-style': form.title.exame === 'false' }"
+  <el-card class="home-right-card" shadow="hover">
+    <div class="right-card-btn">
+      <el-button type="primary" size="small" v-show="editAndView" @click="saveData">保存</el-button>
+    </div>
+    <el-row :gutter="10">
+      <el-col :span="3" class="colLabel">
+        正题名
+      </el-col>
+      <el-col :span="21">
+        <el-input v-model="programData.title.value" size="medium"></el-input>
+      </el-col>
+    </el-row>
+    <el-row :gutter="10">
+      <el-col :span="3" class="colLabel">内容描述</el-col>
+      <el-col :span="21">
+        <el-input
+          type="textarea"
+          v-model="programData.description.value"
+          v-show="this.editAndView"
+        ></el-input>
+      </el-col>
+    </el-row>
+    <el-row :gutter="10">
+      <el-col :span="3" class="colLabel">首播日期</el-col>
+      <el-col :span="6">
+        <el-date-picker
+          v-model="programData.debutDate.value"
+          type="date"
+          placeholder="选择日期">
+        </el-date-picker>
+      </el-col>
+      <el-col :span="2" class="colLabel">节目类型</el-col>
+      <el-col :span="6">
+       <el-select
+          v-model="programData.programType.value"
+          placeholder="请选择节目类型">
+          <el-option label="新闻" value="新闻"></el-option>
+          <el-option label="专题" value="专题"></el-option>
+          <el-option label="综艺" value="综艺"></el-option>
+          <el-option label="素材" value="素材"></el-option>
+        </el-select>
+      </el-col>
+    </el-row>
+    <el-row :gutter="10">
+      <el-col :span="3" class="colLabel">字幕形式</el-col>
+      <el-col :span="6">
+        <el-select
+          v-model="programData.subtitleForm.value"
+          placeholder="请选择字幕形式"
+          v-show="this.editAndView"
         >
-          <el-input
-            v-model="form.title.value"
-            v-show="this.editAndView"
-          ></el-input>
-          <span v-show="!this.editAndView">{{ form.title.value }}</span>
-        </el-form-item>
-        <el-form-item
-          label="首播日期"
-          :class="{ 'exame-style': form.premiereDate.exame === 'false' }"
+          <el-option label="无字幕" value="无字幕"></el-option>
+          <el-option
+            label="只有画面叠加字幕"
+            value="只有画面叠加字幕"
+          ></el-option>
+          <el-option label="只有隐藏字幕" value="只有隐藏字幕"></el-option>
+          <el-option
+            label="既有画面叠加字幕也有隐藏字幕"
+            value="既有画面叠加字幕也有隐藏字幕"
+          ></el-option>
+        </el-select>
+      </el-col>
+      <el-col :span="2" class="colLabel">节目形态</el-col>
+      <el-col :span="6">
+        <el-select
+          v-show="this.editAndView"
+          v-model="programData.programForm.value"
+          placeholder="请选择活动区域"
         >
-          <el-date-picker
-            v-model="form.premiereDate.value"
-            type="date"
-            placeholder="选择日期"
-            v-show="this.editAndView"
-          >
-          </el-date-picker>
-          <span v-show="!this.editAndView">{{ form.premiereDate.value }}</span>
-        </el-form-item>
-        <el-form-item
-          label="节目类型"
-          :class="{ 'exame-style': form.programType.exame === 'false' }"
-        >
-          <el-select
-            v-model="form.programType.value"
-            placeholder="请选择活动区域"
-            v-show="this.editAndView"
-          >
-            <el-option label="新闻" value="新闻"></el-option>
-            <el-option label="专题" value="专题"></el-option>
-            <el-option label="综艺" value="综艺"></el-option>
-            <el-option label="素材" value="素材"></el-option>
-          </el-select>
-          <span v-show="!this.editAndView">{{ form.programType.value }}</span>
-        </el-form-item>
-        <el-form-item
-          label="内容描述"
-          :class="{
-            'exame-style': form.contentDescription.exame === 'false',
-          }"
-        >
-          <el-input
-            type="textarea"
-            v-model="form.contentDescription.value"
-            v-show="this.editAndView"
-          ></el-input>
-          <span v-show="!this.editAndView">{{
-            form.contentDescription.value
-          }}</span>
-        </el-form-item>
-        <el-form-item
-          label="字幕形式"
-          :class="{ 'exame-style': form.subtitleForm.exame === 'false' }"
-        >
-          <el-select
-            v-model="form.subtitleForm.value"
-            placeholder="请选择活动区域"
-            v-show="this.editAndView"
-          >
-            <el-option label="无字幕" value="无字幕"></el-option>
-            <el-option
-              label="只有画面叠加字幕"
-              value="只有画面叠加字幕"
-            ></el-option>
-            <el-option label="只有隐藏字幕" value="只有隐藏字幕"></el-option>
-            <el-option
-              label="既有画面叠加字幕也有隐藏字幕"
-              value="既有画面叠加字幕也有隐藏字幕"
-            ></el-option>
-          </el-select>
-          <span v-show="!this.editAndView">{{ form.subtitleForm.value }}</span>
-        </el-form-item>
-        <el-form-item label="创建者名称">
-          <el-input
-            v-model="form.taskName"
-            v-show="this.editAndView"
-          ></el-input>
-          <h3 v-show="!this.editAndView">{{ form.taskName }}</h3>
-        </el-form-item>
-        <el-form-item label="创建者类型">
-          <el-input
-            v-model="form.taskType.value"
-            v-show="this.editAndView"
-          ></el-input>
-          <h3 v-show="!this.editAndView">{{ form.taskType.value }}</h3>
-        </el-form-item>
-        <el-form-item
-          label="其他责任者"
-          :class="{ 'exame-style': form.groupMembers.exame === 'false' }"
-        >
-          <el-input
-            v-model="form.groupMembers.value"
-            v-show="this.editAndView"
-          ></el-input>
-          <span v-show="!this.editAndView">{{ form.groupMembers.value }}</span>
-        </el-form-item>
-        <el-form-item
-          label="节目形态"
-          :class="{ 'exame-style': form.programForm.exame === 'false' }"
-        >
-          <el-select
-            v-show="this.editAndView"
-            v-model="form.programForm.value"
-            placeholder="请选择活动区域"
-          >
-            <el-option label="口播新闻" value="口播新闻"></el-option>
-            <el-option label="会议新闻" value="会议新闻"></el-option>
-            <el-option label="新闻综述" value="新闻综述"></el-option>
-            <el-option label="消息/简讯" value="消息/简讯"></el-option>
-            <el-option label="专题" value="专题"></el-option>
-            <el-option label="人物专访/介绍" value="人物专访/介绍"></el-option>
-            <el-option label="谈话" value="谈话"></el-option>
-            <el-option label="宣传预告" value="宣传预告"></el-option>
-            <el-option label="连续报道" value="连续报道"></el-option>
-            <el-option label="深度报道" value="深度报道"></el-option>
-            <el-option label="特别报道" value="特别报道"></el-option>
-            <el-option label="系列报道" value="系列报道"></el-option>
-            <el-option label="现场报道" value="现场报道"></el-option>
-            <el-option label="其它" value="其它"></el-option>
-            <el-option label="广告" value="广告"></el-option>
-          </el-select>
-          <span v-show="!this.editAndView">{{ form.programForm.value }}</span>
-        </el-form-item>
-        <el-form-item
-          label="栏目"
-          :class="{ 'exame-style': form.column.exame === 'false' }"
-        >
-          <el-input
-            v-model="form.column.value"
-            v-show="this.editAndView"
-          ></el-input>
-          <span v-show="!this.editAndView">{{ form.column.value }}</span>
-        </el-form-item>
-        <el-form-item
-          label="色彩"
-          :class="{ 'exame-style': form.color.exame === 'false' }"
-        >
-          <el-radio-group v-model="form.color.value" v-show="this.editAndView">
-            <el-radio label="彩色" value="1"></el-radio>
-            <el-radio label="黑白" value="2"></el-radio>
-          </el-radio-group>
-          <span v-show="!this.editAndView">{{ form.color.value }}</span>
-        </el-form-item>
-        <el-form-item
-          label="制式"
-          :class="{ 'exame-style': form.standard.exame === 'false' }"
-        >
-          <el-radio-group
-            v-model="form.standard.value"
-            v-show="this.editAndView"
-          >
-            <el-radio label="PAL" value="1"></el-radio>
-            <el-radio label="NTSC" value="2"></el-radio>
-            <el-radio label="SECAM" value="3"></el-radio>
-          </el-radio-group>
-          <span v-show="!this.editAndView">{{ form.standard.value }}</span>
-        </el-form-item>
-        <el-form-item
-          label="声道格式"
-          :class="{ 'exame-style': form.channelFormat.exame === 'false' }"
-        >
-          <el-radio-group
-            v-model="form.channelFormat.value"
-            v-show="this.editAndView"
-          >
-            <el-radio label="单声道" value="1"></el-radio>
-            <el-radio label="双声道" value="2"></el-radio>
-            <el-radio label="立体声" value="3"></el-radio>
-          </el-radio-group>
-          <span v-show="!this.editAndView">{{ form.channelFormat.value }}</span>
-        </el-form-item>
-        <el-form-item
-          label="画面宽高比"
-          :class="{ 'exame-style': form.AspectRatio.exame === 'false' }"
-        >
-          <el-radio-group
-            v-model="form.AspectRatio.value"
-            v-show="this.editAndView"
-          >
-            <el-radio label="4:3" value="1"></el-radio>
-            <el-radio label="16:9" value="2"></el-radio>
-            <el-radio label="14:9" value="3"></el-radio>
-          </el-radio-group>
-          <span v-show="!this.editAndView">{{ form.AspectRatio.value }}</span>
-        </el-form-item>
-        <el-form-item
-          label="入点"
-          :class="{ 'exame-style': form.entryPoint.exame === 'false' }"
-        >
-          <span v-show="this.editAndView">{{ form.entryPoint.value }}</span>
-          <span v-show="!this.editAndView">{{ form.entryPoint.value }}</span>
-        </el-form-item>
-        <el-form-item
-          label="时长"
-          :class="{ 'exame-style': form.duration.exame === 'false' }"
-        >
-          <span v-show="this.editAndView">{{ form.duration.value }}</span>
-          <span v-show="!this.editAndView">{{ form.duration.value }}</span>
-        </el-form-item>
-        <el-form-item
-          label="资料获取方式"
-          :class="{ 'exame-style': form.AcquisitionMethod.exame === 'false' }"
-        >
-          <el-input
-            v-model="form.AcquisitionMethod.value"
-            v-show="this.editAndView"
-          ></el-input>
-          <span v-show="!this.editAndView">{{
-            form.AcquisitionMethod.value
-          }}</span>
-        </el-form-item>
-        <el-form-item
-          label="资料提供者"
-          :class="{ 'exame-style': form.provider.exame === 'false' }"
-        >
-          <el-input
-            v-model="form.provider.value"
-            v-show="this.editAndView"
-          ></el-input>
-          <span v-show="!this.editAndView">{{ form.provider.value }}</span>
-        </el-form-item>
-        <el-form-item
-          label="图片截取"
-          v-model="form.imageList.value"
-          class="right-card-screenshot"
-        >
-          <div style="color: #f56c6c">
-            {{ form.imageList.exame === "false" ? "不合格" : "" }}
-          </div>
-          <div class="screenshot-list" v-show="this.editAndView">
-            <div
-              class="list-items"
-              v-for="item in form.imageList.value"
-              :key="item.src"
-            >
-              <div class="item-delete">
-                <img
-                  src="@/assets/images/close.png"
-                  alt="图片加载失败"
-                  @click="deleteClick(item.src)"
-                />
-              </div>
-              <img class="item-image" :src="item.src" alt="" />
-              <el-input
-                placeholder="请输入内容"
-                v-model="item.title"
-                size="mini"
-                clearable
-              >
-              </el-input>
+          <el-option label="口播新闻" value="口播新闻"></el-option>
+          <el-option label="会议新闻" value="会议新闻"></el-option>
+          <el-option label="新闻综述" value="新闻综述"></el-option>
+          <el-option label="消息/简讯" value="消息/简讯"></el-option>
+          <el-option label="专题" value="专题"></el-option>
+          <el-option label="人物专访/介绍" value="人物专访/介绍"></el-option>
+          <el-option label="谈话" value="谈话"></el-option>
+          <el-option label="宣传预告" value="宣传预告"></el-option>
+          <el-option label="连续报道" value="连续报道"></el-option>
+          <el-option label="深度报道" value="深度报道"></el-option>
+          <el-option label="特别报道" value="特别报道"></el-option>
+          <el-option label="系列报道" value="系列报道"></el-option>
+          <el-option label="现场报道" value="现场报道"></el-option>
+          <el-option label="其它" value="其它"></el-option>
+          <el-option label="广告" value="广告"></el-option>
+        </el-select>
+      </el-col>
+    </el-row>
+    <el-row :gutter="10">
+      <el-col :span="3" class="colLabel">创建者名称</el-col>
+      <el-col :span="21">
+        <el-input v-model="programData.creator.value"></el-input>
+      </el-col>
+    </el-row>
+    <el-row :gutter="10">
+      <el-col :span="3" class="colLabel">其他责任者</el-col>
+      <el-col :span="21">
+        <el-input v-model="programData.contributor.value" />
+      </el-col>
+    </el-row>    
+    <el-row :gutter="10">
+      <el-col :span="3" class="colLabel">栏目</el-col>
+      <el-col :span="6">
+        <el-input v-model="programData.column.value" />
+      </el-col>
+      <el-col :span="2" class="colLabel">色彩</el-col>
+      <el-col :span="6">
+        <el-radio-group v-model="programData.color.value" class="colLabel">
+          <el-radio label="彩色" value="1"></el-radio>
+          <el-radio label="黑白" value="2"></el-radio>
+        </el-radio-group>
+      </el-col>
+    </el-row>
+    <el-row :gutter="10">
+      <el-col :span="3" class="colLabel">制式</el-col>
+      <el-col :span="7">
+        <el-radio-group v-model="programData.system.value" class="colLabel">
+          <el-radio label="PAL" value="1"></el-radio>
+          <el-radio label="NTSC" value="2"></el-radio>
+          <el-radio label="SECAM" value="3"></el-radio>
+        </el-radio-group>
+      </el-col>
+      <el-col :span="2" class="colLabel">声道格式</el-col>
+      <el-col :span="8">
+        <el-radio-group v-model="programData.audioChannel.value" class="colLabel">
+          <el-radio label="单声道" value="1"></el-radio>
+          <el-radio label="双声道" value="2"></el-radio>
+          <el-radio label="立体声" value="3"></el-radio>
+        </el-radio-group>
+      </el-col>
+    </el-row>
+    <el-row :gutter="10">
+      <el-col :span="3" class="colLabel">画面宽高比</el-col>
+      <el-col :span="7">
+        <el-radio-group v-model="programData.aspectRatio.value" class="colLabel">
+          <el-radio label="4:3" value="1"></el-radio>
+          <el-radio label="16:9" value="2"></el-radio>
+          <el-radio label="14:9" value="3"></el-radio>
+        </el-radio-group>
+      </el-col>
+    </el-row>
+    <el-row :gutter="10">
+      <el-col :span="3" class="colLabel">入点</el-col>
+      <el-col :span="6">
+        <el-input v-model="programData.startPoint.value" disabled/>
+      </el-col>
+      <el-col :span="2" class="colLabel">出点</el-col>
+      <el-col :span="6">
+        <el-input v-model="programData.outPoint.value" disabled/>
+      </el-col>
+    </el-row>
+    <el-row :gutter="10">
+      <el-col :span="3" class="colLabel">资料获取方式</el-col>
+      <el-col :span="6">
+        <el-input v-model="programData.sourceAcquiringMethod.value"/>
+      </el-col>
+      <el-col :span="3" class="colLabel">资料提供者</el-col>
+      <el-col :span="6">
+        <el-input v-model="programData.sourceProvider.value"/>
+      </el-col>
+    </el-row> 
+    <el-row :gutter="10">
+      <el-col :span="3" class="colLabel">关键帧</el-col>
+      <el-col :span="21" class="right-card-screenshot">
+        <div style="color: #f56c6c">
+          {{ programData.keyFrames.check === 1 ? "不合格" : "" }}
+        </div>
+        <div class="screenshot-list" v-show="this.editAndView">
+          <div class="list-items" v-for="item in programData.keyFrames" :key="item.address">
+            <div class="item-delete">
+              <img
+                src="@/assets/images/close.png"
+                alt="图片加载失败"
+                @click="deleteClick(item.src)"
+              />
             </div>
+            <img class="item-image" :src="item.src" alt="" />
+            <el-input placeholder="请输入关键帧描述" v-model="item.description" size="mini" clearable></el-input>
           </div>
-          <div class="screenshot-list" v-show="!this.editAndView">
-            <div
-              class="list-items"
-              v-for="item in form.imageList.value"
-              :key="item.src"
-            >
-              <img class="item-image" :src="item.src" alt="" />
-              <span>{{ item.title === "" ? "请编辑" : item.title }}</span>
-            </div>
-          </div>
-        </el-form-item>
-      </el-form>
-    </el-card>
-  </div>
+        </div>
+      </el-col>
+    </el-row>
+  </el-card>
 </template>
 
 <script>
 import API from "@/network/api";
 import _ from "lodash";
+import { mapState,mapMutations } from 'vuex';
 export default {
   data() {
     return {
@@ -290,7 +196,7 @@ export default {
       // 限制只能编辑一个
       isEdit: false,
       // 查看与编辑模式切换
-      editAndView: false,
+      editAndView: true,
       // 寻找保存的那一个item
       count: null,
       state: "",
@@ -298,158 +204,25 @@ export default {
       index: 10,
       //播放器
       hasChildren: true,
-
-      form: {
-        title: { value: "", exame: true },
-        premiereDate: { value: "", exame: true },
-        programType: { value: "", exame: true },
-        contentDescription: { value: "", exame: true },
-        subtitleForm: { value: "", exame: true },
-        taskName: this.taskName,
-        taskType: { value: "", exame: true },
-        groupMembers: { value: "", exame: true },
-        programForm: { value: "", exame: true },
-        column: { value: "", exame: true },
-        color: { value: "", exame: true },
-        standard: { value: "", exame: true },
-        channelFormat: { value: "", exame: true },
-        AspectRatio: { value: "", exame: true },
-        entryPoint: { value: "--提示：请点击视频入点按钮获取--", exame: true },
-        duration: { value: "--提示：请点击视频出点按钮获取--", exame: true },
-        AcquisitionMethod: { value: "", exame: true },
-        provider: { value: "", exame: true },
-        imageList: { value: [], exame: true },
-      },
     }
   },
-  mounted() {
-    console.log(this.programData);
-  },
-  props:{
-    programData: Object,
+  computed:{
+    ...mapState("common", [      
+      "programData",
+      "authority",
+    ]),
+    // 页面显示模式，编辑还是审核
+    pageMode(){
+
+      return true;
+    },
   },
   methods:{
-        // 保存更改
-    saveClick() {
+    ...mapMutations("common", ["setProgramData"]),
+    // 保存更改
+    saveData() {
       this.logRemove = false;
-      if (this.state === "节目") {
-        this.catalogList[0].title.value = this.form.title.value;
-        this.catalogList[0].premiereDate.value = this.form.premiereDate.value;
-        this.catalogList[0].programType.value = this.form.programType.value;
-        this.catalogList[0].contentDescription.value =
-          this.form.contentDescription.value;
-        this.catalogList[0].subtitleForm.value = this.form.subtitleForm.value;
-        this.catalogList[0].taskName = this.form.taskName;
-        this.catalogList[0].taskType = this.form.taskType.value;
-        this.catalogList[0].groupMembers.value = this.form.groupMembers.value;
-        this.catalogList[0].programForm.value = this.form.programForm.value;
-        this.catalogList[0].column.value = this.form.column.value;
-        this.catalogList[0].color.value = this.form.color.value;
-        this.catalogList[0].standard.value = this.form.standard.value;
-        this.catalogList[0].channelFormat.value = this.form.channelFormat.value;
-        this.catalogList[0].AspectRatio.value = this.form.AspectRatio.value;
-        this.catalogList[0].entryPoint.value = this.form.entryPoint.value;
-        this.catalogList[0].duration.value = this.form.duration.value;
-        this.catalogList[0].AcquisitionMethod.value =
-          this.form.AcquisitionMethod.value;
-        this.catalogList[0].provider.value = this.form.provider.value;
-        this.catalogList[0].edit = false;
-        // this.state = "节目";
-        this.catalogList[0].imageList.value = this.form.imageList.value;
-      } else if (this.state === "片段") {
-        for (let i in this.catalogList[0].children) {
-          if (this.count === this.catalogList[0].children[i].id) {
-            // this.state = "片段";
-            this.catalogList[0].children[i].title.value = this.form.title.value;
-            this.catalogList[0].children[i].premiereDate.value =
-              this.form.premiereDate.value;
-            this.catalogList[0].children[i].programType.value =
-              this.form.programType.value;
-            this.catalogList[0].children[i].contentDescription.value =
-              this.form.contentDescription.value;
-            this.catalogList[0].children[i].subtitleForm.value =
-              this.form.subtitleForm.value;
-            this.catalogList[0].children[i].taskName = this.form.taskName;
-            this.catalogList[0].taskType = this.form.taskType.value;
-            this.catalogList[0].children[i].groupMembers.value =
-              this.form.groupMembers.value;
-            this.catalogList[0].children[i].programForm.value =
-              this.form.programForm.value;
-            this.catalogList[0].children[i].column.value =
-              this.form.column.value;
-            this.catalogList[0].children[i].color.value = this.form.color.value;
-            this.catalogList[0].children[i].standard.value =
-              this.form.standard.value;
-            this.catalogList[0].children[i].channelFormat.value =
-              this.form.channelFormat.value;
-            this.catalogList[0].children[i].AspectRatio.value =
-              this.form.AspectRatio.value;
-            this.catalogList[0].children[i].entryPoint.value =
-              this.form.entryPoint.value;
-            this.catalogList[0].children[i].duration.value =
-              this.form.duration.value;
-            this.catalogList[0].children[i].AcquisitionMethod.value =
-              this.form.AcquisitionMethod.value;
-            this.catalogList[0].children[i].provider.value =
-              this.form.provider.value;
-            this.catalogList[0].children[i].edit = false;
-            this.catalogList[0].children[i].imageList.value =
-              this.form.imageList.value;
-          }
-        }
-      } else if (this.state === "场景") {
-        for (let i in this.catalogList[0].children) {
-          for (let j in this.catalogList[0].children[i].children) {
-            if (this.count === this.catalogList[0].children[i].children[j].id) {
-              // this.state = "片段";
-              this.catalogList[0].children[i].children[j].title.value =
-                this.form.title.value;
-              this.catalogList[0].children[i].children[j].premiereDate.value =
-                this.form.premiereDate.value;
-              this.catalogList[0].children[i].children[j].programType.value =
-                this.form.programType.value;
-              this.catalogList[0].children[i].children[
-                j
-              ].contentDescription.value = this.form.contentDescription.value;
-              this.catalogList[0].children[i].children[j].subtitleForm.value =
-                this.form.subtitleForm.value;
-              this.catalogList[0].children[i].children[j].taskName =
-                this.form.taskName;
-              this.catalogList[0].taskType = this.form.taskType.value;
-              this.catalogList[0].children[i].children[j].groupMembers.value =
-                this.form.groupMembers.value;
-              this.catalogList[0].children[i].children[j].programForm.value =
-                this.form.programForm.value;
-              this.catalogList[0].children[i].children[j].column.value =
-                this.form.column.value;
-              this.catalogList[0].children[i].children[j].color.value =
-                this.form.color.value;
-              this.catalogList[0].children[i].children[j].standard.value =
-                this.form.standard.value;
-              this.catalogList[0].children[i].children[j].channelFormat.value =
-                this.form.channelFormat.value;
-              this.catalogList[0].children[i].children[j].AspectRatio.value =
-                this.form.AspectRatio.value;
-              this.catalogList[0].children[i].children[j].entryPoint.value =
-                this.form.entryPoint.value;
-              this.catalogList[0].children[i].children[j].duration.value =
-                this.form.duration.value;
-              this.catalogList[0].children[i].children[
-                j
-              ].AcquisitionMethod.value = this.form.AcquisitionMethod.value;
-              this.catalogList[0].children[i].children[j].provider.value =
-                this.form.provider.value;
-              this.catalogList[0].children[i].children[j].edit = false;
-              this.catalogList[0].children[i].children[j].imageList.value =
-                this.form.imageList.value;
-            }
-          }
-        }
-      }
-      this.count = null;
-      this.editAndView = false;
-      this.isEdit = false;
-      this.setscreenshotList([]);
+      this.setProgramData(this.programData);
     },
     cancelClick() {
       this.logRemove = false;
@@ -659,17 +432,105 @@ export default {
 </script>
 
 <style lang="less" scoped>
-.home-right-card {
-  width: 100%;
+.home-right {
+  // width: 100%;
   height: 100%;
-  overflow-y: scroll;
-  .right-card-btns {
-    position: sticky;
-    top: 0.8em;
-    z-index: 5;
-    display: flex;
-    justify-content: flex-end;
-    align-items: center;
+  min-width: 50%;
+
+  .home-right-card {
+    width: 100%;
+    height: 100%;
+    overflow-y: scroll;
+    .right-card-btn {
+      position: sticky;
+      top: 0.8em;
+      z-index: 5;
+      display: flex;
+      justify-content: flex-end;
+      align-items: center;
+      margin-bottom: 5px;
+    }
+    .exame-style {
+      background-color: antiquewhite;
+    }
+    .right-card-screenshot {
+      height: auto;
+      .screenshot-list {
+        display: grid;
+        grid-template-columns: 1fr 1fr 1fr;
+        grid-gap: 1%;
+        width: 100%;
+        height: 26em;
+        overflow-y: scroll;
+        border-radius: 0.5em;
+        box-sizing: border-box;
+        padding: 1em 0 0 1em;
+        border: 0.1em solid rgb(204, 206, 211);
+        .list-items {
+          width: 13em;
+          height: 10em;
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          justify-content: space-around;
+          margin: 0.5em 1em 0 0;
+          padding: 0.3em;
+          border: 0.1em solid rgb(204, 206, 211);
+          box-sizing: border-box;
+          border-radius: 0.5em;
+          .item-image {
+            width: 80%;
+            height: auto;
+          }
+          .item-delete {
+            width: 100%;
+            height: 10%;
+            display: flex;
+            justify-content: flex-end;
+            img {
+              height: 100%;
+              width: auto;
+              cursor: pointer;
+            }
+          }
+        }
+        .list-items:hover {
+          background-color: rgb(235, 238, 245);
+        }
+      }
+    }
   }
+}
+.el-row {
+  margin-bottom: 20px;
+  &:last-child {
+    margin-bottom: 0;
+  }
+}
+.el-col {
+  border-radius: 4px;
+}
+.bg-purple-dark {
+  background: #99a9bf;
+}
+.bg-purple {
+  background: #d3dce6;
+}
+.bg-purple-light {
+  background: #e5e9f2;
+}
+.grid-content {
+  border-radius: 4px;
+  min-height: 36px;
+  text-align: right;
+}
+.row-bg {
+  padding: 10px 0;
+  background-color: #f9fafc;
+}
+.colLabel{
+  line-height: 36px;
+  text-align: right;
+  font-size: 14px;
 }
 </style>
