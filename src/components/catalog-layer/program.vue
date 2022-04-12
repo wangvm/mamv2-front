@@ -1,7 +1,7 @@
 <template>
   <el-card class="home-right-card" shadow="hover">
     <div class="right-card-btn">
-      <el-button type="primary" size="small" v-show="editAndView" @click="saveData">保存</el-button>
+      <el-button type="primary" size="small" @click="saveData">保存</el-button>
     </div>
     <el-row :gutter="10">
       <el-col :span="3" class="colLabel">
@@ -17,7 +17,7 @@
         <el-input
           type="textarea"
           v-model="programData.description.value"
-          v-show="this.editAndView"
+          
         ></el-input>
       </el-col>
     </el-row>
@@ -48,7 +48,6 @@
         <el-select
           v-model="programData.subtitleForm.value"
           placeholder="请选择字幕形式"
-          v-show="this.editAndView"
         >
           <el-option label="无字幕" value="无字幕"></el-option>
           <el-option
@@ -65,9 +64,8 @@
       <el-col :span="2" class="colLabel">节目形态</el-col>
       <el-col :span="6">
         <el-select
-          v-show="this.editAndView"
           v-model="programData.programForm.value"
-          placeholder="请选择活动区域"
+          placeholder="请选择节目形态"
         >
           <el-option label="口播新闻" value="口播新闻"></el-option>
           <el-option label="会议新闻" value="会议新闻"></el-option>
@@ -166,7 +164,7 @@
         <div style="color: #f56c6c">
           {{ programData.keyFrames.check === 1 ? "不合格" : "" }}
         </div>
-        <div class="screenshot-list" v-show="this.editAndView">
+        <div class="screenshot-list" >
           <div class="list-items" v-for="item in programData.keyFrames" :key="item.address">
             <div class="item-delete">
               <img
@@ -188,6 +186,8 @@
 import API from "@/network/api";
 import _ from "lodash";
 import { mapState,mapMutations } from 'vuex';
+import { message } from "@/assets/js/message";
+
 export default {
   data() {
     return {
@@ -220,39 +220,16 @@ export default {
   methods:{
     ...mapMutations("common", ["setProgramData"]),
     // 保存更改
-    saveData() {
+    async saveData() {
       this.logRemove = false;
-      this.setProgramData(this.programData);
-    },
-    cancelClick() {
-      this.logRemove = false;
-      if (this.state === "节目") {
-        this.catalogList[0].edit = false;
-      } else if (this.state === "片段") {
-        for (let i in this.catalogList[0].children) {
-          if (this.count === this.catalogList[0].children[i].id) {
-            this.catalogList[0].children[i].edit = false;
-          }
-        }
-      } else if (this.state === "场景") {
-        for (let i in this.catalogList[0].children) {
-          for (let j in this.catalogList[0].children[i].children) {
-            if (this.count === this.catalogList[0].children[i].children[j].id) {
-              this.catalogList[0].children[i].edit = false;
-            }
-          }
-        }
-      }
-      this.count = null;
-      this.editAndView = false;
-      this.isEdit = false;
-    },
-     // 点击查看详情
-    lookClick(row) {
-      if (this.editAndView === true) {
-        this.$message("请结束修改再进行查看");
-      } else {
-        this.form = row;
+      // 保存数据
+      try {
+        let res = await API.updateProgramRecord(this.programData);
+        if(res.code !== 200){
+          message.error(res.message)
+        } 
+      } catch (e) {
+        message.error(e.message);
       }
     },
     // 写入入点时间

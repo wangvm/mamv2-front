@@ -421,9 +421,6 @@ export default {
       try{
         let res = await $api.getProgramRecord(catalogId,taskId);
         if(res.code === 200){
-          // res.data.programForm = {value:null, check: null}
-          // res.data.subtitleForm  = {value:null, check: null}
-          // res.data.keyFrames = []
           this.$store.commit("common/setProgramData",res.data);
         }
       }catch(e){

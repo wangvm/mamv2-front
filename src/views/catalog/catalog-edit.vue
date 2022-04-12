@@ -165,8 +165,6 @@ export default {
           } catch (e) {
             message.error(e.message);
           }
-          // submitData = this.$refs.program.programData;
-          // res = await API.updateFragmentRecord(submitData);
           break;
         case "场景层":
           try {
@@ -174,8 +172,6 @@ export default {
           } catch (e) {
             message.error(e.message);
           }
-          // submitData = this.$refs.program.programData;
-          // res = await API.updateScenesRecord(submitData);
           break;
         default:
           break;
@@ -183,12 +179,12 @@ export default {
     },
     async getCatalogRecord(data){
       let res;
+      // 更改为第一次获取的时候从服务器拿，后面从map拿
       switch (data.level) {
         case "片段层":
           try {
             res = await API.getCatalogRecord("fragment", data.catalogId);
             if (res.code === 200) {
-              console.log(res.data);
               this.setFragmentData(res.data)
             }
           } catch (e) {
@@ -199,7 +195,6 @@ export default {
           try {
             res = await API.getCatalogRecord("scenes", data.catalogId);
             if (res.code === 200) {
-              console.log(res.data);
               this.setScenesData(res.data);
             }
           } catch (e) {
