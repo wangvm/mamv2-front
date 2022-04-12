@@ -28,11 +28,10 @@
 
 <script>
 // @ is an alias to /src
-import { mapActions, mapMutations, mapState } from "vuex";
+import { mapMutations, mapState } from "vuex";
 import { debounce } from "lodash-es";
 import BaseHeader from "@/components/BaseHeader.vue";
 import API from "@/network/api";
-import { message } from "@/assets/js/message";
 
 // import API from "@/network/api";
 
@@ -51,7 +50,6 @@ export default {
     ...mapState("common", ["authority"]),
   },
   methods: {
-    ...mapActions("common", ["loginAction"]),
     ...mapMutations("common", ["updateLoginData"]),
     // 登录防抖函数
     loginSubmit: debounce(function () {
@@ -61,12 +59,10 @@ export default {
       this.login();
     }, 300),
     // 登录逻辑
-    // TODO 修改全部请求逻辑
     async login() {
       let regNum = /^\d*$/;
       if (regNum.test(this.account)) {
         let res = await API.login(this.account, this.password);
-        console.log(this.$router.push);
         if (res.code === 200) {
           this.updateLoginData(res.data);
           this.$router.push("/manage");

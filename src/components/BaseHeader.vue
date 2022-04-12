@@ -26,6 +26,7 @@ export default {
 .header {
   display: flex;
   justify-content: space-between;
+  box-shadow: 6px 6px 12px #e3e3e3, -6px -6px 12px #fff;
 
   align-items: center;
   font-size: 20px;

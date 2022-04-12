@@ -10,12 +10,14 @@ export default {
   updateTaskNumber: (projectId) => request("/project/task/add", projectId),
   finishedTask: (projectId) => request("/project/task/finished", projectId),
   queryProjectList: (status = 0, order = "account", isAsc = 1, current = 1, pageSize = 5) =>
-    request("/project/query", { status, order, isAsc, current, pageSize }),
-  queryProjectListByUser: (current = 1, pageSize = 5) => request("/project/query/user", { current, pageSize }),
+    request("/project/query/admin", { status, order, isAsc, current, pageSize }),
+  queryProjectListByUser: (current = 1, pageSize = 5, account) =>
+    request("/project/query/user", { current, pageSize, account }),
   queryProjectByName: (name) => request("/project/query/name", { name }),
   // 任务接口
   queryTaskByProject: (id, current = 1, pageSize = 5) =>
     request("/task/query/project", { projectId: id, current, pageSize }),
+  queryTaskByProjectAndUser: (account, projectId) => request("/task/query/user", { account, projectId }),
   updateTaskInfo: (taskData) => request("/task/update", taskData, "POST"),
   deleteTask: (taskId) => request("/task/delete", { id: taskId }, "POST"),
   addTask: (taskData) => request("/task/add", taskData, "POST"),

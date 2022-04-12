@@ -4,7 +4,7 @@
       <el-button type="primary" size="small" @click="saveData">保存</el-button>
     </div>
     <el-row :gutter="10">
-      <el-col :span="3" class="colLabel"> 题名 </el-col>
+      <el-col :span="3" class="colLabel">题名</el-col>
       <el-col :span="21">
         <el-input v-model="scenesData.title.value" size="medium"></el-input>
       </el-col>
@@ -46,6 +46,36 @@
       <el-col :span="2" class="colLabel">出点</el-col>
       <el-col :span="6">
         <el-input v-model="scenesData.outPoint.value" disabled />
+      </el-col>
+    </el-row>
+    <el-row :gutter="10">
+      <el-col :span="3" class="colLabel">关键帧</el-col>
+      <el-col :span="21" class="right-card-screenshot">
+        <div style="color: #f56c6c">
+          {{ scenesData.keyFrames.check === 1 ? "不合格" : "" }}
+        </div>
+        <div class="screenshot-list">
+          <div
+            class="list-items"
+            v-for="item in scenesData.keyFrames"
+            :key="item.address"
+          >
+            <div class="item-delete">
+              <img
+                src="@/assets/images/close.png"
+                alt="图片加载失败"
+                @click="deleteClick(item.src)"
+              />
+            </div>
+            <img class="item-image" :src="item.src" alt="" />
+            <el-input
+              placeholder="请输入关键帧描述"
+              v-model="item.description"
+              size="mini"
+              clearable
+            ></el-input>
+          </div>
+        </div>
       </el-col>
     </el-row>
   </el-card>

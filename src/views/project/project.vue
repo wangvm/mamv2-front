@@ -1,17 +1,24 @@
 <template>
   <el-container>
-    <BaseHeader >
+    <BaseHeader>
       <template v-slot:right>
-        <el-button type="primary" @click="addProject" >新建项目</el-button>
+        <el-button type="primary" @click="addProject" :disabled="!manageMode"
+          >新建项目</el-button
+        >
       </template>
     </BaseHeader>
     <el-main>
-      <el-table :data="tableData" stripe :style="{width:100+'%'}">
+      <el-table :data="tableData" stripe :style="{ width: 100 + '%' }">
         <el-table-column prop="index" label="序号"></el-table-column>
         <el-table-column prop="name" label="项目名称">
           <template slot-scope="scope">
-            <el-input v-model="scope.row.name" v-show="scope.row.isEdit" autofocus=true size='mini'></el-input>
-            <span v-show="!scope.row.isEdit">{{scope.row.name}}</span>
+            <el-input
+              v-model="scope.row.name"
+              v-show="scope.row.isEdit"
+              autofocus="true"
+              size="mini"
+            ></el-input>
+            <span v-show="!scope.row.isEdit">{{ scope.row.name }}</span>
           </template>
         </el-table-column>
         <el-table-column prop="leaderName" label="项目负责人"></el-table-column>
@@ -19,9 +26,25 @@
         <el-table-column prop="status" label="项目状态"></el-table-column>
         <el-table-column label="" min-width="100%">
           <template slot-scope="scope">
-            <el-button size="mini" @click="handleEdit(scope.row)">{{scope.row.isEdit?'保存':'编辑'}}</el-button>
-            <el-button size="mini" type="danger" @click="handleDelete(scope.$index,scope.row)">删除</el-button>
-            <el-button size="mini" type="primary" @click="enterProject(scope.row)">进入项目</el-button>
+            <el-button
+              size="mini"
+              @click="handleEdit(scope.row)"
+              v-show="manageMode"
+              >{{ scope.row.isEdit ? "保存" : "编辑" }}</el-button
+            >
+            <el-button
+              size="mini"
+              type="danger"
+              @click="handleDelete(scope.$index, scope.row)"
+              v-show="manageMode"
+              >删除</el-button
+            >
+            <el-button
+              size="mini"
+              type="primary"
+              @click="enterProject(scope.row)"
+              >进入项目</el-button
+            >
           </template>
         </el-table-column>
       </el-table>
@@ -37,7 +60,12 @@
       </el-pagination>
     </el-footer>
     <!-- 添加项目表单 -->
-    <el-dialog title="创建项目" :visible.sync="dialogVisible" width="400px">
+    <el-dialog
+      title="创建项目"
+      :visible.sync="dialogVisible"
+      width="400px"
+      destroy-on-close
+    >
       <el-form
         :model="projectForm"
         :rules="projectRules"
@@ -60,7 +88,9 @@
           <el-input :value="projectForm.status" disabled></el-input>
         </el-form-item>
         <el-form-item>
-          <el-button type="primary" @click="submitForm('projectForm')">提交</el-button>
+          <el-button type="primary" @click="submitForm('projectForm')"
+            >提交</el-button
+          >
           <el-button @click="resetForm('projectForm')">重置</el-button>
         </el-form-item>
       </el-form>
@@ -76,8 +106,8 @@ import BaseHeader from "@/components/BaseHeader.vue";
 
 export default {
   name: "project",
-  components:{
-    BaseHeader
+  components: {
+    BaseHeader,
   },
   data() {
     return {
@@ -114,43 +144,60 @@ export default {
     };
   },
   computed: {
-    ...mapState("common", ["username", "account", "currentProjectPage"]),
+    ...mapState("common", [
+      "username",
+      "account",
+      "currentProjectPage",
+      "authority",
+    ]),
+    manageMode() {
+      let mode = this.authority === "ROLE_ADMIN";
+      return mode;
+    },
     // 创建时间的时间戳转化为时间
     createTime() {
       return new Date(this.projectForm.createTime).toLocaleString();
     },
   },
   methods: {
-    handleEdit(row){
-      if(row.isEdit){
-        this.updateProjectName(row.id, row.name)
+    handleEdit(row) {
+      if (row.isEdit) {
+        this.updateProjectName(row.id, row.name);
       }
       row.isEdit = !row.isEdit;
     },
-    async updateProjectName(id, name){
+    async updateProjectName(id, name) {
       // 保存数据到后端
-      let res = await API.updateProjectName(id, name)
-      if(res.code === 200){
+      let res = await API.updateProjectName(id, name);
+      if (res.code === 200) {
         this.getProjectData();
-      }else{
-        message.error(res.message)
+      } else {
+        this.$throw(res);
       }
     },
-    async handleDelete(index, row){
-      let res = await API.deleteProject(row.id)
-      if(res.code === 200){
+    async handleDelete(index, row) {
+      let res = await API.deleteProject(row.id);
+      if (res.code === 200) {
         this.getProjectData();
-      }else{
-        message.error(res.message)
+      } else {
+        this.$throw(res);
       }
     },
-    async enterProject(row){
+    async enterProject(row) {
       // 保存currentProject数据和当前页数currentPage
-      this.$store.commit("common/updateProjectInfo", {currentPage:this.currentPage, id:row.id, name:row.name})
+      this.$store.commit("common/updateProjectInfo", {
+        currentPage: this.currentPage,
+        id: row.id,
+        name: row.name,
+      });
       this.$router.push("/manage/task");
     },
+    // 控制分页切换逻辑
+    handleCurrentChange() {
+      this.getProjectData();
+      this.$store.commit("storedProjectPage", this.currentPage);
+    },
     // 打开添加项目浮窗，初始化数据
-    // TODO 添加权限验证
     addProject() {
       this.dialogVisible = true;
       this.projectForm.leader = this.account;
@@ -158,33 +205,23 @@ export default {
       this.projectForm.createTime = new Date().getTime();
       this.projectForm.status = "创建中";
     },
-    // 控制分页切换逻辑
-    handleCurrentChange() {
-      this.getProjectData();
-      this.$store.commit("storedProjectPage",this.currentPage);
-    },
     // 验证规则并提交创建项目数据
-    // 添加权限验证
     submitForm(formName) {
       this.$refs[formName].validate(async (valid) => {
         if (valid) {
-          try {
-            let res = await API.addProject(this.projectForm);
-            if (res.code === 200) {
-              this.dialogVisible = false;
-              this.projectForm = {
-                name: "",
-                leader: "",
-                leaderName: "",
-                createTime: "",
-                status: "",
-              };
-              this.getProjectData();
-            } else {
-              message.error(res.message);
-            }
-          } catch (e) {
-            this.$catch = e;
+          let res = await API.addProject(this.projectForm);
+          if (res.code === 200) {
+            this.dialogVisible = false;
+            this.projectForm = {
+              name: "",
+              leader: "",
+              leaderName: "",
+              createTime: "",
+              status: "",
+            };
+            this.getProjectData();
+          } else {
+            this.$throw(res);
           }
         } else {
           return false;
@@ -202,38 +239,46 @@ export default {
       isAsc = 0,
       pageSize = 5
     ) {
-      try {
-        let res = await API.queryProjectList(
+      let res;
+      if (this.manageMode) {
+        res = await API.queryProjectList(
           status,
           order,
           isAsc,
           this.currentPage,
           pageSize
         );
-        if (res.code === 200) {
-          // 展示之前做处理，添加index和status
-          let start = (this.currentPage - 1) * pageSize + 1;
-          res.data.records.map((record) => {
-            // 插入index
-            record.index = start++;
-            // 插入status
-            if (record.finishedTask === record.taskCount && record.finishedTask > 0) {
-              record.status = "已完成";
-            } else {
-              record.status = "进行中";
-            }
-            record.isEdit = false;
-            // 转换时间戳
-            record.createTime = new Date(record.createTime).toLocaleString();
-            return record;
-          });
-          this.tableData = res.data.records;
-          this.total = res.data.total;
-        } else {
-          message.error(res.message);
-        }
-      } catch (e) {
-        message.error(e);
+      } else {
+        res = await API.queryProjectListByUser(
+          this.currentPage,
+          pageSize,
+          this.account
+        );
+      }
+      if (res.code === 200) {
+        // 展示之前做处理，添加index和status
+        let start = (this.currentPage - 1) * pageSize + 1;
+        res.data.records.map((record) => {
+          // 插入index
+          record.index = start++;
+          // 插入status
+          if (
+            record.finishedTask === record.taskCount &&
+            record.finishedTask > 0
+          ) {
+            record.status = "已完成";
+          } else {
+            record.status = "进行中";
+          }
+          record.isEdit = false;
+          // 转换时间戳
+          record.createTime = new Date(record.createTime).toLocaleString();
+          return record;
+        });
+        this.tableData = res.data.records;
+        this.total = res.data.total;
+      } else {
+        this.$throw(res);
       }
     },
   },

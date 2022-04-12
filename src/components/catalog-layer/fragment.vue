@@ -58,6 +58,36 @@
         <el-input v-model="fragmentData.sourceProvider.value" />
       </el-col>
     </el-row>
+    <el-row :gutter="10">
+      <el-col :span="3" class="colLabel">关键帧</el-col>
+      <el-col :span="21" class="right-card-screenshot">
+        <div style="color: #f56c6c">
+          {{ fragmentData.keyFrames.check === 1 ? "不合格" : "" }}
+        </div>
+        <div class="screenshot-list">
+          <div
+            class="list-items"
+            v-for="item in fragmentData.keyFrames"
+            :key="item.address"
+          >
+            <div class="item-delete">
+              <img
+                src="@/assets/images/close.png"
+                alt="图片加载失败"
+                @click="deleteClick(item.src)"
+              />
+            </div>
+            <img class="item-image" :src="item.src" alt="" />
+            <el-input
+              placeholder="请输入关键帧描述"
+              v-model="item.description"
+              size="mini"
+              clearable
+            ></el-input>
+          </div>
+        </div>
+      </el-col>
+    </el-row>
   </el-card>
 </template>
 
@@ -73,21 +103,21 @@ export default {
   computed: {
     ...mapState("common", ["fragmentData", "authority"]),
   },
-  methods:{
-        // 保存更改
+  methods: {
+    // 保存更改
     async saveData() {
       this.logRemove = false;
       // 保存数据
       try {
         let res = await API.updateFragmentRecord(this.fragmentData);
-        if(res.code !== 200){
-          message.error(res.message)
-        } 
+        if (res.code !== 200) {
+          message.error(res.message);
+        }
       } catch (e) {
         message.error(e.message);
       }
     },
-  }
+  },
 };
 </script>
 

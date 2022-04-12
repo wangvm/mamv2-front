@@ -13,6 +13,7 @@ export default {
   currentTask: {
     id: null,
     name: "",
+    status:"",
   },
   // 用户数据
   currentUserPage: 1,

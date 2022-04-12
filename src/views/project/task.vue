@@ -5,7 +5,9 @@
         <el-button type="primary" @click="back">返回</el-button>
       </template>
       <template v-slot:right>
-        <el-button type="primary" @click="addTask">新建任务</el-button>
+        <el-button type="primary" @click="addTask" :disabled="!manageMode"
+          >新建任务</el-button
+        >
       </template>
     </BaseHeader>
     <el-main>
@@ -28,12 +30,16 @@
         <el-table-column prop="status" label="项目状态"></el-table-column>
         <el-table-column label="" min-width="100%">
           <template slot-scope="scope">
-            <el-button size="mini" @click="handleEdit(scope.row)">{{
-              scope.row.isEdit ? "保存" : "编辑"
-            }}</el-button>
+            <el-button
+              size="mini"
+              @click="handleEdit(scope.row)"
+              v-show="manageMode"
+              >{{ scope.row.isEdit ? "保存" : "编辑" }}</el-button
+            >
             <el-button
               size="mini"
               type="danger"
+              v-show="manageMode"
               @click="handleDelete(scope.row)"
               >删除</el-button
             >
@@ -55,13 +61,18 @@
       </el-pagination>
     </el-footer>
     <!-- 添加项目表单 -->
-    <el-dialog title="创建任务" :visible.sync="dialogVisible" width="500px" destroy-on-close>
+    <el-dialog
+      title="创建任务"
+      :visible.sync="dialogVisible"
+      width="500px"
+      destroy-on-close
+    >
       <el-form
         :model="taskForm"
         :rules="taskRules"
         ref="taskForm"
         label-width="100px"
-        :style="{width: 400 + 'px'}"
+        :style="{ width: 400 + 'px' }"
       >
         <el-form-item label="任务名称" prop="name">
           <el-input v-model="taskForm.name"></el-input>
@@ -75,7 +86,7 @@
             :fetch-suggestions="queryCatalogers"
             placeholder="查询编目员"
             @select="handleSelectCataloger"
-            :style="{width: 300 + 'px'}"
+            :style="{ width: 300 + 'px' }"
           ></el-autocomplete>
         </el-form-item>
         <el-form-item label="审核员" prop="auditorName">
@@ -84,7 +95,7 @@
             :fetch-suggestions="queryAuditors"
             placeholder="查询审核员"
             @select="handleSelectAuditor"
-            :style="{width: 300 + 'px'}"
+            :style="{ width: 300 + 'px' }"
           ></el-autocomplete>
         </el-form-item>
         <el-form-item label="视频">
@@ -93,7 +104,7 @@
             :fetch-suggestions="queryVideo"
             placeholder="搜索视频"
             @select="handleSelectVideo"
-            :style="{width: 300 + 'px'}"
+            :style="{ width: 300 + 'px' }"
           ></el-autocomplete>
         </el-form-item>
         <el-form-item label="创建时间" prop="createTime">
@@ -120,7 +131,8 @@
 import API from "@/network/api";
 import { message } from "@/assets/js/message";
 import BaseHeader from "@/components/BaseHeader.vue";
-import { mapState, mapActions} from "vuex";
+import { mapState, mapActions, mapMutations } from "vuex";
+import AppVue from '../../App.vue';
 export default {
   name: "task",
   components: {
@@ -149,12 +161,12 @@ export default {
         status: "",
       },
       videoInfo: {
-        fileName:"",
-        aspectRatio:"",
-        duration:0,
-        frameRate:0,
-        address:"",
-        audioChannel:0
+        fileName: "",
+        aspectRatio: "",
+        duration: 0,
+        frameRate: 0,
+        address: "",
+        audioChannel: 0,
       },
       // 添加任务表单验证规则
       taskRules: {
@@ -176,70 +188,61 @@ export default {
   },
   computed: {
     // 创建时间的时间戳转化为时间
-    ...mapState("common", ["currentProject", "currentTaskPage"]),
+    ...mapState("common", ["currentProject", "currentTaskPage", "authority", "account"]),
     createTime() {
       return new Date(this.taskForm.createTime).toLocaleString();
     },
+    manageMode() {
+      return this.authority === "ROLE_ADMIN";
+    },
   },
   methods: {
-    ...mapActions("common", ["getVideoInfoAction"]),
+    ...mapMutations("common", ["setVideoInfo", "storedTaskInfo"]),
     // back返回项目管理页面
     back() {
       this.$router.push("/manage/project");
     },
-    // @see: https://element.eleme.cn/#/zh-CN/component/input#yuan-cheng-sou-suo
     // 从服务器查询编目员
     async queryCatalogers(queryString, cb) {
-      try {
-        if (queryString) {
-          let res = await API.queryCatalogerByName(queryString);
-          if (res.code === 200 && res.data.length !== 0) {
-            res.data.map((record) => {
-              record.value = record.username + "(" + record.account + ")";
-            });
-            cb(res.data);
-          } else {
-            message.error(res.message);
-          }
+      if (queryString) {
+        let res = await API.queryCatalogerByName(queryString);
+        if (res.code === 200 && res.data.length !== 0) {
+          res.data.map((record) => {
+            record.value = record.username + "(" + record.account + ")";
+          });
+          cb(res.data);
+        } else {
+          message.error(res.message);
         }
-      } catch (e) {
-        message.error(e.message);
       }
     },
     // 从服务器查询审核员
     async queryAuditors(queryString, cb) {
-      try {
-        if (queryString) {
-          let res = await API.queryAuditorByName(queryString);
-          if (res.code === 200 && res.data.length !== 0) {
-            res.data.map((record) => {
-              record.value = record.username + "(" + record.account + ")";
-            });
-            cb(res.data);
-          } else {
-            message.error(res.message);
-          }
+      if (queryString) {
+        let res = await API.queryAuditorByName(queryString);
+        if (res.code === 200 && res.data.length !== 0) {
+          res.data.map((record) => {
+            record.value = record.username + "(" + record.account + ")";
+          });
+          cb(res.data);
+        } else {
+          message.error(res.message);
         }
-      } catch (e) {
-        message.error(e.message);
       }
     },
     // 搜索视频
-    async queryVideo(queryString, cb){
-      try{
-        if(queryString){
-          let res = await API.searchVideoByName(queryString);
-          if (res.code === 200 && res.data.length !== 0) {
-            res.data.map((record) => {
-              record.value = record.fileName;
-            });
-            cb(res.data);
-          } else {
-            message.error(res.data.length===0?"未搜索到视频":res.message);
-          }
+    async queryVideo(queryString, cb) {
+      if (queryString) {
+        let res = await API.searchVideoByName(queryString);
+        if (res.code === 200 && res.data.length !== 0) {
+          res.data.map((record) => {
+            record.value = record.fileName;
+          });
+          cb(res.data);
+        } else {
+          this.$throw(res);
+          message.error(res.data.length === 0 ? "未搜索到视频" : res.message);
         }
-      } catch (e) {
-        message.error(e.message);
       }
     },
     handleSelectCataloger(item) {
@@ -261,36 +264,34 @@ export default {
     submitForm(formName) {
       this.$refs[formName].validate(async (valid) => {
         if (valid) {
-          try {
-            this.taskForm.status = 0;
-            let res = await API.addTask({taskInfo:this.taskForm, videoInfo:this.videoInfo});
-            if (res.code === 200) {
-              this.dialogVisible = false;
-              this.taskForm = {
-                name: "",
-                project: null,
-                projectName: "",
-                cataloger: null,
-                catalogerName: "",
-                auditor: null,
-                auditorName: "",
-                createTime: "",
-                status: "",
-              };
-              this.videoInfo = {
-                fileName:"",
-                aspectRatio:"",
-                duration:0,
-                frameRate:0,
-                address:"",
-                audioChannel:0
-              };
-              this.getTaskData();
-            } else {
-              message.error(res.message);
-            }
-          } catch (e) {
-            this.$catch = e;
+          let res = await API.addTask({
+            taskInfo: this.taskForm,
+            videoInfo: this.videoInfo,
+          });
+          if (res.code === 200) {
+            this.dialogVisible = false;
+            this.taskForm = {
+              name: "",
+              project: null,
+              projectName: "",
+              cataloger: null,
+              catalogerName: "",
+              auditor: null,
+              auditorName: "",
+              createTime: "",
+              status: "",
+            };
+            this.videoInfo = {
+              fileName: "",
+              aspectRatio: "",
+              duration: 0,
+              frameRate: 0,
+              address: "",
+              audioChannel: 0,
+            };
+            this.getTaskData();
+          } else {
+            this.$throw(res);
           }
         } else {
           return false;
@@ -301,24 +302,7 @@ export default {
     handleEdit(row) {
       if (row.isEdit) {
         // 删除不必要的信息，如deleted，index，转换status
-        let {deleted, isEdit, index,...record} = row
-        switch (record.status) {
-          case "创建":
-            record.status = 0;
-            break;
-          case "编目中":
-            record.status = 1;
-            break;
-          case "审核中":
-            record.status = 2;
-            break;
-          case "完成":
-            record.status = 3;
-            break;
-          default:
-            record.status = "error";
-            break;
-        }
+        let { deleted, isEdit, index, ...record } = row;
         record.createTime = new Date(row.createTime).getTime();
         this.updateTaskInfo(record);
       }
@@ -330,7 +314,7 @@ export default {
       if (res.code === 200) {
         this.getTaskData();
       } else {
-        message.error(res.message);
+        this.$throw(res);
       }
     },
     // 删除操作
@@ -339,21 +323,35 @@ export default {
       if (res.code === 200) {
         this.getTaskData();
       } else {
-        message.error(res.message);
+        this.$throw(res);
       }
     },
     // 进入编目操作
     async enterTask(row) {
       // 等待编目界面完成
       // 获取并视频信息
-      this.getVideoInfoAction(row.id)
+      // 修改接口实现获取视频信息
+      let res = await API.getVideoInfo(row.id);
+      if (res.code === 200) {
+        // TODO 暂时测试，使用测试数据，正式需要使用一下操作
+        // commit("setVideoInfo", res.data)
+      } else {
+        this.$throw(res);
+        this.setVideoInfo("setVideoInfo", {});
+      }
       // 保存当前任务信息
-      this.$store.commit("common/storedTaskInfo", {
+      this.storedTaskInfo({
         currentPage: this.currentPage,
         id: row.id,
         name: row.name,
+        status: row.status,
       });
-      this.$router.push({ path: '/catalog/edit', query: {task : row.id }});
+      this.$router.push({ path: "/catalog/edit", query: { task: row.id } });
+    },
+    // 控制分页切换逻辑
+    handleCurrentChange() {
+      this.getTaskData();
+      this.$store.commit("storedTaskPage", this.currentPage);
     },
     // 打开添加项目浮窗，初始化数据
     // TODO 添加权限验证
@@ -362,54 +360,33 @@ export default {
       this.taskForm.project = this.currentProject.id;
       this.taskForm.projectName = this.currentProject.name;
       this.taskForm.createTime = new Date().getTime();
-      this.taskForm.status = "创建中";
+      this.taskForm.status = "编目中";
     },
-    // 控制分页切换逻辑
-    handleCurrentChange() {
-      this.getTaskData();
-      this.$store.commit("storedTaskPage",this.currentPage);
-    },
+
     // 从后端获取数据
     async getTaskData() {
-      try {
-        let res = await API.queryTaskByProject(this.currentProject.id);
-        if (res.code === 200) {
-          // 展示之前做处理，添加index和status
-          if (res.data === null) return;
-          let start = (this.currentPage - 1) * 5 + 1;
-          res.data.records.map((record) => {
-            // 插入index
-            record.index = start++;
-            // 插入status
-            switch (record.status) {
-              case 0:
-                record.status = "创建";
-                break;
-              case 1:
-                record.status = "编目中";
-                break;
-              case 2:
-                record.status = "审核中";
-                break;
-              case 3:
-                record.status = "完成";
-                break;
-              default:
-                record.status = "error";
-                break;
-            }
-            record.isEdit = false;
-            // 转换时间戳
-            record.createTime = new Date(record.createTime).toLocaleString();
-            return record;
-          });
-          this.tableData = res.data.records ? res.data.records : [];
-          this.total = res.data.total;
-        } else {
-          message.error(res.message);
-        }
-      } catch (e) {
-        message.error(e.message);
+      let res;
+      if (this.manageMode) {
+        res = await API.queryTaskByProject(this.currentProject.id);
+      }else{
+        res = await API.queryTaskByProjectAndUser(this.account, this.currentProject.id);
+      }
+      if (res.code === 200) {
+        // 展示之前做处理，添加index和status
+        if (res.data === null) return;
+        let start = (this.currentPage - 1) * 5 + 1;
+        res.data.records.map((record) => {
+          // 插入index
+          record.index = start++;
+          record.isEdit = false;
+          // 转换时间戳
+          record.createTime = new Date(record.createTime).toLocaleString();
+          return record;
+        });
+        this.tableData = res.data.records ? res.data.records : [];
+        this.total = res.data.total;
+      } else {
+        this.$throw(res);
       }
     },
     // 重置
@@ -417,27 +394,23 @@ export default {
       this.$refs[formName].resetFields();
     },
     // 获取节目层数据
-    async getProgramData(taskId, catalogId){
-      try{
-        let res = await API.getProgramRecord(catalogId,taskId);
-        if(res.code === 200){
-          this.$store.commit("common/setProgramData",res.data);
-        }
-      }catch(e){
-        message.error(e.message);
+    async getProgramData(taskId, catalogId) {
+      let res = await API.getProgramRecord(catalogId, taskId);
+      if (res.code === 200) {
+        this.$store.commit("common/setProgramData", res.data);
       }
-    }
+    },
   },
   mounted: async function () {
     this.currentPage = this.currentTaskPage;
     this.getTaskData();
   },
-  beforeRouteLeave (to, from, next) {
-    if(to.name === "editCatalog"){
+  beforeRouteLeave(to, from, next) {
+    if (to.name === "editCatalog") {
       this.getProgramData(to.query.task);
     }
     next();
-  }
+  },
 };
 </script>
 

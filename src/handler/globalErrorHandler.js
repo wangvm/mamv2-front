@@ -11,4 +11,4 @@ export default (res, vm) => {
 const unAuthorizedErrorHandler = function(res, vm) {
   vm.$router.push("/");
 };
-errorHandlers.set(3,unAuthorizedErrorHandler);
+errorHandlers.set(401,unAuthorizedErrorHandler);

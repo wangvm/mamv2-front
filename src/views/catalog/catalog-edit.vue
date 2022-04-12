@@ -2,8 +2,8 @@
   <div class="home">
     <!-- 右上角操作按钮 -->
     <div class="onload">
-      <el-button type="success" size="small" @click="saveCatalog()"
-        >保存</el-button
+      <el-button type="success" size="small" @click="saveData()"
+        >上传数据</el-button
       >
       <el-button type="primary" size="small" @click="commitAudit()"
         >提交审核</el-button
@@ -148,57 +148,37 @@ export default {
       // 不同层传递到不同的编目组件中，分别为programData、fragmentData、scenesData
       // 使用map保存编目数据，id为key，对应key的编目数据为value
     },
-    async saveData(){
+    async saveData() {
       let res = {};
       // 保存数据
       switch (this.currentLevel) {
         case "节目层":
-          try {
-            res = await API.updateProgramRecord(this.programData);
-          } catch (e) {
-            message.error(e.message);
-          }
+          res = await API.updateProgramRecord(this.programData);
           break;
         case "片段层":
-          try {
-            res = await API.updateFragmentRecord(this.fragmentData);
-          } catch (e) {
-            message.error(e.message);
-          }
+          res = await API.updateFragmentRecord(this.fragmentData);
           break;
         case "场景层":
-          try {
-            res = await API.updateScenesRecord(this.scenesData);
-          } catch (e) {
-            message.error(e.message);
-          }
+          res = await API.updateScenesRecord(this.scenesData);
           break;
         default:
           break;
       }
     },
-    async getCatalogRecord(data){
+    async getCatalogRecord(data) {
       let res;
       // 更改为第一次获取的时候从服务器拿，后面从map拿
       switch (data.level) {
         case "片段层":
-          try {
-            res = await API.getCatalogRecord("fragment", data.catalogId);
-            if (res.code === 200) {
-              this.setFragmentData(res.data)
-            }
-          } catch (e) {
-            message.error(e.message);
+          res = await API.getCatalogRecord("fragment", data.catalogId);
+          if (res.code === 200) {
+            this.setFragmentData(res.data);
           }
           break;
         case "场景层":
-          try {
-            res = await API.getCatalogRecord("scenes", data.catalogId);
-            if (res.code === 200) {
-              this.setScenesData(res.data);
-            }
-          } catch (e) {
-            message.error(e.message);
+          res = await API.getCatalogRecord("scenes", data.catalogId);
+          if (res.code === 200) {
+            this.setScenesData(res.data);
           }
           break;
         default:
@@ -237,34 +217,30 @@ export default {
       let res = null;
       // 暂时做简单实现，直接从服务器获取数据覆盖本地fragmentData和scenesData
       // 后续改成新建的时候通过对象构造器构造，然后保存到map中
-      try {
-        switch (newChild.level) {
-          case "片段层":
-            this.fragmentData.menu = newChild;
-            this.fragmentData.taskId = this.currentTask.id;
-            this.fragmentData.title.value = newChild.content;
-            res = await API.addFragmentRecord(this.fragmentData);
-            break;
-          case "场景层":
-            this.scenesData.menu = newChild;
-            this.scenesData.taskId = this.currentTask.id;
-            this.scenesData.title.value = newChild.content;
-            res = await API.addScenesRecord(this.scenesData);
-            break;
-        }
-        if (res.code === 200) {
-          if (data.level === "场景层") {
-            node.parent.data.children.push(newChild);
-          } else {
-            newChild.children = [];
-            data.children.push(newChild);
-          }
-          newChild.catalogId = res.data.id;
+      switch (newChild.level) {
+        case "片段层":
+          this.fragmentData.menu = newChild;
+          this.fragmentData.taskId = this.currentTask.id;
+          this.fragmentData.title.value = newChild.content;
+          res = await API.addFragmentRecord(this.fragmentData);
+          break;
+        case "场景层":
+          this.scenesData.menu = newChild;
+          this.scenesData.taskId = this.currentTask.id;
+          this.scenesData.title.value = newChild.content;
+          res = await API.addScenesRecord(this.scenesData);
+          break;
+      }
+      if (res.code === 200) {
+        if (data.level === "场景层") {
+          node.parent.data.children.push(newChild);
         } else {
-          message.error(res.message);
+          newChild.children = [];
+          data.children.push(newChild);
         }
-      } catch (e) {
-        message.error(e.message);
+        newChild.catalogId = res.data.id;
+      } else {
+        this.$throw(res);
       }
     },
     // 删除菜单节点
@@ -275,13 +251,7 @@ export default {
           scenesIds.push(element.catalogId);
         });
         // 删除子节点
-        try {
-          await API.deleteBulkScenes(scenesIds);
-        } catch (e) {
-          message.error(e.message);
-        }
-      }
-      try {
+        await API.deleteBulkScenes(scenesIds);
         let record = data.level === "片段层" ? "fragment" : "scenes";
         let res = await API.deleteCatalogRecord(record, data.catalogId);
         if (res.code === 200) {
@@ -290,39 +260,33 @@ export default {
           const index = children.findIndex((d) => d.id === data.id);
           children.splice(index, 1);
         } else {
-          message.error(res.message);
+          this.$throw(res);
         }
-      } catch (e) {
-        message.error(e.message);
       }
     },
 
     // 初始化界面数据
     async getMenuData() {
       let taskId = this.currentTask.id;
-      try {
-        let res = await API.getMenu(taskId);
-        if (res.code === 200) {
-          let menuList = [];
-          res.data.forEach((element) => {
-            this.menuId =
-              element.menu.id > this.menuId ? element.menu.id : this.menuId;
-            menuList.push({
-              catalogId: element.catalogId,
-              ...element.menu,
-            });
+      let res = await API.getMenu(taskId);
+      if (res.code === 200) {
+        let menuList = [];
+        res.data.forEach((element) => {
+          this.menuId =
+            element.menu.id > this.menuId ? element.menu.id : this.menuId;
+          menuList.push({
+            catalogId: element.catalogId,
+            ...element.menu,
           });
-          let menuTree = menuConverter(menuList);
-          this.menuData = menuTree;
-        } else {
-          message.error(res.message);
-        }
-      } catch (e) {
-        message.error(e.message);
+        });
+        let menuTree = menuConverter(menuList);
+        this.menuData = menuTree;
+      } else {
+        this.$throw(res);
       }
     },
     // =============================================
-    saveCatalog() {},
+    // 提交审核
     commitAudit() {},
   },
 };
@@ -366,71 +330,6 @@ export default {
     width: 55%;
     height: 100%;
     min-width: 50%;
-
-    .home-right-card {
-      background: rgb(235, 234, 234);
-      width: 100%;
-      height: 100%;
-      overflow-y: scroll;
-      .right-card-btns {
-        position: sticky;
-        top: 0.8em;
-        z-index: 5;
-        display: flex;
-        justify-content: flex-end;
-        align-items: center;
-      }
-      .exame-style {
-        background-color: antiquewhite;
-      }
-      .right-card-screenshot {
-        width: 100%;
-        height: auto;
-        .screenshot-list {
-          display: grid;
-          grid-template-columns: 1fr 1fr 1fr;
-          grid-gap: 1%;
-          width: 100%;
-          height: 26em;
-          overflow-y: scroll;
-          border-radius: 0.5em;
-          box-sizing: border-box;
-          padding: 1em 0 0 1em;
-          border: 0.1em solid rgb(204, 206, 211);
-          .list-items {
-            width: 13em;
-            height: 10em;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: space-around;
-            margin: 0.5em 1em 0 0;
-            padding: 0.3em;
-            border: 0.1em solid rgb(204, 206, 211);
-            box-sizing: border-box;
-            border-radius: 0.5em;
-            .item-image {
-              width: 80%;
-              height: auto;
-            }
-            .item-delete {
-              width: 100%;
-              height: 10%;
-              display: flex;
-              justify-content: flex-end;
-              img {
-                height: 100%;
-                width: auto;
-                cursor: pointer;
-              }
-            }
-          }
-          .list-items:hover {
-            background-color: rgb(235, 238, 245);
-          }
-        }
-      }
-    }
   }
   // 操作按钮样式 保留
   .onload {

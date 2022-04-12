@@ -4,21 +4,40 @@
       <el-button type="primary" size="small" @click="saveData">保存</el-button>
     </div>
     <el-row :gutter="10">
-      <el-col :span="3" class="colLabel">
-        正题名
-      </el-col>
-      <el-col :span="21">
+      <el-col :span="3" class="colLabel"> 正题名 </el-col>
+      <el-col :span="20">
         <el-input v-model="programData.title.value" size="medium"></el-input>
+      </el-col>
+      <el-col :span="1" class="colLabel">
+        <el-switch
+          v-model="programData.title.check"
+          active-color="#13ce66"
+          inactive-color="#ff4949"
+          active-value="1"
+          inactive-value="0"
+          v-if="displaySwitch"
+        >
+        </el-switch>
       </el-col>
     </el-row>
     <el-row :gutter="10">
       <el-col :span="3" class="colLabel">内容描述</el-col>
-      <el-col :span="21">
+      <el-col :span="20">
         <el-input
           type="textarea"
           v-model="programData.description.value"
-          
         ></el-input>
+      </el-col>
+      <el-col :span="1" class="colLabel">
+        <el-switch
+          v-model="programData.description.check"
+          active-color="#13ce66"
+          inactive-color="#ff4949"
+          active-value="1"
+          inactive-value="0"
+          v-if="displaySwitch"
+        >
+        </el-switch>
       </el-col>
     </el-row>
     <el-row :gutter="10">
@@ -27,19 +46,41 @@
         <el-date-picker
           v-model="programData.debutDate.value"
           type="date"
-          placeholder="选择日期">
+          placeholder="选择日期"
+        >
         </el-date-picker>
+      </el-col>
+      <el-col :span="1" class="colLabel">
+        <el-switch
+          v-model="programData.debutDate.check"
+          active-color="#13ce66"
+          inactive-color="#ff4949"
+          active-value="1"
+          inactive-value="0"
+        >
+        </el-switch>
       </el-col>
       <el-col :span="2" class="colLabel">节目类型</el-col>
       <el-col :span="6">
-       <el-select
+        <el-select
           v-model="programData.programType.value"
-          placeholder="请选择节目类型">
+          placeholder="请选择节目类型"
+        >
           <el-option label="新闻" value="新闻"></el-option>
           <el-option label="专题" value="专题"></el-option>
           <el-option label="综艺" value="综艺"></el-option>
           <el-option label="素材" value="素材"></el-option>
         </el-select>
+      </el-col>
+      <el-col :span="1" class="colLabel">
+        <el-switch
+          v-model="programData.programType.check"
+          active-color="#13ce66"
+          inactive-color="#ff4949"
+          active-value="1"
+          inactive-value="0"
+        >
+        </el-switch>
       </el-col>
     </el-row>
     <el-row :gutter="10">
@@ -60,6 +101,16 @@
             value="既有画面叠加字幕也有隐藏字幕"
           ></el-option>
         </el-select>
+      </el-col>
+      <el-col :span="1" class="colLabel">
+        <el-switch
+          v-model="programData.subtitleForm.check"
+          active-color="#13ce66"
+          inactive-color="#ff4949"
+          active-value="1"
+          inactive-value="0"
+        >
+        </el-switch>
       </el-col>
       <el-col :span="2" class="colLabel">节目形态</el-col>
       <el-col :span="6">
@@ -84,23 +135,63 @@
           <el-option label="广告" value="广告"></el-option>
         </el-select>
       </el-col>
+      <el-col :span="1" class="colLabel">
+        <el-switch
+          v-model="programData.programForm.check"
+          active-color="#13ce66"
+          inactive-color="#ff4949"
+          active-value="1"
+          inactive-value="0"
+        >
+        </el-switch>
+      </el-col>
     </el-row>
     <el-row :gutter="10">
       <el-col :span="3" class="colLabel">创建者名称</el-col>
-      <el-col :span="21">
+      <el-col :span="20">
         <el-input v-model="programData.creator.value"></el-input>
+      </el-col>
+      <el-col :span="1" class="colLabel">
+        <el-switch
+          v-model="programData.creator.check"
+          active-color="#13ce66"
+          inactive-color="#ff4949"
+          active-value="1"
+          inactive-value="0"
+        >
+        </el-switch>
       </el-col>
     </el-row>
     <el-row :gutter="10">
       <el-col :span="3" class="colLabel">其他责任者</el-col>
-      <el-col :span="21">
+      <el-col :span="20">
         <el-input v-model="programData.contributor.value" />
       </el-col>
-    </el-row>    
+      <el-col :span="1" class="colLabel">
+        <el-switch
+          v-model="programData.contributor.check"
+          active-color="#13ce66"
+          inactive-color="#ff4949"
+          active-value="1"
+          inactive-value="0"
+        >
+        </el-switch>
+      </el-col>
+    </el-row>
     <el-row :gutter="10">
       <el-col :span="3" class="colLabel">栏目</el-col>
       <el-col :span="6">
         <el-input v-model="programData.column.value" />
+      </el-col>
+      <el-col :span="1" class="colLabel">
+        <el-switch
+          v-model="programData.column.check"
+          active-color="#13ce66"
+          inactive-color="#ff4949"
+          active-value="1"
+          inactive-value="0"
+        >
+        </el-switch>
       </el-col>
       <el-col :span="2" class="colLabel">色彩</el-col>
       <el-col :span="6">
@@ -108,6 +199,16 @@
           <el-radio label="彩色" value="1"></el-radio>
           <el-radio label="黑白" value="2"></el-radio>
         </el-radio-group>
+      </el-col>
+      <el-col :span="1" class="colLabel">
+        <el-switch
+          v-model="programData.color.check"
+          active-color="#13ce66"
+          inactive-color="#ff4949"
+          active-value="1"
+          inactive-value="0"
+        >
+        </el-switch>
       </el-col>
     </el-row>
     <el-row :gutter="10">
@@ -119,62 +220,152 @@
           <el-radio label="SECAM" value="3"></el-radio>
         </el-radio-group>
       </el-col>
+      <el-col :span="1" class="colLabel">
+        <el-switch
+          v-model="programData.system.check"
+          active-color="#13ce66"
+          inactive-color="#ff4949"
+          active-value="1"
+          inactive-value="0"
+        >
+        </el-switch>
+      </el-col>
       <el-col :span="2" class="colLabel">声道格式</el-col>
       <el-col :span="8">
-        <el-radio-group v-model="programData.audioChannel.value" class="colLabel">
+        <el-radio-group
+          v-model="programData.audioChannel.value"
+          class="colLabel"
+        >
           <el-radio label="单声道" value="1"></el-radio>
           <el-radio label="双声道" value="2"></el-radio>
           <el-radio label="立体声" value="3"></el-radio>
         </el-radio-group>
       </el-col>
+      <el-col :span="1" class="colLabel">
+        <el-switch
+          v-model="programData.audioChannel.check"
+          active-color="#13ce66"
+          inactive-color="#ff4949"
+          active-value="1"
+          inactive-value="0"
+        >
+        </el-switch>
+      </el-col>
     </el-row>
     <el-row :gutter="10">
       <el-col :span="3" class="colLabel">画面宽高比</el-col>
       <el-col :span="7">
-        <el-radio-group v-model="programData.aspectRatio.value" class="colLabel">
+        <el-radio-group
+          v-model="programData.aspectRatio.value"
+          class="colLabel"
+        >
           <el-radio label="4:3" value="1"></el-radio>
           <el-radio label="16:9" value="2"></el-radio>
           <el-radio label="14:9" value="3"></el-radio>
         </el-radio-group>
       </el-col>
+      <el-col :span="1" class="colLabel">
+        <el-switch
+          v-model="programData.aspectRatio.check"
+          active-color="#13ce66"
+          inactive-color="#ff4949"
+          active-value="1"
+          inactive-value="0"
+        >
+        </el-switch>
+      </el-col>
     </el-row>
     <el-row :gutter="10">
       <el-col :span="3" class="colLabel">入点</el-col>
       <el-col :span="6">
-        <el-input v-model="programData.startPoint.value" disabled/>
+        <el-input v-model="programData.startPoint.value" disabled />
+      </el-col>
+      <el-col :span="1" class="colLabel">
+        <el-switch
+          v-model="programData.startPoint.check"
+          active-color="#13ce66"
+          inactive-color="#ff4949"
+          active-value="1"
+          inactive-value="0"
+        >
+        </el-switch>
       </el-col>
       <el-col :span="2" class="colLabel">出点</el-col>
       <el-col :span="6">
-        <el-input v-model="programData.outPoint.value" disabled/>
+        <el-input v-model="programData.outPoint.value" disabled />
+      </el-col>
+      <el-col :span="1" class="colLabel">
+        <el-switch
+          v-model="programData.outPoint.check"
+          active-color="#13ce66"
+          inactive-color="#ff4949"
+          active-value="1"
+          inactive-value="0"
+        >
+        </el-switch>
       </el-col>
     </el-row>
     <el-row :gutter="10">
       <el-col :span="3" class="colLabel">资料获取方式</el-col>
       <el-col :span="6">
-        <el-input v-model="programData.sourceAcquiringMethod.value"/>
+        <el-input v-model="programData.sourceAcquiringMethod.value" />
+      </el-col>
+      <el-col :span="1" class="colLabel">
+        <el-switch
+          v-model="programData.sourceAcquiringMethod.check"
+          active-color="#13ce66"
+          inactive-color="#ff4949"
+          active-value="1"
+          inactive-value="0"
+        >
+        </el-switch>
       </el-col>
       <el-col :span="3" class="colLabel">资料提供者</el-col>
       <el-col :span="6">
-        <el-input v-model="programData.sourceProvider.value"/>
+        <el-input v-model="programData.sourceProvider.value" />
       </el-col>
-    </el-row> 
+      <el-col :span="1" class="colLabel">
+        <el-switch
+          v-model="programData.sourceProvider.check"
+          active-color="#13ce66"
+          inactive-color="#ff4949"
+          active-value="1"
+          inactive-value="0"
+        >
+        </el-switch>
+      </el-col>
+    </el-row>
     <el-row :gutter="10">
       <el-col :span="3" class="colLabel">关键帧</el-col>
       <el-col :span="21" class="right-card-screenshot">
-        <div style="color: #f56c6c">
-          {{ programData.keyFrames.check === 1 ? "不合格" : "" }}
-        </div>
-        <div class="screenshot-list" >
-          <div class="list-items" v-for="item in programData.keyFrames" :key="item.address">
+        <div class="screenshot-list">
+          <div
+            class="list-items"
+            v-for="item in programData.keyFrames"
+            :key="item.address"
+          >
             <div class="item-delete">
               <img
                 src="@/assets/images/close.png"
                 alt="图片加载失败"
-                @click="deleteClick(item.src)"
+                @click="deleteClick(item.address)"
               />
             </div>
-            <img class="item-image" :src="item.src" alt="" />
-            <el-input placeholder="请输入关键帧描述" v-model="item.description" size="mini" clearable></el-input>
+            <img class="item-image" :src="item.address" alt="" />
+            <el-input
+              placeholder="请输入关键帧描述"
+              v-model="item.description"
+              size="mini"
+              clearable
+            ></el-input>
+            <el-switch
+              v-model="item.check"
+              active-color="#13ce66"
+              inactive-color="#ff4949"
+              active-value="1"
+              inactive-value="0"
+            >
+            </el-switch>
           </div>
         </div>
       </el-col>
@@ -185,7 +376,7 @@
 <script>
 import API from "@/network/api";
 import _ from "lodash";
-import { mapState,mapMutations } from 'vuex';
+import { mapState, mapMutations } from "vuex";
 import { message } from "@/assets/js/message";
 
 export default {
@@ -204,30 +395,33 @@ export default {
       index: 10,
       //播放器
       hasChildren: true,
-    }
+    };
   },
-  computed:{
-    ...mapState("common", [      
-      "programData",
-      "authority",
-    ]),
+  computed: {
+    ...mapState("common", ["programData", "authority", "currentTask"]),
     // 页面显示模式，编辑还是审核
-    pageMode(){
-
+    pageMode() {
       return true;
     },
+    displaySwitch() {
+      return (
+        this.currentTask.status === "审核中" ||
+        this.currentTask.status === "待修改"
+      );
+    },
   },
-  methods:{
+  methods: {
     ...mapMutations("common", ["setProgramData"]),
+    // TODO 完成审核流程和关键帧截图功能
     // 保存更改
     async saveData() {
       this.logRemove = false;
       // 保存数据
       try {
         let res = await API.updateProgramRecord(this.programData);
-        if(res.code !== 200){
-          message.error(res.message)
-        } 
+        if (res.code !== 200) {
+          message.error(res.message);
+        }
       } catch (e) {
         message.error(e.message);
       }
@@ -404,7 +598,7 @@ export default {
         this.setTaskStatus(4);
       }
     },
-  }
+  },
 };
 </script>
 
@@ -413,7 +607,7 @@ export default {
   // width: 100%;
   height: 100%;
   min-width: 50%;
-  .colLabel{
+  .colLabel {
     line-height: 36px;
     text-align: right;
     font-size: 14px;
@@ -510,5 +704,4 @@ export default {
   padding: 10px 0;
   background-color: #f9fafc;
 }
-
 </style>

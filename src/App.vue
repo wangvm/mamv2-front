@@ -1,5 +1,5 @@
 <template>
-  <div id="app" :style="{'min-width':1800+'px'}">
+  <div id="app" class="app">
     <keep-alive>
       <transition name="el-fade-in">
         <router-view />
@@ -14,5 +14,9 @@
       display: flex;
       justify-content: center;
       align-items: center;
+}
+.app{
+  background: #eef0f3;
+  min-width: 1800px;
 }
 </style>

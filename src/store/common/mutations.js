@@ -20,6 +20,7 @@ export default {
     state.currentTaskPage = payload.currentPage;
     state.currentTask.id = payload.id;
     state.currentTask.name = payload.name;
+    state.currentTask.status = payload.status;
   },
   storedUserPage(state, payload) {
     state.currentUserPage = payload;

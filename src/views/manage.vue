@@ -30,12 +30,8 @@ export default {
   },
   methods: {
     async logout() {
-      try {
         const res = await API.logout();
         if (res.code === 200) this.$router.push("/");
-      } catch (e) {
-        this.$catch = e;
-      }
     },
   },
 };

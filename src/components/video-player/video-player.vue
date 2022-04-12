@@ -232,12 +232,10 @@ export default {
               );
               this.$refs.progress.value = this.player.currentTime;
             }, this.videoInfo.frameRate);
-            console.log(this.timer)
           }
           break;
         case "pause":
           //播放器暂停
-          console.log(this.timer);
           clearInterval(this.timer);
           this.timer = null;
           this.$refs.time.innerText = timeFormat(
