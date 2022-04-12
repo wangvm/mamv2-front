@@ -70,7 +70,7 @@
 
 <script>
 import { mapState } from "vuex";
-import $api from "@/network/api";
+import API from "@/network/api";
 import { message } from "@/assets/js/message";
 import BaseHeader from "@/components/BaseHeader.vue";
 
@@ -129,7 +129,7 @@ export default {
     },
     async updateProjectName(id, name){
       // 保存数据到后端
-      let res = await $api.updateProjectName(id, name)
+      let res = await API.updateProjectName(id, name)
       if(res.code === 200){
         this.getProjectData();
       }else{
@@ -137,7 +137,7 @@ export default {
       }
     },
     async handleDelete(index, row){
-      let res = await $api.deleteProject(row.id)
+      let res = await API.deleteProject(row.id)
       if(res.code === 200){
         this.getProjectData();
       }else{
@@ -169,7 +169,7 @@ export default {
       this.$refs[formName].validate(async (valid) => {
         if (valid) {
           try {
-            let res = await $api.addProject(this.projectForm);
+            let res = await API.addProject(this.projectForm);
             if (res.code === 200) {
               this.dialogVisible = false;
               this.projectForm = {
@@ -203,7 +203,7 @@ export default {
       pageSize = 5
     ) {
       try {
-        let res = await $api.queryProjectList(
+        let res = await API.queryProjectList(
           status,
           order,
           isAsc,

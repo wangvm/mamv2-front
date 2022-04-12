@@ -28,10 +28,13 @@
 
 <script>
 // @ is an alias to /src
-import { mapActions, mapState } from "vuex";
+import { mapActions, mapMutations, mapState } from "vuex";
 import { debounce } from "lodash-es";
 import BaseHeader from "@/components/BaseHeader.vue";
-// import $api from "@/network/api";
+import API from "@/network/api";
+import { message } from "@/assets/js/message";
+
+// import API from "@/network/api";
 
 export default {
   name: "home",
@@ -49,6 +52,7 @@ export default {
   },
   methods: {
     ...mapActions("common", ["loginAction"]),
+    ...mapMutations("common", ["updateLoginData"]),
     // 登录防抖函数
     loginSubmit: debounce(function () {
       const { account, password } = this;
@@ -57,13 +61,18 @@ export default {
       this.login();
     }, 300),
     // 登录逻辑
+    // TODO 修改全部请求逻辑
     async login() {
       let regNum = /^\d*$/;
-      const { account, password } = this;
-      const params = { account, password };
-      if (regNum.test(account)) {
-        await this.loginAction(params);
-        if (this.authority) this.$router.push("/manage");
+      if (regNum.test(this.account)) {
+        let res = await API.login(this.account, this.password);
+        console.log(this.$router.push);
+        if (res.code === 200) {
+          this.updateLoginData(res.data);
+          this.$router.push("/manage");
+        }else{
+          this.$throw(res);
+        }
       } else {
         this.$message.error("请输入正确的账号");
       }

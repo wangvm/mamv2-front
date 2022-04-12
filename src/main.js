@@ -3,8 +3,10 @@ import App from './App.vue'
 import router from './router'
 import store from './store'
 import './config/element.config'
+import globalErrorHandler from "@/handler/globalErrorHandler"
 
 Vue.config.productionTip = false
+Vue.prototype.$throw = function(error){globalErrorHandler(error, this)}
 
 new Vue({
   router,

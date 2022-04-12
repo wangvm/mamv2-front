@@ -413,7 +413,20 @@ export default {
   // width: 100%;
   height: 100%;
   min-width: 50%;
-
+  .colLabel{
+    line-height: 36px;
+    text-align: right;
+    font-size: 14px;
+  }
+  .el-row {
+    margin-bottom: 20px;
+    &:last-child {
+      margin-bottom: 0;
+    }
+  }
+  .el-col {
+    border-radius: 4px;
+  }
   .home-right-card {
     width: 100%;
     height: 100%;
@@ -478,15 +491,7 @@ export default {
     }
   }
 }
-.el-row {
-  margin-bottom: 20px;
-  &:last-child {
-    margin-bottom: 0;
-  }
-}
-.el-col {
-  border-radius: 4px;
-}
+
 .bg-purple-dark {
   background: #99a9bf;
 }
@@ -505,9 +510,5 @@ export default {
   padding: 10px 0;
   background-color: #f9fafc;
 }
-.colLabel{
-  line-height: 36px;
-  text-align: right;
-  font-size: 14px;
-}
+
 </style>

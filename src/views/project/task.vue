@@ -16,7 +16,7 @@
             <el-input
               v-model="scope.row.name"
               v-show="scope.row.isEdit"
-              autofocus="true"
+              autofocus
               size="mini"
             ></el-input>
             <span v-show="!scope.row.isEdit">{{ scope.row.name }}</span>
@@ -117,7 +117,7 @@
 </template>
 
 <script>
-import $api from "@/network/api";
+import API from "@/network/api";
 import { message } from "@/assets/js/message";
 import BaseHeader from "@/components/BaseHeader.vue";
 import { mapState, mapActions} from "vuex";
@@ -192,7 +192,7 @@ export default {
     async queryCatalogers(queryString, cb) {
       try {
         if (queryString) {
-          let res = await $api.queryCatalogerByName(queryString);
+          let res = await API.queryCatalogerByName(queryString);
           if (res.code === 200 && res.data.length !== 0) {
             res.data.map((record) => {
               record.value = record.username + "(" + record.account + ")";
@@ -210,7 +210,7 @@ export default {
     async queryAuditors(queryString, cb) {
       try {
         if (queryString) {
-          let res = await $api.queryAuditorByName(queryString);
+          let res = await API.queryAuditorByName(queryString);
           if (res.code === 200 && res.data.length !== 0) {
             res.data.map((record) => {
               record.value = record.username + "(" + record.account + ")";
@@ -228,7 +228,7 @@ export default {
     async queryVideo(queryString, cb){
       try{
         if(queryString){
-          let res = await $api.searchVideoByName(queryString);
+          let res = await API.searchVideoByName(queryString);
           if (res.code === 200 && res.data.length !== 0) {
             res.data.map((record) => {
               record.value = record.fileName;
@@ -263,7 +263,7 @@ export default {
         if (valid) {
           try {
             this.taskForm.status = 0;
-            let res = await $api.addTask({taskInfo:this.taskForm, videoInfo:this.videoInfo});
+            let res = await API.addTask({taskInfo:this.taskForm, videoInfo:this.videoInfo});
             if (res.code === 200) {
               this.dialogVisible = false;
               this.taskForm = {
@@ -326,7 +326,7 @@ export default {
     },
     async updateTaskInfo(record) {
       // 保存数据到后端
-      let res = await $api.updateTaskInfo(record);
+      let res = await API.updateTaskInfo(record);
       if (res.code === 200) {
         this.getTaskData();
       } else {
@@ -335,7 +335,7 @@ export default {
     },
     // 删除操作
     async handleDelete(row) {
-      let res = await $api.deleteTask(row.id);
+      let res = await API.deleteTask(row.id);
       if (res.code === 200) {
         this.getTaskData();
       } else {
@@ -372,7 +372,7 @@ export default {
     // 从后端获取数据
     async getTaskData() {
       try {
-        let res = await $api.queryTaskByProject(this.currentProject.id);
+        let res = await API.queryTaskByProject(this.currentProject.id);
         if (res.code === 200) {
           // 展示之前做处理，添加index和status
           if (res.data === null) return;
@@ -419,7 +419,7 @@ export default {
     // 获取节目层数据
     async getProgramData(taskId, catalogId){
       try{
-        let res = await $api.getProgramRecord(catalogId,taskId);
+        let res = await API.getProgramRecord(catalogId,taskId);
         if(res.code === 200){
           this.$store.commit("common/setProgramData",res.data);
         }

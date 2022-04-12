@@ -14,7 +14,7 @@ export default {
         commit("updateLoginData", {});
       }
     } catch (e) {
-      this.$catch = e;
+      this.$throw  = e;
     }
   },
 

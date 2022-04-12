@@ -141,7 +141,7 @@
 
 <script>
 import { mapState, mapActions, mapMutations } from "vuex";
-import $api from "@/network/api";
+import API from "@/network/api";
 
 export default {
   name: "videoPlayer",
@@ -442,7 +442,7 @@ export default {
       this.loading = true;
       // TODO 改成本地截图上传
       try {
-        let res = await $api.getscreenshotList(
+        let res = await API.getscreenshotList(
           this.player.currentTime,
           this.currentTask.id
         );

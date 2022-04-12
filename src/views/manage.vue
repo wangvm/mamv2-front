@@ -20,7 +20,7 @@
 <script>
 import BaseHeader from "@/components/BaseHeader.vue";
 import ManageMenu from "@/components/ManageMenu.vue";
-import $api from "@/network/api";
+import API from "@/network/api";
 
 export default {
   name: "manage",
@@ -31,7 +31,7 @@ export default {
   methods: {
     async logout() {
       try {
-        const res = await $api.logout();
+        const res = await API.logout();
         if (res.code === 200) this.$router.push("/");
       } catch (e) {
         this.$catch = e;

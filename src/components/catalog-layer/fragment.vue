@@ -1,13 +1,174 @@
 <template>
-  <dir>片段层</dir>
+  <el-card class="home-right-card" shadow="hover">
+    <div class="right-card-btn">
+      <el-button type="primary" size="small" @click="saveData">保存</el-button>
+    </div>
+    <el-row :gutter="10">
+      <el-col :span="3" class="colLabel"> 题名 </el-col>
+      <el-col :span="21">
+        <el-input v-model="fragmentData.title.value" size="medium"></el-input>
+      </el-col>
+    </el-row>
+    <el-row :gutter="10">
+      <el-col :span="3" class="colLabel">内容描述</el-col>
+      <el-col :span="21">
+        <el-input
+          type="textarea"
+          v-model="fragmentData.description.value"
+        ></el-input>
+      </el-col>
+    </el-row>
+    <el-row :gutter="10">
+      <el-col :span="3" class="colLabel">字幕形式</el-col>
+      <el-col :span="6">
+        <el-select
+          v-model="fragmentData.subtitleForm.value"
+          placeholder="请选择字幕形式"
+        >
+          <el-option label="无字幕" value="无字幕"></el-option>
+          <el-option
+            label="只有画面叠加字幕"
+            value="只有画面叠加字幕"
+          ></el-option>
+          <el-option label="只有隐藏字幕" value="只有隐藏字幕"></el-option>
+          <el-option
+            label="既有画面叠加字幕也有隐藏字幕"
+            value="既有画面叠加字幕也有隐藏字幕"
+          ></el-option>
+        </el-select>
+      </el-col>
+    </el-row>
+    <el-row :gutter="10">
+      <el-col :span="3" class="colLabel">入点</el-col>
+      <el-col :span="6">
+        <el-input v-model="fragmentData.startPoint.value" disabled />
+      </el-col>
+      <el-col :span="2" class="colLabel">出点</el-col>
+      <el-col :span="6">
+        <el-input v-model="fragmentData.outPoint.value" disabled />
+      </el-col>
+    </el-row>
+    <el-row :gutter="10">
+      <el-col :span="3" class="colLabel">资料获取方式</el-col>
+      <el-col :span="6">
+        <el-input v-model="fragmentData.sourceAcquiringMethod.value" />
+      </el-col>
+      <el-col :span="3" class="colLabel">资料提供者</el-col>
+      <el-col :span="6">
+        <el-input v-model="fragmentData.sourceProvider.value" />
+      </el-col>
+    </el-row>
+  </el-card>
 </template>
 
 <script>
-export default {
+import { mapState, mapMutations } from "vuex";
+import API from "@/network/api";
+import { message } from "@/assets/js/message";
 
-}
+export default {
+  data() {
+    return {};
+  },
+  computed: {
+    ...mapState("common", ["fragmentData", "authority"]),
+  },
+  methods:{
+        // 保存更改
+    async saveData() {
+      this.logRemove = false;
+      // 保存数据
+      try {
+        let res = await API.updateFragmentRecord(this.fragmentData);
+        if(res.code !== 200){
+          message.error(res.message)
+        } 
+      } catch (e) {
+        message.error(e.message);
+      }
+    },
+  }
+};
 </script>
 
-<style>
-
+<style lang="less" scoped>
+.home-right {
+  // width: 100%;
+  height: 100%;
+  min-width: 50%;
+  .colLabel {
+    line-height: 36px;
+    text-align: right;
+    font-size: 14px;
+  }
+  .el-row {
+    margin-bottom: 20px;
+    &:last-child {
+      margin-bottom: 0;
+    }
+  }
+  .el-col {
+    border-radius: 4px;
+  }
+  .home-right-card {
+    width: 100%;
+    height: 100%;
+    overflow-y: scroll;
+    .right-card-btn {
+      position: sticky;
+      top: 0.8em;
+      z-index: 5;
+      display: flex;
+      justify-content: flex-end;
+      align-items: center;
+      margin-bottom: 5px;
+    }
+    .right-card-screenshot {
+      height: auto;
+      .screenshot-list {
+        display: grid;
+        grid-template-columns: 1fr 1fr 1fr;
+        grid-gap: 1%;
+        width: 100%;
+        height: 26em;
+        overflow-y: scroll;
+        border-radius: 0.5em;
+        box-sizing: border-box;
+        padding: 1em 0 0 1em;
+        border: 0.1em solid rgb(204, 206, 211);
+        .list-items {
+          width: 13em;
+          height: 10em;
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          justify-content: space-around;
+          margin: 0.5em 1em 0 0;
+          padding: 0.3em;
+          border: 0.1em solid rgb(204, 206, 211);
+          box-sizing: border-box;
+          border-radius: 0.5em;
+          .item-image {
+            width: 80%;
+            height: auto;
+          }
+          .item-delete {
+            width: 100%;
+            height: 10%;
+            display: flex;
+            justify-content: flex-end;
+            img {
+              height: 100%;
+              width: auto;
+              cursor: pointer;
+            }
+          }
+        }
+        .list-items:hover {
+          background-color: rgb(235, 238, 245);
+        }
+      }
+    }
+  }
+}
 </style>
