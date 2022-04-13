@@ -13,7 +13,7 @@ export default {
   currentTask: {
     id: null,
     name: "",
-    status:"",
+    status: "",
   },
   // 用户数据
   currentUserPage: 1,
@@ -21,22 +21,17 @@ export default {
   // 视频播放组件
   screenshotList: [],
   videoInfo: {
-    fileName:"",
-    aspectRatio:"",
-    duration: 0,
-    frameRate: 0,
+    fileName: "",
+    aspectRatio: "",
+    duration: 770120,
+    frameRate: 25,
     address: "http://192.168.111.128/vod/test.mp4",
     audioChannel: 0,
   },
 
   // 视频数据
-  // 当前入点
-  entryPoint: null,
-  // 当前出点
-  outPoint: null,
   // 打点时长
   logTime: null,
-
 
   // 编目数据
   programData: {
@@ -72,6 +67,10 @@ export default {
       value: "",
       check: 0,
     },
+    programForm: {
+      value: "",
+      check: 0,
+    },
     column: {
       value: "",
       check: 0,
@@ -90,20 +89,26 @@ export default {
     },
     aspectRatio: {
       value: "0x0",
+      check: 0,
+    },
+    subtitleForm: {
+      value: "0",
+      check: 0,
     },
     startPoint: {
-      value: "",
+      value: "0",
       check: 0,
     },
     outPoint: {
+      value: "0",
+      check: 0,
+    },
+    keyFrames: [{ address: "", description: "", check: 0 }],
+    sourceProvider: {
       value: "",
       check: 0,
     },
     sourceAcquiringMethod: {
-      value: "",
-      check: 0,
-    },
-    sourceProvider: {
       value: "",
       check: 0,
     },
@@ -154,6 +159,7 @@ export default {
       value: "",
       check: 0,
     },
+    keyFrames: [],
   },
   // 场景层数据
   scenesData: {
@@ -186,5 +192,6 @@ export default {
       value: "",
       check: 0,
     },
+    keyFrames: [],
   },
 };

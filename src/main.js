@@ -13,4 +13,3 @@ new Vue({
   store,
   render: h => h(App)
 }).$mount('#app')
-// TODO 添加全局异常处理

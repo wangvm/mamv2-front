@@ -35,9 +35,25 @@ export default {
   },
 
   // 设置入点时间
-  setLoginTime(state, val) {
-    state.entryPoint = val;
+  setStartPoint(state, val) {
+    state.programData.startPoint.value = "" + val;
   },
+  setOutPoint(state, val) {
+    state.programData.outPoint.value = "" + val;
+  },
+  setFragmentStartPoint(state, val) {
+    state.fragmentData.startPoint.value = "" + val;
+  },
+  setFragmentOutPoint(state, val) {
+    state.fragmentData.outPoint.value = "" + val;
+  },
+  setScenesStartPoint(state, val) {
+    state.scenesData.startPoint.value = "" + val;
+  },
+  setScenesOutPoint(state, val) {
+    state.scenesData.outPoint.value = "" + val;
+  },
+
   // 设置时长
   setLogTime(state, val) {
     state.logTime = val;

@@ -108,12 +108,7 @@ export default {
       }
     },
     async handleDelete(row) {
-      let res = await Api.deleteUser(row.id, row.address);
-      if (res.code === 200) {
-        this.getVideoList();
-      } else {
-        this.$throw(res);
-      }
+      // 删除视频
     },
     // 重置
     resetForm(formName) {

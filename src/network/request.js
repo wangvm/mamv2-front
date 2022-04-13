@@ -1,12 +1,12 @@
 import axios from "axios";
+import VueRouter from "vue-router";
 // import { Message } from 'element-ui'
 // import { getUserToken } from "../config/storage"
 import { message } from "../assets/js/message";
 
-// let baseUrl = "http://192.168.111.128:8080/mamv2";
-let baseUrl = 'http://localhost:8080/mamv2'
+let baseUrl = "http://192.168.111.128:8080/mamv2";
+// let baseUrl = "http://localhost:8080/mamv2";
 // let baseUrl = 'http://localhost:8080'
-
 
 let $http = axios.create({
   headers: {},
@@ -33,6 +33,15 @@ $http.interceptors.request.use(
     return Promise.reject(err);
   }
 );
+// // 响应拦截器
+// $http.defaults.response.use(
+//   (config) => {
+//     return config;
+//   },
+//   (err) => {
+//     return Promise.reject(err);
+//   }
+// );
 
 export default function (url, data, method = "GET") {
   return new Promise((resolve, reject) => {

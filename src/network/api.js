@@ -33,12 +33,12 @@ export default {
   queryUserByName: (username, current, pageSize) => request("/user/query/name", { username, current, pageSize }),
   // 文件接口
 
-  // uploadVideo: (file) => request("/file/upload/video", file, "POST"),
+  uploadVideo: (file) => request("/file/upload/video", file, "POST"),
   uploadKeyFrame: (file) => request("file/upload/keyframe", file, "POST"),
   getVideoList: (pageSize = 5, pageIndex = 1) => request("/file/videoList", { pageSize, pageIndex }),
   searchVideoByName: (filename, pageSize = 5, pageIndex = 1) =>
     request("/file/search", { filename, pageSize, pageIndex }),
-
+  keyFrameCut: (cutTime, videoUrl) => request("/file/keyframe", { cutTime, videoUrl }),
   // 编目接口
   addFragmentRecord: (fragmentData) => request("/catalog/add/fragment", fragmentData, "POST"),
   addScenesRecord: (scenesData) => request("/catalog/add/scenes", scenesData, "POST"),
@@ -51,4 +51,8 @@ export default {
   updateProgramRecord: (programData) => request("/catalog/update/program", programData, "POST"),
   updateFragmentRecord: (fragmentData) => request("/catalog/update/fragment", fragmentData, "POST"),
   updateScenesRecord: (scenesData) => request("/catalog/update/scenes", scenesData, "POST"),
+  // 提交和审核接口
+  submitAudit: (taskId) => request("/task/submit", { taskId }),
+  rebackCatalog: (taskId) => request("/task/reback", { taskId }),
+  passCatalog: (taskId) => request("/task/pass", { taskId }),
 };

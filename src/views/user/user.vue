@@ -202,7 +202,6 @@ export default {
       }
     },
     // 打开添加项目浮窗，初始化数据
-    // TODO 添加权限验证
     addUser() {
       this.dialogVisible = true;
       this.userForm.createTime = new Date().getTime();

@@ -57,6 +57,7 @@
           inactive-color="#ff4949"
           active-value="1"
           inactive-value="0"
+          v-if="displaySwitch"
         >
         </el-switch>
       </el-col>
@@ -79,6 +80,7 @@
           inactive-color="#ff4949"
           active-value="1"
           inactive-value="0"
+          v-if="displaySwitch"
         >
         </el-switch>
       </el-col>
@@ -109,6 +111,7 @@
           inactive-color="#ff4949"
           active-value="1"
           inactive-value="0"
+          v-if="displaySwitch"
         >
         </el-switch>
       </el-col>
@@ -142,6 +145,7 @@
           inactive-color="#ff4949"
           active-value="1"
           inactive-value="0"
+          v-if="displaySwitch"
         >
         </el-switch>
       </el-col>
@@ -158,6 +162,7 @@
           inactive-color="#ff4949"
           active-value="1"
           inactive-value="0"
+          v-if="displaySwitch"
         >
         </el-switch>
       </el-col>
@@ -174,6 +179,7 @@
           inactive-color="#ff4949"
           active-value="1"
           inactive-value="0"
+          v-if="displaySwitch"
         >
         </el-switch>
       </el-col>
@@ -190,6 +196,7 @@
           inactive-color="#ff4949"
           active-value="1"
           inactive-value="0"
+          v-if="displaySwitch"
         >
         </el-switch>
       </el-col>
@@ -207,6 +214,7 @@
           inactive-color="#ff4949"
           active-value="1"
           inactive-value="0"
+          v-if="displaySwitch"
         >
         </el-switch>
       </el-col>
@@ -227,6 +235,7 @@
           inactive-color="#ff4949"
           active-value="1"
           inactive-value="0"
+          v-if="displaySwitch"
         >
         </el-switch>
       </el-col>
@@ -248,6 +257,7 @@
           inactive-color="#ff4949"
           active-value="1"
           inactive-value="0"
+          v-if="displaySwitch"
         >
         </el-switch>
       </el-col>
@@ -271,6 +281,7 @@
           inactive-color="#ff4949"
           active-value="1"
           inactive-value="0"
+          v-if="displaySwitch"
         >
         </el-switch>
       </el-col>
@@ -278,7 +289,11 @@
     <el-row :gutter="10">
       <el-col :span="3" class="colLabel">入点</el-col>
       <el-col :span="6">
-        <el-input v-model="programData.startPoint.value" disabled />
+        <div>
+          <p class="colLabel" style="text-align: left">
+            {{ startPoint }}
+          </p>
+        </div>
       </el-col>
       <el-col :span="1" class="colLabel">
         <el-switch
@@ -287,12 +302,17 @@
           inactive-color="#ff4949"
           active-value="1"
           inactive-value="0"
+          v-if="displaySwitch"
         >
         </el-switch>
       </el-col>
       <el-col :span="2" class="colLabel">出点</el-col>
       <el-col :span="6">
-        <el-input v-model="programData.outPoint.value" disabled />
+        <div>
+          <p class="colLabel" style="text-align: left">
+            {{ outPoint }}
+          </p>
+        </div>
       </el-col>
       <el-col :span="1" class="colLabel">
         <el-switch
@@ -301,6 +321,7 @@
           inactive-color="#ff4949"
           active-value="1"
           inactive-value="0"
+          v-if="displaySwitch"
         >
         </el-switch>
       </el-col>
@@ -317,6 +338,7 @@
           inactive-color="#ff4949"
           active-value="1"
           inactive-value="0"
+          v-if="displaySwitch"
         >
         </el-switch>
       </el-col>
@@ -331,6 +353,7 @@
           inactive-color="#ff4949"
           active-value="1"
           inactive-value="0"
+          v-if="displaySwitch"
         >
         </el-switch>
       </el-col>
@@ -364,6 +387,7 @@
               inactive-color="#ff4949"
               active-value="1"
               inactive-value="0"
+              v-if="displaySwitch"
             >
             </el-switch>
           </div>
@@ -378,6 +402,7 @@ import API from "@/network/api";
 import _ from "lodash";
 import { mapState, mapMutations } from "vuex";
 import { message } from "@/assets/js/message";
+import timeFormat from "@/utils/timeFormat";
 
 export default {
   data() {
@@ -398,21 +423,38 @@ export default {
     };
   },
   computed: {
-    ...mapState("common", ["programData", "authority", "currentTask"]),
+    ...mapState("common", [
+      "programData",
+      "authority",
+      "currentTask",
+      "videoInfo",
+    ]),
     // 页面显示模式，编辑还是审核
-    pageMode() {
-      return true;
-    },
     displaySwitch() {
       return (
-        this.currentTask.status === "审核中" ||
-        this.currentTask.status === "待修改"
+        (this.currentTask.status === "审核中" &&
+          this.authority === "ROLE_AUDITOR") ||
+        (this.currentTask.status === "待修改" &&
+          this.authority === "ROLE_CATALOGER")
       );
+    },
+    startPoint() {
+      let time = timeFormat(
+        this.programData.startPoint.value,
+        this.videoInfo.frameRate
+      );
+      return time;
+    },
+    outPoint() {
+      let time = timeFormat(
+        this.programData.outPoint.value,
+        this.videoInfo.frameRate
+      );
+      return time;
     },
   },
   methods: {
     ...mapMutations("common", ["setProgramData"]),
-    // TODO 完成审核流程和关键帧截图功能
     // 保存更改
     async saveData() {
       this.logRemove = false;
@@ -425,14 +467,6 @@ export default {
       } catch (e) {
         message.error(e.message);
       }
-    },
-    // 写入入点时间
-    setEntryPoint() {
-      this.form.entryPoint.value = this.loginTime;
-    },
-    // 写入时长
-    setDuration() {
-      this.form.duration.value = this.logTime;
     },
     // 更新表单图片数据
     updateFormImageList() {
@@ -632,7 +666,7 @@ export default {
       display: flex;
       justify-content: flex-end;
       align-items: center;
-      margin-bottom: 5px;
+      margin: 0 35px 10px 0;
     }
     .exame-style {
       background-color: antiquewhite;
@@ -684,24 +718,5 @@ export default {
       }
     }
   }
-}
-
-.bg-purple-dark {
-  background: #99a9bf;
-}
-.bg-purple {
-  background: #d3dce6;
-}
-.bg-purple-light {
-  background: #e5e9f2;
-}
-.grid-content {
-  border-radius: 4px;
-  min-height: 36px;
-  text-align: right;
-}
-.row-bg {
-  padding: 10px 0;
-  background-color: #f9fafc;
 }
 </style>

@@ -2,17 +2,25 @@
   <div class="home">
     <!-- 右上角操作按钮 -->
     <div class="onload">
-      <el-button type="success" size="small" @click="saveData()"
-        >上传数据</el-button
-      >
-      <el-button type="primary" size="small" @click="commitAudit()"
-        >提交审核</el-button
-      >
+      <template v-if="authority === 'ROLE_AUDITOR'">
+        <el-button type="success" size="small" @click="repulse()"
+          >打回</el-button
+        >
+        <el-button type="primary" size="small" @click="pass()">通过</el-button>
+      </template>
+      <template v-else-if="authority === 'ROLE_CATALOGER'">
+        <el-button type="success" size="small" @click="saveData()"
+          >上传数据</el-button
+        >
+        <el-button type="primary" size="small" @click="commitAudit()"
+          >提交审核</el-button
+        >
+      </template>
     </div>
     <div class="home-left">
       <!-- 封装的播放器 -->
       <div class="home-video">
-        <videoPlayer :video-info="videoInfo" :logReset="logRemove" />
+        <videoPlayer :video-info="videoInfo" :level="currentLevel" ref="videoPlayer" />
       </div>
       <!-- 编目条目菜单 -->
       <!-- 使用Tree树形控件实现 -->
@@ -74,12 +82,10 @@ import Program from "@/components/catalog-layer/program.vue";
 import videoPlayer from "@/components/video-player/video-player";
 import { mapState, mapMutations, mapActions } from "vuex";
 import API from "@/network/api";
-import { message } from "@/assets/js/message";
 import menuConverter from "@/utils/menuConverter";
 
 // 引用loadsh
 import _ from "lodash";
-import catalogVue from "../catalog.vue";
 
 export default {
   name: "catalog-edit",
@@ -126,6 +132,7 @@ export default {
       "programData",
       "fragmentData",
       "scenesData",
+      "authority",
     ]),
   },
   methods: {
@@ -164,11 +171,16 @@ export default {
         default:
           break;
       }
+      if (res.code !== 200) {
+        this.$throw(res);
+      }
     },
     async getCatalogRecord(data) {
       let res;
       // 更改为第一次获取的时候从服务器拿，后面从map拿
       switch (data.level) {
+        case "节目层":
+          break;
         case "片段层":
           res = await API.getCatalogRecord("fragment", data.catalogId);
           if (res.code === 200) {
@@ -182,6 +194,7 @@ export default {
           }
           break;
         default:
+          null;
           break;
       }
     },
@@ -287,7 +300,29 @@ export default {
     },
     // =============================================
     // 提交审核
-    commitAudit() {},
+    async commitAudit() {
+      this.saveData();
+      let res = await API.submitAudit(this.currentTask.id);
+      if (res.code !== 200) {
+        this.$throw(res);
+      }
+    },
+
+    async pass() {
+      this.saveData();
+      let res = await API.passCatalog(this.currentTask.id);
+      if (res.code !== 200) {
+        this.$throw(res);
+      }
+    },
+
+    async repulse() {
+      this.saveData();
+      let res = await API.rebackCatalog(this.currentTask.id);
+      if (res.code !== 200) {
+        this.$throw(res);
+      }
+    },
   },
 };
 </script>

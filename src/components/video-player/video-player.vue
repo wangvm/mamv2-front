@@ -14,7 +14,6 @@
       <div class="video_content">
         <!--http://10.1.71.155/static/video/test.mp4-->
         <!--@/assets/video/test.mp4-->
-        <!-- TODO 还需要调试修改 -->
         <video
           class="player"
           ref="player"
@@ -54,7 +53,7 @@
           @click="playerBtnEvent('stop')"
         />
         <div class="time-box">
-          <span class="time" title="时:分:秒:帧" ref="time">00:00:00:00</span>
+          <span class="time" title="时:分:秒.帧" ref="time">00:00:00.00</span>
         </div>
         <i
           class="playerBtn el-icon-arrow-left"
@@ -98,13 +97,13 @@
           type="vertical-align-top"
           @click="logEvent('toLogout')"
         />
-        <!--     input：调节声音大小       -->
         <i
           class="playerBtn el-icon-scissors"
           title="截取关键帧图片"
           type="customer-service"
-          @click="screenshot(time)"
+          @click="screenShot(time)"
         />
+        <!-- 音量调节 -->
         <input
           type="range"
           min="0"
@@ -130,8 +129,18 @@
             @mouseenter="progressMouseEnter"
             @mouseleave="progressMouseLeave"
           ></progress>
-          <span class="login" ref="login"></span>
-          <span class="logout" ref="logout"></span>
+          <!-- 入点 -->
+          <span
+            class="login"
+            :style="{ left: loginPosition + '%' }"
+            ref="login"
+          ></span>
+          <!-- 出点 -->
+          <span
+            class="logout"
+            :style="{ right: 100 - logOutPosition + '%' }"
+            ref="logout"
+          ></span>
           <img class="video_preview" ref="preview" src="" />
         </div>
       </div>
@@ -142,6 +151,7 @@
 <script>
 import { mapState, mapActions, mapMutations } from "vuex";
 import API from "@/network/api";
+import catalogVue from "../../views/catalog.vue";
 
 export default {
   name: "videoPlayer",
@@ -156,14 +166,11 @@ export default {
       ifPreviewMouseDown: false, //进度条实时变化
       ifPreview: false, //进度条预览图
       ifVolumeMouseDown: false, //音量实时变化
-      loginTime: null, //入点时间string类型
-      logoutTime: null, //出点时间string类型
-      start: null, //入点数值number，用来算时长
     };
   },
   props: {
     videoInfo: Object,
-    logReset: Boolean,
+    level: String,
   },
   created() {},
   mounted() {
@@ -176,25 +183,74 @@ export default {
     clearInterval(this.timer);
     this.timer = null;
     document.removeEventListener("keydown", this.videoPlayerKeyEvent);
-  },
-  watch: {
-    logReset: "updateVideoLog",
+    this.setStartPoint("0");
+    this.setOutPoint("0");
   },
   computed: {
     getPlayerDuration() {
       return this.player.duration;
     },
-    ...mapState("common", ["currentTask"]),
+    ...mapState("common", [
+      "currentTask",
+      "programData",
+      "fragmentData",
+      "scenesData",
+    ]),
+    loginPosition() {
+      let position = "0";
+      let duration = this.videoInfo.duration / 1000;
+      switch (this.level) {
+        case "节目层":
+          position = ((1 * this.programData.startPoint.value) / duration) * 100;
+          break;
+        case "片段层":
+          position =
+            ((1 * this.fragmentData.startPoint.value) / this.player.duration) *
+            100;
+          break;
+        case "场景层":
+          position =
+            ((1 * this.scenesData.startPoint.value) / this.player.duration) *
+            100;
+          break;
+        default:
+          null;
+      }
+      position;
+      return position;
+    },
+    logOutPosition() {
+      let position = "0";
+      let duration = this.videoInfo.duration / 1000;
+      switch (this.level) {
+        case "节目层":
+          position = ((1 * this.programData.outPoint.value) / duration) * 100;
+          break;
+        case "片段层":
+          position =
+            ((1 * this.fragmentData.outPoint.value) / this.player.duration) *
+            100;
+          break;
+        case "场景层":
+          position =
+            ((1 * this.scenesData.outPoint.value) / this.player.duration) * 100;
+          break;
+        default:
+          null;
+      }
+      return position;
+    },
   },
   methods: {
     ...mapActions("common", ["updateScreenshotList"]),
-    ...mapMutations("common", ["setLoginTime", "setLogTime"]),
-    updateVideoLog() {
-      //当父组件保存或者取消时，将入点和出点重置
-      if (this.logReset === false) {
-        this.logEvent("logRemove");
-      }
-    },
+    ...mapMutations("common", [
+      "setStartPoint",
+      "setOutPoint",
+      "setFragmentStartPoint",
+      "setFragmentOutPoint",
+      "setScenesStartPoint",
+      "setScenesOutPoint",
+    ]),
     videoPlayerKeyEvent(event) {
       let myVid = this.player;
       if (event.key === " " && this.ifPlay === false) {
@@ -294,41 +350,70 @@ export default {
           break;
       }
     },
+    // 打点位置更改，更改入点出点的样式位置
+    resetPointPos(login, logout, isStartPoint, value) {
+      let leftLog = isNaN(parseFloat(login.style.left))
+        ? 0
+        : parseFloat(login.style.left);
+      let rightLog = isNaN(parseFloat(logout.style.right))
+        ? 0
+        : parseFloat(logout.style.right);
+      if (isStartPoint) {
+        if (value <= 100 - rightLog) {
+          login.style.left = value + "%";
+        } else {
+          login.style.left = value + "%";
+          logout.style.right = 100 - value + "%";
+        }
+      } else {
+        if (value > leftLog) {
+          logout.style.right = 100 - value + "%";
+        } else {
+          login.style.left = value + "%";
+          logout.style.right = 100 - value + "%";
+        }
+      }
+    },
     logEvent(status) {
+      // 位置的百分比，用于设置入点出点线条的位置
       let logIndex = (this.player.currentTime / this.player.duration) * 100;
-      let logTime = timeFormat(
-        this.player.currentTime,
-        this.videoInfo.frameRate
-      );
       switch (status) {
+        // 打入点
         case "login":
-          ifLoginSmall(
+          this.resetPointPos(
             this.$refs.login,
             this.$refs.logout,
             true,
-            logIndex,
-            logTime
+            logIndex
           );
-          this.start = this.player.currentTime;
-          this.loginTime = logTime;
-          if (this.logReset === true) this.setLoginTime(this.loginTime);
+          this.changePoint(true);
+          this.setStartPoint(this.player.currentTime);
+          if (logIndex > this.logOutPosition) {
+            this.changePoint(false);
+          }
           break;
+        // 打出点
         case "logout":
           // eslint-disable-next-line no-case-declarations
-          let time = timeFormat(this.player.currentTime - this.start, this.videoInfo.frameRate);
-          if (this.logReset === true) this.setLogTime(time);
-          ifLoginSmall(
+          this.resetPointPos(
             this.$refs.login,
             this.$refs.logout,
             false,
-            logIndex,
-            logTime
+            logIndex
           );
+          this.changePoint(false);
+          if (logIndex < this.loginPosition) {
+            this.changePoint(true);
+          }
           break;
+        // 清除入点出点
         case "logRemove":
           this.$refs.login.style.left = 0;
+          this.setStartPoint(0);
           this.$refs.logout.style.right = 0;
+          this.setOutPoint(this.player.duration);
           break;
+        // 跳到入点
         case "toLogin":
           // eslint-disable-next-line no-case-declarations
           let left = isNaN(parseFloat(this.$refs.login.style.left))
@@ -343,6 +428,7 @@ export default {
           this.player.pause();
           this.ifPlay = false;
           break;
+        // 跳到出点
         case "toLogout":
           // eslint-disable-next-line no-case-declarations
           let right = isNaN(parseFloat(this.$refs.logout.style.right))
@@ -359,28 +445,35 @@ export default {
           this.ifPlay = false;
           break;
       }
-
-      function ifLoginSmall(login, logout, ifLogin, value, logTime) {
-        let leftLog = isNaN(parseFloat(login.style.left))
-          ? 0
-          : parseFloat(login.style.left);
-        let rightLog = isNaN(parseFloat(logout.style.right))
-          ? 0
-          : parseFloat(logout.style.right);
-        if (ifLogin) {
-          if (value <= 100 - rightLog) {
-            login.style.left = value + "%";
-          } else {
-            login.style.left = value + "%";
-            logout.style.right = 100 - value + "%";
-          }
-        } else {
-          if (value > leftLog) {
-            logout.style.right = 100 - value + "%";
-          } else {
-            login.style.left = value + "%";
-            logout.style.right = 100 - value + "%";
-          }
+    },
+    changePoint(isStart) {
+      if (isStart) {
+        switch (this.level) {
+          case "节目层":
+            this.setStartPoint(this.player.currentTime);
+            break;
+          case "片段层":
+            this.setFragmentStartPoint(this.player.currentTime);
+            break;
+          case "场景层":
+            this.setScenesStartPoint(this.player.currentTime);
+            break;
+          default:
+            null;
+        }
+      } else {
+        switch (this.level) {
+          case "节目层":
+            this.setOutPoint(this.player.currentTime);
+            break;
+          case "片段层":
+            this.setFragmentOutPoint(this.player.currentTime);
+            break;
+          case "场景层":
+            this.setScenesOutPoint(this.player.currentTime);
+            break;
+          default:
+            null;
         }
       }
     },
@@ -395,8 +488,8 @@ export default {
       );
     },
     progressMouseEnter() {
-      this.ifPreview = true;
-      this.$refs.preview.style.display = "block";
+      // this.ifPreview = true;
+      // this.$refs.preview.style.display = "block";
     },
     progressMouseDown() {
       this.ifPreviewMouseDown = true;
@@ -431,27 +524,47 @@ export default {
       this.ifPreviewMouseDown = false;
     },
     progressMouseLeave() {
-      this.ifPreview = false;
-      this.$refs.preview.style.display = "none";
+      // this.ifPreview = false;
+      // this.$refs.preview.style.display = "none";
+      this.ifPreviewMouseDown = false;
     },
     // 截图操作
-    async screenshot() {
+    async screenShot() {
       this.playerBtnEvent("pause");
       this.loading = true;
-      // TODO 改成本地截图上传
-      try {
-        let res = await API.getscreenshotList(
-          this.player.currentTime,
-          this.currentTask.id
-        );
-        if (res.code === 200) {
-          this.updateScreenshotList(res.data);
+      let res = await API.keyFrameCut(
+        this.player.currentTime * 1000,
+        this.videoInfo.address
+      );
+      this.loading = false;
+      if (res.code === 200) {
+        switch (this.level) {
+          case "节目层":
+            this.programData.keyFrames.push({
+              address: res.data,
+              description: "节目层关键帧",
+              check: 0,
+            });
+            break;
+          case "片段层":
+            this.fragmentData.keyFrames.push({
+              address: res.data,
+              description: "片段层关键帧",
+              check: 0,
+            });
+            break;
+          case "场景层":
+            this.scenesData.keyFrames.push({
+              address: res.data,
+              description: "场景层关键帧",
+              check: 0,
+            });
+            break;
+          default:
+            null;
         }
-        this.loading = false;
-      } catch (e) {
-        this.$emit(e);
-        this.loading = false;
       }
+      this.loading = false;
     },
     //改变播放视频声音大小
     volumeEvent(status) {
@@ -480,15 +593,6 @@ export default {
           break;
       }
     },
-    // btnClick() {
-    //     //入点，出点时间
-    //     let left = isNaN(parseFloat(this.$refs.login.style.left)) ? 0 : parseFloat(this.$refs.login.style.left)
-    //     let right = isNaN(parseFloat(this.$refs.logout.style.right)) ? 0 : parseFloat(this.$refs.logout.style.right)
-    //     console.log('入点时间', this.player.duration * left / 100)
-    //     console.log(timeFormat(this.player.duration * left / 100, this.videoInfo.frameRate))
-    //     console.log('出点时间', this.player.duration - this.player.duration * right / 100)
-    //     console.log(timeFormat(this.player.duration - this.player.duration * right / 100, this.videoInfo.frameRate))
-    // }
   },
 };
 
@@ -509,13 +613,13 @@ function timeFormat(time, frameRate) {
   let setTime = parseInt(time);
   let setFrame = time - parseInt(time);
   if (setTime < 60) {
-    timeStr = `00:00:${stringFormat(setTime)}:${stringFrame(setFrame)}`;
+    timeStr = `00:00:${stringFormat(setTime)}.${stringFrame(setFrame)}`;
   } else if (setTime >= 60 && setTime < 3600) {
     minuteTime = parseInt(setTime / 60);
     secondTime = parseInt(setTime % 60);
     timeStr = `00:${stringFormat(minuteTime)}:${stringFormat(
       secondTime
-    )}:${stringFrame(setFrame)}`;
+    )}.${stringFrame(setFrame)}`;
   } else if (setTime >= 3600) {
     let _time = parseInt(setTime % 3600);
     hourTime = parseInt(setTime / 3600);
@@ -523,7 +627,7 @@ function timeFormat(time, frameRate) {
     secondTime = parseInt(_time % 60);
     timeStr = `${stringFormat(hourTime)}:${stringFormat(
       minuteTime
-    )}:${stringFormat(secondTime)}:${stringFrame(setFrame)}`;
+    )}:${stringFormat(secondTime)}.${stringFrame(setFrame)}`;
   }
   return timeStr;
 }

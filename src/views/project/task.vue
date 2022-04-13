@@ -333,11 +333,9 @@ export default {
       // 修改接口实现获取视频信息
       let res = await API.getVideoInfo(row.id);
       if (res.code === 200) {
-        // TODO 暂时测试，使用测试数据，正式需要使用一下操作
-        // commit("setVideoInfo", res.data)
+        this.setVideoInfo(res.data)
       } else {
         this.$throw(res);
-        this.setVideoInfo("setVideoInfo", {});
       }
       // 保存当前任务信息
       this.storedTaskInfo({
@@ -354,7 +352,6 @@ export default {
       this.$store.commit("storedTaskPage", this.currentPage);
     },
     // 打开添加项目浮窗，初始化数据
-    // TODO 添加权限验证
     addTask() {
       this.dialogVisible = true;
       this.taskForm.project = this.currentProject.id;

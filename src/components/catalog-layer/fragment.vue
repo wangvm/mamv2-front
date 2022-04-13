@@ -5,17 +5,39 @@
     </div>
     <el-row :gutter="10">
       <el-col :span="3" class="colLabel"> 题名 </el-col>
-      <el-col :span="21">
+      <el-col :span="20">
         <el-input v-model="fragmentData.title.value" size="medium"></el-input>
+      </el-col>
+      <el-col :span="1" class="colLabel">
+        <el-switch
+          v-model="fragmentData.title.check"
+          active-color="#13ce66"
+          inactive-color="#ff4949"
+          active-value="1"
+          inactive-value="0"
+          v-if="displaySwitch"
+        >
+        </el-switch>
       </el-col>
     </el-row>
     <el-row :gutter="10">
       <el-col :span="3" class="colLabel">内容描述</el-col>
-      <el-col :span="21">
+      <el-col :span="20">
         <el-input
           type="textarea"
           v-model="fragmentData.description.value"
         ></el-input>
+      </el-col>
+      <el-col :span="1" class="colLabel">
+        <el-switch
+          v-model="fragmentData.description.check"
+          active-color="#13ce66"
+          inactive-color="#ff4949"
+          active-value="1"
+          inactive-value="0"
+          v-if="displaySwitch"
+        >
+        </el-switch>
       </el-col>
     </el-row>
     <el-row :gutter="10">
@@ -37,15 +59,56 @@
           ></el-option>
         </el-select>
       </el-col>
+      <el-col :span="1" class="colLabel">
+        <el-switch
+          v-model="fragmentData.subtitleForm.check"
+          active-color="#13ce66"
+          inactive-color="#ff4949"
+          active-value="1"
+          inactive-value="0"
+          v-if="displaySwitch"
+        >
+        </el-switch>
+      </el-col>
     </el-row>
     <el-row :gutter="10">
       <el-col :span="3" class="colLabel">入点</el-col>
       <el-col :span="6">
-        <el-input v-model="fragmentData.startPoint.value" disabled />
+        <div>
+          <p class="colLabel" style="text-align: left">
+            {{ startPoint }}
+          </p>
+        </div>
+      </el-col>
+      <el-col :span="1" class="colLabel">
+        <el-switch
+          v-model="fragmentData.startPoint.check"
+          active-color="#13ce66"
+          inactive-color="#ff4949"
+          active-value="1"
+          inactive-value="0"
+          v-if="displaySwitch"
+        >
+        </el-switch>
       </el-col>
       <el-col :span="2" class="colLabel">出点</el-col>
       <el-col :span="6">
-        <el-input v-model="fragmentData.outPoint.value" disabled />
+        <div>
+          <p class="colLabel" style="text-align: left">
+            {{ outPoint }}
+          </p>
+        </div>
+      </el-col>
+      <el-col :span="1" class="colLabel">
+        <el-switch
+          v-model="fragmentData.outPoint.check"
+          active-color="#13ce66"
+          inactive-color="#ff4949"
+          active-value="1"
+          inactive-value="0"
+          v-if="displaySwitch"
+        >
+        </el-switch>
       </el-col>
     </el-row>
     <el-row :gutter="10">
@@ -53,17 +116,36 @@
       <el-col :span="6">
         <el-input v-model="fragmentData.sourceAcquiringMethod.value" />
       </el-col>
+      <el-col :span="1" class="colLabel">
+        <el-switch
+          v-model="fragmentData.sourceAcquiringMethod.check"
+          active-color="#13ce66"
+          inactive-color="#ff4949"
+          active-value="1"
+          inactive-value="0"
+          v-if="displaySwitch"
+        >
+        </el-switch>
+      </el-col>
       <el-col :span="3" class="colLabel">资料提供者</el-col>
       <el-col :span="6">
         <el-input v-model="fragmentData.sourceProvider.value" />
       </el-col>
+      <el-col :span="1" class="colLabel">
+        <el-switch
+          v-model="fragmentData.sourceProvider.check"
+          active-color="#13ce66"
+          inactive-color="#ff4949"
+          active-value="1"
+          inactive-value="0"
+          v-if="displaySwitch"
+        >
+        </el-switch>
+      </el-col>
     </el-row>
     <el-row :gutter="10">
       <el-col :span="3" class="colLabel">关键帧</el-col>
-      <el-col :span="21" class="right-card-screenshot">
-        <div style="color: #f56c6c">
-          {{ fragmentData.keyFrames.check === 1 ? "不合格" : "" }}
-        </div>
+      <el-col :span="20" class="right-card-screenshot">
         <div class="screenshot-list">
           <div
             class="list-items"
@@ -74,16 +156,25 @@
               <img
                 src="@/assets/images/close.png"
                 alt="图片加载失败"
-                @click="deleteClick(item.src)"
+                @click="deleteClick(item.address)"
               />
             </div>
-            <img class="item-image" :src="item.src" alt="" />
+            <img class="item-image" :src="item.address" alt="" />
             <el-input
               placeholder="请输入关键帧描述"
               v-model="item.description"
               size="mini"
               clearable
             ></el-input>
+            <el-switch
+              v-model="item.check"
+              active-color="#13ce66"
+              inactive-color="#ff4949"
+              active-value="1"
+              inactive-value="0"
+              v-if="displaySwitch"
+            >
+            </el-switch>
           </div>
         </div>
       </el-col>
@@ -95,13 +186,41 @@
 import { mapState, mapMutations } from "vuex";
 import API from "@/network/api";
 import { message } from "@/assets/js/message";
+import timeFormat from "@/utils/timeFormat";
 
 export default {
   data() {
     return {};
   },
   computed: {
-    ...mapState("common", ["fragmentData", "authority"]),
+    ...mapState("common", [
+      "fragmentData",
+      "authority",
+      "currentTask",
+      "videoInfo",
+    ]),
+    displaySwitch() {
+      return (
+        (this.currentTask.status === "审核中" &&
+          this.authority === "ROLE_AUDITOR") ||
+        (this.currentTask.status === "待修改" &&
+          this.authority === "ROLE_CATALOGER")
+      );
+    },
+    startPoint() {
+      let time = timeFormat(
+        this.fragmentData.startPoint.value,
+        this.videoInfo.frameRate
+      );
+      return time;
+    },
+    outPoint() {
+      let time = timeFormat(
+        this.fragmentData.outPoint.value,
+        this.videoInfo.frameRate
+      );
+      return time;
+    },
   },
   methods: {
     // 保存更改
@@ -151,7 +270,7 @@ export default {
       display: flex;
       justify-content: flex-end;
       align-items: center;
-      margin-bottom: 5px;
+      margin: 0 35px 10px 0;
     }
     .right-card-screenshot {
       height: auto;
