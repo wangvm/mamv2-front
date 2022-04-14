@@ -533,7 +533,7 @@ export default {
       this.playerBtnEvent("pause");
       this.loading = true;
       let res = await API.keyFrameCut(
-        this.player.currentTime * 1000,
+        parseInt(this.player.currentTime * 1000),
         this.videoInfo.address
       );
       this.loading = false;
