@@ -686,7 +686,7 @@ export default {
         border: 0.1em solid rgb(204, 206, 211);
         .list-items {
           width: 13em;
-          height: 10em;
+          height: 13em;
           display: flex;
           flex-direction: column;
           align-items: center;
