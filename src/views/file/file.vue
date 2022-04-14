@@ -16,11 +16,6 @@
           label="时长(时:分:秒:帧)"
         ></el-table-column>
         <el-table-column prop="frameRate" label="帧率"></el-table-column>
-        <!-- <el-table-column label="" min-width="100%">
-          <template slot-scope="scope">
-            <el-button size="mini" type="danger" @click="handleDelete(scope.row)">删除</el-button>
-          </template>
-        </el-table-column> -->
       </el-table>
     </el-main>
     <el-footer class="pagination">
@@ -83,7 +78,7 @@ export default {
       // 文件列表数据
       tableData: [],
       // 上传文件url
-      uploadAction: Config.uploadUrl,
+      uploadAction: "http://192.168.111.128:8080" + "/mamv2/file/upload/video",
       fileList: [],
     };
   },
@@ -127,7 +122,7 @@ export default {
         res.data.content.map((record) => {
           // 插入index
           record.index = start++;
-          record.time = timeFormat(record.duration, record.frameRate);
+          record.time = timeFormat(record.duration / 1000, record.frameRate);
           return record;
         });
         this.tableData = res.data.content;
