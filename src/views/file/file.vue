@@ -78,7 +78,7 @@ export default {
       // 文件列表数据
       tableData: [],
       // 上传文件url
-      uploadAction: "http://192.168.111.128:8080" + "/mamv2/file/upload/video",
+      uploadAction: "http://mams.cuz.edu.cn/api" + "/file/upload/video",
       fileList: [],
     };
   },

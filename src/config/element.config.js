@@ -79,6 +79,7 @@ import {
   Notification,
   Descriptions,
   DescriptionsItem,
+  Drawer
 } from 'element-ui';
 
 Vue.use(DescriptionsItem);
@@ -156,6 +157,7 @@ Vue.use(Calendar);
 Vue.use(Backtop);
 Vue.use(PageHeader);
 Vue.use(CascaderPanel);
+Vue.use(Drawer)
 
 Vue.use(Loading.directive);
 

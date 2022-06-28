@@ -8,17 +8,6 @@
       <el-col :span="20">
         <el-input v-model="fragmentData.title.value" size="medium"></el-input>
       </el-col>
-      <el-col :span="1" class="colLabel">
-        <el-switch
-          v-model="fragmentData.title.check"
-          active-color="#13ce66"
-          inactive-color="#ff4949"
-          active-value="1"
-          inactive-value="0"
-          v-if="displaySwitch"
-        >
-        </el-switch>
-      </el-col>
     </el-row>
     <el-row :gutter="10">
       <el-col :span="3" class="colLabel">内容描述</el-col>
@@ -27,17 +16,6 @@
           type="textarea"
           v-model="fragmentData.description.value"
         ></el-input>
-      </el-col>
-      <el-col :span="1" class="colLabel">
-        <el-switch
-          v-model="fragmentData.description.check"
-          active-color="#13ce66"
-          inactive-color="#ff4949"
-          active-value="1"
-          inactive-value="0"
-          v-if="displaySwitch"
-        >
-        </el-switch>
       </el-col>
     </el-row>
     <el-row :gutter="10">
@@ -59,17 +37,6 @@
           ></el-option>
         </el-select>
       </el-col>
-      <el-col :span="1" class="colLabel">
-        <el-switch
-          v-model="fragmentData.subtitleForm.check"
-          active-color="#13ce66"
-          inactive-color="#ff4949"
-          active-value="1"
-          inactive-value="0"
-          v-if="displaySwitch"
-        >
-        </el-switch>
-      </el-col>
     </el-row>
     <el-row :gutter="10">
       <el-col :span="3" class="colLabel">入点</el-col>
@@ -80,17 +47,7 @@
           </p>
         </div>
       </el-col>
-      <el-col :span="1" class="colLabel">
-        <el-switch
-          v-model="fragmentData.startPoint.check"
-          active-color="#13ce66"
-          inactive-color="#ff4949"
-          active-value="1"
-          inactive-value="0"
-          v-if="displaySwitch"
-        >
-        </el-switch>
-      </el-col>
+
       <el-col :span="2" class="colLabel">出点</el-col>
       <el-col :span="6">
         <div>
@@ -99,48 +56,15 @@
           </p>
         </div>
       </el-col>
-      <el-col :span="1" class="colLabel">
-        <el-switch
-          v-model="fragmentData.outPoint.check"
-          active-color="#13ce66"
-          inactive-color="#ff4949"
-          active-value="1"
-          inactive-value="0"
-          v-if="displaySwitch"
-        >
-        </el-switch>
-      </el-col>
     </el-row>
     <el-row :gutter="10">
       <el-col :span="3" class="colLabel">资料获取方式</el-col>
       <el-col :span="6">
         <el-input v-model="fragmentData.sourceAcquiringMethod.value" />
       </el-col>
-      <el-col :span="1" class="colLabel">
-        <el-switch
-          v-model="fragmentData.sourceAcquiringMethod.check"
-          active-color="#13ce66"
-          inactive-color="#ff4949"
-          active-value="1"
-          inactive-value="0"
-          v-if="displaySwitch"
-        >
-        </el-switch>
-      </el-col>
       <el-col :span="3" class="colLabel">资料提供者</el-col>
       <el-col :span="6">
         <el-input v-model="fragmentData.sourceProvider.value" />
-      </el-col>
-      <el-col :span="1" class="colLabel">
-        <el-switch
-          v-model="fragmentData.sourceProvider.check"
-          active-color="#13ce66"
-          inactive-color="#ff4949"
-          active-value="1"
-          inactive-value="0"
-          v-if="displaySwitch"
-        >
-        </el-switch>
       </el-col>
     </el-row>
     <el-row :gutter="10">
@@ -166,15 +90,6 @@
               size="mini"
               clearable
             ></el-input>
-            <el-switch
-              v-model="item.check"
-              active-color="#13ce66"
-              inactive-color="#ff4949"
-              active-value="1"
-              inactive-value="0"
-              v-if="displaySwitch"
-            >
-            </el-switch>
           </div>
         </div>
       </el-col>

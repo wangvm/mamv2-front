@@ -2,6 +2,9 @@
   <div class="home">
     <!-- 右上角操作按钮 -->
     <div class="onload">
+      <el-button type="primary" size="small" @click="auditComments()"
+        >审核意见</el-button
+      >
       <template v-if="authority === 'ROLE_AUDITOR'">
         <el-button type="success" size="small" @click="repulse()"
           >打回</el-button
@@ -20,7 +23,11 @@
     <div class="home-left">
       <!-- 封装的播放器 -->
       <div class="home-video">
-        <videoPlayer :video-info="videoInfo" :level="currentLevel" ref="videoPlayer" />
+        <videoPlayer
+          :video-info="videoInfo"
+          :level="currentLevel"
+          ref="videoPlayer"
+        />
       </div>
       <!-- 编目条目菜单 -->
       <!-- 使用Tree树形控件实现 -->
@@ -63,11 +70,11 @@
         <Program ref="program"></Program>
       </template>
       <template v-else-if="currentLevel === '片段层'">
-        <Fragment ref="fragment"></Fragment
-      ></template>
+        <Fragment ref="fragment"></Fragment>
+      </template>
       <template v-else-if="currentLevel === '场景层'">
-        <Scenes ref="scenes"></Scenes
-      ></template>
+        <Scenes ref="scenes"></Scenes>
+      </template>
     </div>
   </div>
 </template>
@@ -103,6 +110,7 @@ export default {
       // key为数据的id,值是整个fragmentData
       fragmentMap: null,
       scenesMap: null,
+      commentsVisible: false,
     };
   },
   created() {
@@ -323,6 +331,9 @@ export default {
         this.$throw(res);
       }
     },
+    async auditComments() {
+      this.commentsVisible = true;
+    },
   },
 };
 </script>
@@ -374,7 +385,7 @@ export default {
     position: fixed;
     top: 1em;
     right: 1em;
-    width: 15em;
+    width: 25em;
     height: 3em;
   }
   .custom-tree-node {

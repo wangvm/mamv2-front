@@ -8,17 +8,6 @@
       <el-col :span="20">
         <el-input v-model="programData.title.value" size="medium"></el-input>
       </el-col>
-      <el-col :span="1" class="colLabel">
-        <el-switch
-          v-model="programData.title.check"
-          active-color="#13ce66"
-          inactive-color="#ff4949"
-          active-value="1"
-          inactive-value="0"
-          v-if="displaySwitch"
-        >
-        </el-switch>
-      </el-col>
     </el-row>
     <el-row :gutter="10">
       <el-col :span="3" class="colLabel">内容描述</el-col>
@@ -27,17 +16,6 @@
           type="textarea"
           v-model="programData.description.value"
         ></el-input>
-      </el-col>
-      <el-col :span="1" class="colLabel">
-        <el-switch
-          v-model="programData.description.check"
-          active-color="#13ce66"
-          inactive-color="#ff4949"
-          active-value="1"
-          inactive-value="0"
-          v-if="displaySwitch"
-        >
-        </el-switch>
       </el-col>
     </el-row>
     <el-row :gutter="10">
@@ -50,17 +28,7 @@
         >
         </el-date-picker>
       </el-col>
-      <el-col :span="1" class="colLabel">
-        <el-switch
-          v-model="programData.debutDate.check"
-          active-color="#13ce66"
-          inactive-color="#ff4949"
-          active-value="1"
-          inactive-value="0"
-          v-if="displaySwitch"
-        >
-        </el-switch>
-      </el-col>
+
       <el-col :span="2" class="colLabel">节目类型</el-col>
       <el-col :span="6">
         <el-select
@@ -72,17 +40,6 @@
           <el-option label="综艺" value="综艺"></el-option>
           <el-option label="素材" value="素材"></el-option>
         </el-select>
-      </el-col>
-      <el-col :span="1" class="colLabel">
-        <el-switch
-          v-model="programData.programType.check"
-          active-color="#13ce66"
-          inactive-color="#ff4949"
-          active-value="1"
-          inactive-value="0"
-          v-if="displaySwitch"
-        >
-        </el-switch>
       </el-col>
     </el-row>
     <el-row :gutter="10">
@@ -103,17 +60,6 @@
             value="既有画面叠加字幕也有隐藏字幕"
           ></el-option>
         </el-select>
-      </el-col>
-      <el-col :span="1" class="colLabel">
-        <el-switch
-          v-model="programData.subtitleForm.check"
-          active-color="#13ce66"
-          inactive-color="#ff4949"
-          active-value="1"
-          inactive-value="0"
-          v-if="displaySwitch"
-        >
-        </el-switch>
       </el-col>
       <el-col :span="2" class="colLabel">节目形态</el-col>
       <el-col :span="6">
@@ -138,33 +84,11 @@
           <el-option label="广告" value="广告"></el-option>
         </el-select>
       </el-col>
-      <el-col :span="1" class="colLabel">
-        <el-switch
-          v-model="programData.programForm.check"
-          active-color="#13ce66"
-          inactive-color="#ff4949"
-          active-value="1"
-          inactive-value="0"
-          v-if="displaySwitch"
-        >
-        </el-switch>
-      </el-col>
     </el-row>
     <el-row :gutter="10">
       <el-col :span="3" class="colLabel">创建者名称</el-col>
       <el-col :span="20">
         <el-input v-model="programData.creator.value"></el-input>
-      </el-col>
-      <el-col :span="1" class="colLabel">
-        <el-switch
-          v-model="programData.creator.check"
-          active-color="#13ce66"
-          inactive-color="#ff4949"
-          active-value="1"
-          inactive-value="0"
-          v-if="displaySwitch"
-        >
-        </el-switch>
       </el-col>
     </el-row>
     <el-row :gutter="10">
@@ -172,33 +96,11 @@
       <el-col :span="20">
         <el-input v-model="programData.contributor.value" />
       </el-col>
-      <el-col :span="1" class="colLabel">
-        <el-switch
-          v-model="programData.contributor.check"
-          active-color="#13ce66"
-          inactive-color="#ff4949"
-          active-value="1"
-          inactive-value="0"
-          v-if="displaySwitch"
-        >
-        </el-switch>
-      </el-col>
     </el-row>
     <el-row :gutter="10">
       <el-col :span="3" class="colLabel">栏目</el-col>
       <el-col :span="6">
         <el-input v-model="programData.column.value" />
-      </el-col>
-      <el-col :span="1" class="colLabel">
-        <el-switch
-          v-model="programData.column.check"
-          active-color="#13ce66"
-          inactive-color="#ff4949"
-          active-value="1"
-          inactive-value="0"
-          v-if="displaySwitch"
-        >
-        </el-switch>
       </el-col>
       <el-col :span="2" class="colLabel">色彩</el-col>
       <el-col :span="6">
@@ -206,17 +108,6 @@
           <el-radio label="彩色" value="1"></el-radio>
           <el-radio label="黑白" value="2"></el-radio>
         </el-radio-group>
-      </el-col>
-      <el-col :span="1" class="colLabel">
-        <el-switch
-          v-model="programData.color.check"
-          active-color="#13ce66"
-          inactive-color="#ff4949"
-          active-value="1"
-          inactive-value="0"
-          v-if="displaySwitch"
-        >
-        </el-switch>
       </el-col>
     </el-row>
     <el-row :gutter="10">
@@ -228,17 +119,6 @@
           <el-radio label="SECAM" value="3"></el-radio>
         </el-radio-group>
       </el-col>
-      <el-col :span="1" class="colLabel">
-        <el-switch
-          v-model="programData.system.check"
-          active-color="#13ce66"
-          inactive-color="#ff4949"
-          active-value="1"
-          inactive-value="0"
-          v-if="displaySwitch"
-        >
-        </el-switch>
-      </el-col>
       <el-col :span="2" class="colLabel">声道格式</el-col>
       <el-col :span="8">
         <el-radio-group
@@ -249,17 +129,6 @@
           <el-radio label="双声道" value="2"></el-radio>
           <el-radio label="立体声" value="3"></el-radio>
         </el-radio-group>
-      </el-col>
-      <el-col :span="1" class="colLabel">
-        <el-switch
-          v-model="programData.audioChannel.check"
-          active-color="#13ce66"
-          inactive-color="#ff4949"
-          active-value="1"
-          inactive-value="0"
-          v-if="displaySwitch"
-        >
-        </el-switch>
       </el-col>
     </el-row>
     <el-row :gutter="10">
@@ -274,17 +143,6 @@
           <el-radio label="14:9" value="3"></el-radio>
         </el-radio-group>
       </el-col>
-      <el-col :span="1" class="colLabel">
-        <el-switch
-          v-model="programData.aspectRatio.check"
-          active-color="#13ce66"
-          inactive-color="#ff4949"
-          active-value="1"
-          inactive-value="0"
-          v-if="displaySwitch"
-        >
-        </el-switch>
-      </el-col>
     </el-row>
     <el-row :gutter="10">
       <el-col :span="3" class="colLabel">入点</el-col>
@@ -295,17 +153,6 @@
           </p>
         </div>
       </el-col>
-      <el-col :span="1" class="colLabel">
-        <el-switch
-          v-model="programData.startPoint.check"
-          active-color="#13ce66"
-          inactive-color="#ff4949"
-          active-value="1"
-          inactive-value="0"
-          v-if="displaySwitch"
-        >
-        </el-switch>
-      </el-col>
       <el-col :span="2" class="colLabel">出点</el-col>
       <el-col :span="6">
         <div>
@@ -314,48 +161,15 @@
           </p>
         </div>
       </el-col>
-      <el-col :span="1" class="colLabel">
-        <el-switch
-          v-model="programData.outPoint.check"
-          active-color="#13ce66"
-          inactive-color="#ff4949"
-          active-value="1"
-          inactive-value="0"
-          v-if="displaySwitch"
-        >
-        </el-switch>
-      </el-col>
     </el-row>
     <el-row :gutter="10">
       <el-col :span="3" class="colLabel">资料获取方式</el-col>
       <el-col :span="6">
         <el-input v-model="programData.sourceAcquiringMethod.value" />
       </el-col>
-      <el-col :span="1" class="colLabel">
-        <el-switch
-          v-model="programData.sourceAcquiringMethod.check"
-          active-color="#13ce66"
-          inactive-color="#ff4949"
-          active-value="1"
-          inactive-value="0"
-          v-if="displaySwitch"
-        >
-        </el-switch>
-      </el-col>
       <el-col :span="3" class="colLabel">资料提供者</el-col>
       <el-col :span="6">
         <el-input v-model="programData.sourceProvider.value" />
-      </el-col>
-      <el-col :span="1" class="colLabel">
-        <el-switch
-          v-model="programData.sourceProvider.check"
-          active-color="#13ce66"
-          inactive-color="#ff4949"
-          active-value="1"
-          inactive-value="0"
-          v-if="displaySwitch"
-        >
-        </el-switch>
       </el-col>
     </el-row>
     <el-row :gutter="10">
@@ -381,15 +195,6 @@
               size="mini"
               clearable
             ></el-input>
-            <el-switch
-              v-model="item.check"
-              active-color="#13ce66"
-              inactive-color="#ff4949"
-              active-value="1"
-              inactive-value="0"
-              v-if="displaySwitch"
-            >
-            </el-switch>
           </div>
         </div>
       </el-col>
