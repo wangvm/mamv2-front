@@ -116,6 +116,14 @@
         <el-form-item label="项目状态" prop="status">
           <el-input :value="taskForm.status" disabled></el-input>
         </el-form-item>
+        <el-form-item label="测试" prop="test">
+          <LoadSelect
+            v-model="selected"
+            :data="testOptions"
+            :page="page"
+            :request="getData"
+          ></LoadSelect>
+        </el-form-item>
         <el-form-item>
           <el-button type="primary" @click="submitForm('taskForm')"
             >提交</el-button
@@ -132,14 +140,19 @@ import API from "@/network/api";
 import { message } from "@/assets/js/message";
 import BaseHeader from "@/components/BaseHeader.vue";
 import { mapState, mapActions, mapMutations } from "vuex";
-import AppVue from '../../App.vue';
+import LoadSelect from "@/components/LoadSelect.vue";
+
 export default {
   name: "task",
   components: {
     BaseHeader,
+    LoadSelect,
   },
   data() {
     return {
+      selected: "",
+      page: 1,
+      testOptions: [],
       // 是否显示操作按钮
       isDisplay: "none",
       // 当前分页页数
@@ -188,7 +201,12 @@ export default {
   },
   computed: {
     // 创建时间的时间戳转化为时间
-    ...mapState("common", ["currentProject", "currentTaskPage", "authority", "account"]),
+    ...mapState("common", [
+      "currentProject",
+      "currentTaskPage",
+      "authority",
+      "account",
+    ]),
     createTime() {
       return new Date(this.taskForm.createTime).toLocaleString();
     },
@@ -198,6 +216,46 @@ export default {
   },
   methods: {
     ...mapMutations("common", ["setVideoInfo", "storedTaskInfo"]),
+    getData() {
+      // 输出页数
+      console.log(this.page);
+      // 访问后端接口API
+      return new Promise((resolve) => {
+        // 访问后端接口API
+        this.requestAPI({ page: this.page }).then((res) => {
+          this.testOptions = [...this.testOptions, ...res.result];
+          this.page = res.page;
+          resolve();
+        });
+      });
+    },
+    requestAPI({ page = 1, size = 10 } = {}) {
+      return new Promise((resolve) => {
+        let responseData = [];
+        // 假设总共的数据有50条
+        let total = 50;
+        for (let index = 1; index <= size; index++) {
+          // serial：处于第几个元素，就显示多少序号
+          let serial = index + (page - 1) * size;
+          if (serial <= 50) {
+            responseData.push({
+              label: serial,
+              value: serial,
+            });
+          }
+        }
+        page += 1;
+        // 模拟异步请求，500ms之后返回接口的数据
+        setTimeout(() => {
+          resolve({
+            total,
+            page,
+            size,
+            result: responseData,
+          });
+        }, 500);
+      });
+    },
     // back返回项目管理页面
     back() {
       this.$router.push("/manage/project");
@@ -333,7 +391,7 @@ export default {
       // 修改接口实现获取视频信息
       let res = await API.getVideoInfo(row.id);
       if (res.code === 200) {
-        this.setVideoInfo(res.data)
+        this.setVideoInfo(res.data);
       } else {
         this.$throw(res);
       }
@@ -365,8 +423,11 @@ export default {
       let res;
       if (this.manageMode) {
         res = await API.queryTaskByProject(this.currentProject.id);
-      }else{
-        res = await API.queryTaskByProjectAndUser(this.account, this.currentProject.id);
+      } else {
+        res = await API.queryTaskByProjectAndUser(
+          this.account,
+          this.currentProject.id
+        );
       }
       if (res.code === 200) {
         // 展示之前做处理，添加index和status
