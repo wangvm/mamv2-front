@@ -241,11 +241,8 @@ export default {
       this.$store.commit("storedUserPage", this.currentPage);
     },
     // 从后端获取数据
-    async getUserList(status = 0, order = "account", isAsc = 1, pageSize = 5) {
+    async getUserList(pageSize = 5) {
       let res = await Api.queryUserList(
-        status,
-        order,
-        isAsc,
         this.currentPage,
         pageSize
       );

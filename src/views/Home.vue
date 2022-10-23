@@ -65,7 +65,12 @@ export default {
         let res = await API.login(this.account, this.password);
         if (res.code === 200) {
           this.updateLoginData(res.data);
-          this.$router.push("/manage");
+          if (res.data.role === "ROLE_CATALOGER"){
+            // todo 编目员直接进入编目操作
+            this.$router.push("/manage");
+          }else{
+            this.$router.push("/manage");
+          }
         }else{
           this.$throw(res);
         }

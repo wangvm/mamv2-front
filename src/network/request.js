@@ -34,6 +34,8 @@ export default function (url, data, method = "GET") {
         params: data,
         withCredentials: true,
       });
+    } else if (method === "PUT") {
+      promise = $http.put(url, data);
     } else {
       promise = $http.post(baseUrl + url, data, { withCredentials: true });
     }

@@ -1,9 +1,6 @@
 <template>
   <div>
     <BaseHeader>
-      <template v-slot:left>
-        <el-button type="primary" @click="back">返回</el-button>
-      </template>
       <template v-slot:right>
         <el-button type="primary" @click="addTask" :disabled="!manageMode"
           >新建任务</el-button
@@ -13,19 +10,25 @@
     <el-main>
       <el-table :data="tableData" stripe :style="{ width: 100 + '%' }">
         <el-table-column prop="index" label="序号"></el-table-column>
-        <el-table-column prop="name" label="任务名称">
+        <el-table-column prop="taskName" label="任务名称">
           <template slot-scope="scope">
             <el-input
-              v-model="scope.row.name"
+              v-model="scope.row.taskName"
               v-show="scope.row.isEdit"
               autofocus
               size="mini"
             ></el-input>
-            <span v-show="!scope.row.isEdit">{{ scope.row.name }}</span>
+            <span v-show="!scope.row.isEdit">{{ scope.row.taskName }}</span>
           </template>
         </el-table-column>
-        <el-table-column prop="catalogerName" label="编目员"></el-table-column>
-        <el-table-column prop="auditorName" label="审核员"></el-table-column>
+        <el-table-column
+          prop="cataloger.username"
+          label="编目员"
+        ></el-table-column>
+        <el-table-column
+          prop="auditor.username"
+          label="审核员"
+        ></el-table-column>
         <el-table-column prop="createTime" label="创建时间"></el-table-column>
         <el-table-column prop="status" label="项目状态"></el-table-column>
         <el-table-column label="" min-width="100%">
@@ -74,11 +77,8 @@
         label-width="100px"
         :style="{ width: 400 + 'px' }"
       >
-        <el-form-item label="任务名称" prop="name">
-          <el-input v-model="taskForm.name"></el-input>
-        </el-form-item>
-        <el-form-item label="归属项目" prop="projectName">
-          <el-input :value="taskForm.projectName" disabled></el-input>
+        <el-form-item label="任务名称" prop="taskName">
+          <el-input v-model="taskForm.taskName"></el-input>
         </el-form-item>
         <el-form-item label="编目员" prop="catalogerName">
           <el-autocomplete
@@ -116,14 +116,6 @@
         <el-form-item label="项目状态" prop="status">
           <el-input :value="taskForm.status" disabled></el-input>
         </el-form-item>
-        <el-form-item label="测试" prop="test">
-          <LoadSelect
-            v-model="selected"
-            :data="testOptions"
-            :page="page"
-            :request="getData"
-          ></LoadSelect>
-        </el-form-item>
         <el-form-item>
           <el-button type="primary" @click="submitForm('taskForm')"
             >提交</el-button
@@ -146,7 +138,6 @@ export default {
   name: "task",
   components: {
     BaseHeader,
-    LoadSelect,
   },
   data() {
     return {
@@ -163,14 +154,13 @@ export default {
       dialogVisible: false,
       // 添加任务表单数据
       taskForm: {
-        name: "",
-        project: null,
-        projectName: "",
-        cataloger: null,
+        taskName: "",
+        catalogerId: null,
         catalogerName: "",
-        auditor: null,
+        auditorId: null,
         auditorName: "",
         createTime: "",
+        videoInfoId: null,
         status: "",
       },
       videoInfo: {
@@ -201,12 +191,7 @@ export default {
   },
   computed: {
     // 创建时间的时间戳转化为时间
-    ...mapState("common", [
-      "currentProject",
-      "currentTaskPage",
-      "authority",
-      "account",
-    ]),
+    ...mapState("common", ["currentTaskPage", "authority", "account"]),
     createTime() {
       return new Date(this.taskForm.createTime).toLocaleString();
     },
@@ -256,10 +241,6 @@ export default {
         }, 500);
       });
     },
-    // back返回项目管理页面
-    back() {
-      this.$router.push("/manage/project");
-    },
     // 从服务器查询编目员
     async queryCatalogers(queryString, cb) {
       if (queryString) {
@@ -305,15 +286,16 @@ export default {
     },
     handleSelectCataloger(item) {
       // 选择编目员操作
-      this.taskForm.cataloger = parseInt(item.account);
+      this.taskForm.catalogerId = parseInt(item.userId);
       this.taskForm.catalogerName = item.username;
     },
     handleSelectAuditor(item) {
       // 选择审核员操作
-      this.taskForm.auditor = parseInt(item.account);
+      this.taskForm.auditorId = parseInt(item.userId);
       this.taskForm.auditorName = item.username;
     },
     handleSelectVideo(item) {
+      this.taskForm.videoInfoId = item.id;
       // 选择视频操作
       this.videoInfo = item;
     },
@@ -322,10 +304,7 @@ export default {
     submitForm(formName) {
       this.$refs[formName].validate(async (valid) => {
         if (valid) {
-          let res = await API.addTask({
-            taskInfo: this.taskForm,
-            videoInfo: this.videoInfo,
-          });
+          let res = await API.addTask(this.taskForm);
           if (res.code === 200) {
             this.dialogVisible = false;
             this.taskForm = {
@@ -377,7 +356,7 @@ export default {
     },
     // 删除操作
     async handleDelete(row) {
-      let res = await API.deleteTask(row.id);
+      let res = await API.deleteTask(row.taskId);
       if (res.code === 200) {
         this.getTaskData();
       } else {
@@ -412,8 +391,6 @@ export default {
     // 打开添加项目浮窗，初始化数据
     addTask() {
       this.dialogVisible = true;
-      this.taskForm.project = this.currentProject.id;
-      this.taskForm.projectName = this.currentProject.name;
       this.taskForm.createTime = new Date().getTime();
       this.taskForm.status = "编目中";
     },
@@ -422,12 +399,9 @@ export default {
     async getTaskData() {
       let res;
       if (this.manageMode) {
-        res = await API.queryTaskByProject(this.currentProject.id);
+        res = await API.queryTask();
       } else {
-        res = await API.queryTaskByProjectAndUser(
-          this.account,
-          this.currentProject.id
-        );
+        res = await API.queryTaskByUser(this.account);
       }
       if (res.code === 200) {
         // 展示之前做处理，添加index和status
@@ -450,13 +424,6 @@ export default {
     // 重置
     resetForm(formName) {
       this.$refs[formName].resetFields();
-    },
-    // 获取节目层数据
-    async getProgramData(taskId, catalogId) {
-      let res = await API.getProgramRecord(catalogId, taskId);
-      if (res.code === 200) {
-        this.$store.commit("common/setProgramData", res.data);
-      }
     },
   },
   mounted: async function () {

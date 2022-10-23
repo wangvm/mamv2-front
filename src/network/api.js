@@ -3,34 +3,22 @@ import request from "@/network/request";
 export default {
   login: (account, password) => request("/login", { account, password }, "POST"), //ok
   logout: () => request("/logout"),
-  // 项目接口
-  addProject: (projectData) => request("/project/add", projectData, "POST"),
-  deleteProject: (id) => request("/project/delete", { id }, "POST"),
-  updateProjectName: (id, name) => request("/project/update/name", { id, name }, "POST"),
-  updateTaskNumber: (projectId) => request("/project/task/add", projectId),
-  finishedTask: (projectId) => request("/project/task/finished", projectId),
-  queryProjectList: (status = 0, order = "account", isAsc = 1, current = 1, pageSize = 5) =>
-    request("/project/query/admin", { status, order, isAsc, current, pageSize }),
-  queryProjectListByUser: (current = 1, pageSize = 5, account) =>
-    request("/project/query/user", { current, pageSize, account }),
-  queryProjectByName: (name) => request("/project/query/name", { name }),
   // 任务接口
-  queryTaskByProject: (id, current = 1, pageSize = 5) =>
-    request("/task/query/project", { projectId: id, current, pageSize }),
-  queryTaskByProjectAndUser: (account, projectId) => request("/task/query/user", { account, projectId }),
+  queryTask: (current = 1, pageSize = 5) => request("/task/list", { current, pageSize }),
+  queryTaskByUser: (current = 1, pageSize = 5, account) => request("/task/list", { current, pageSize, account }),
   updateTaskInfo: (taskData) => request("/task/update", taskData, "POST"),
-  deleteTask: (taskId) => request("/task/delete", { id: taskId }, "POST"),
+  deleteTask: (taskId) => request("/task/delete/" + taskId),
   addTask: (taskData) => request("/task/add", taskData, "POST"),
-  queryCatalogerByName: (name) => request("/user/query/cataloger", { username: name }),
-  queryAuditorByName: (name) => request("/user/query/auditor", { username: name }),
+  queryCatalogerByName: (name) => request("/user/cataloger", { username: name }),
+  queryAuditorByName: (name) => request("/user/auditor", { username: name }),
 
   // 用户接口
   addUser: (user) => request("/user/add", user, "POST"),
   deleteUser: (account) => request("/user/delete", { account }, "POST"),
   updateUserInfo: (user) => request("/user/update", user, "POST"),
   queryUserList: (status = 0, order = "account", isAsc = 1, current = 1, pageSize = 5) =>
-    request("/user/query/list", { status, order, isAsc, current, pageSize }),
-  queryUserByName: (username, current, pageSize) => request("/user/query/name", { username, current, pageSize }),
+    request("/user/list", { current, pageSize }),
+  queryUserByName: (username, current, pageSize) => request("/user/list", { username, current, pageSize }),
   // 文件接口
 
   uploadVideo: (file) => request("/file/upload/video", file, "POST"),
