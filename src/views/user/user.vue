@@ -237,15 +237,12 @@ export default {
     },
     // 控制分页切换逻辑
     handleCurrentChange() {
-      this.getUserList();
       this.$store.commit("storedUserPage", this.currentPage);
+      this.getUserList();
     },
     // 从后端获取数据
     async getUserList(pageSize = 5) {
-      let res = await Api.queryUserList(
-        this.currentPage,
-        pageSize
-      );
+      let res = await Api.queryUserList(this.currentPage, pageSize);
       if (res.code === 200) {
         // 展示之前做处理，添加index和status
         let start = (this.currentPage - 1) * pageSize + 1;

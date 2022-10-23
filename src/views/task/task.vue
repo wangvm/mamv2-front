@@ -399,7 +399,7 @@ export default {
     async getTaskData() {
       let res;
       if (this.manageMode) {
-        res = await API.queryTask();
+        res = await API.queryTask(this.currentPage, 5);
       } else {
         res = await API.queryTaskByUser(this.account);
       }

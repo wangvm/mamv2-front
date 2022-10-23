@@ -16,7 +16,7 @@ export default {
   addUser: (user) => request("/user/add", user, "POST"),
   deleteUser: (account) => request("/user/delete", { account }, "POST"),
   updateUserInfo: (user) => request("/user/update", user, "POST"),
-  queryUserList: (status = 0, order = "account", isAsc = 1, current = 1, pageSize = 5) =>
+  queryUserList: (current = 1, pageSize = 5) =>
     request("/user/list", { current, pageSize }),
   queryUserByName: (username, current, pageSize) => request("/user/list", { username, current, pageSize }),
   // 文件接口
