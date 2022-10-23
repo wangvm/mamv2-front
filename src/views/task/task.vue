@@ -29,7 +29,7 @@
           prop="auditor.username"
           label="审核员"
         ></el-table-column>
-        <el-table-column prop="createTime" label="创建时间"></el-table-column>
+        <el-table-column prop="createTime" label="创建时间" show-overflow-tooltip></el-table-column>
         <el-table-column prop="status" label="项目状态"></el-table-column>
         <el-table-column label="" min-width="100%">
           <template slot-scope="scope">

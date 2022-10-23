@@ -17,6 +17,7 @@
 }
 .app{
   background: #eef0f3;
-  min-width: 1800px;
+  min-width: 1200px;
+  width: 100%;
 }
 </style>
