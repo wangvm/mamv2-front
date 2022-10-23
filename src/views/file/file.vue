@@ -119,14 +119,14 @@ export default {
       if (res.code === 200) {
         // 展示之前做处理，添加index和status
         let start = (this.currentPage - 1) * pageSize + 1;
-        res.data.content.map((record) => {
+        res.data.records.map((record) => {
           // 插入index
           record.index = start++;
           record.time = timeFormat(record.duration / 1000, record.frameRate);
           return record;
         });
-        this.tableData = res.data.content;
-        this.total = res.data.totalElements;
+        this.tableData = res.data.records;
+        this.total = res.data.total;
       } else {
         this.$throw(res);
       }
