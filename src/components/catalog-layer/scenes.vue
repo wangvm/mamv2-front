@@ -6,7 +6,7 @@
     <el-row :gutter="10">
       <el-col :span="3" class="colLabel">题名</el-col>
       <el-col :span="20">
-        <el-input v-model="scenesData.title.value" size="medium"></el-input>
+        <el-input v-model="scenesData.title" size="medium"></el-input>
       </el-col>
     </el-row>
     <el-row :gutter="10">
@@ -14,7 +14,7 @@
       <el-col :span="20">
         <el-input
           type="textarea"
-          v-model="scenesData.description.value"
+          v-model="scenesData.description"
         ></el-input>
       </el-col>
     </el-row>
@@ -22,7 +22,7 @@
       <el-col :span="3" class="colLabel">字幕形式</el-col>
       <el-col :span="6">
         <el-select
-          v-model="scenesData.subtitleForm.value"
+          v-model="scenesData.subtitleForm"
           placeholder="请选择字幕形式"
         >
           <el-option label="无字幕" value="无字幕"></el-option>
@@ -113,14 +113,14 @@ export default {
     },
     startPoint() {
       let time = timeFormat(
-        this.scenesData.startPoint.value,
+        this.scenesData.startPoint,
         this.videoInfo.frameRate
       );
       return time;
     },
     outPoint() {
       let time = timeFormat(
-        this.scenesData.outPoint.value,
+        this.scenesData.outPoint,
         this.videoInfo.frameRate
       );
       return time;

@@ -32,161 +32,74 @@ export default {
   programData: {
     menu: {
       id: 1,
+      menuId: null,
+      catalogId: null,
       content: "",
       level: "",
-      check: 0,
-      parent: null,
+      parentId: null,
     },
     taskId: 4,
-    title: {
-      value: "",
-      check: 0,
-    },
-    description: {
-      value: "",
-      check: 0,
-    },
-    debutDate: {
-      value: "",
-      check: 0,
-    },
-    programType: {
-      value: "",
-      check: 0,
-    },
-    creator: {
-      value: "",
-      check: 0,
-    },
-    contributor: {
-      value: "",
-      check: 0,
-    },
-    programForm: {
-      value: "",
-      check: 0,
-    },
-    column: {
-      value: "",
-      check: 0,
-    },
-    color: {
-      value: "",
-      check: 0,
-    },
-    system: {
-      value: "",
-      check: 0,
-    },
-    audioChannel: {
-      value: "1",
-      check: 0,
-    },
-    aspectRatio: {
-      value: "0x0",
-      check: 0,
-    },
-    subtitleForm: {
-      value: "0",
-      check: 0,
-    },
-    startPoint: {
-      value: "0",
-      check: 0,
-    },
-    outPoint: {
-      value: "0",
-      check: 0,
-    },
-    keyFrames: [{ address: "", description: "", check: 0 }],
-    sourceProvider: {
-      value: "",
-      check: 0,
-    },
-    sourceAcquiringMethod: {
-      value: "",
-      check: 0,
-    },
+    title: "",
+    description: "",
+    debutDate: "",
+    programType: "",
+    creator: "",
+    contributor: "",
+    programForm: "",
+    column: "",
+    color: "",
+    system: "",
+    audioChannel: "",
+    aspectRatio: "",
+    subtitleForm: "",
+    startPoint: "",
+    outPoint: "",
+    keyFrames: [],
+    sourceProvider: "",
+    sourceAcquiringMethod: "",
   },
   // 片段层数据
   fragmentData: {
     menu: {
-      id: 0,
+      id: 1,
+      menuId: null,
+      catalogId: null,
       content: "",
       level: "",
-      check: 0,
-      parent: 1,
+      parentId: null,
     },
     taskId: 1,
-    title: {
-      value: "",
-      check: 0,
-    },
-    description: {
-      value: "",
-      check: 0,
-    },
-    creator: {
-      value: "",
-      check: 0,
-    },
-    contributor: {
-      value: "",
-      check: 0,
-    },
-    subtitleForm: {
-      value: "",
-      check: 0,
-    },
-    startPoint: {
-      value: "",
-      check: 0,
-    },
-    outPoint: {
-      value: "",
-      check: 0,
-    },
-    sourceAcquiringMethod: {
-      value: "",
-      check: 0,
-    },
-    sourceProvider: {
-      value: "",
-      check: 0,
-    },
+    title: "",
+    description: "",
+    creator: "",
+    contributor: "",
+    subtitleForm: "",
+    startPoint: "",
+    outPoint: "",
+    sourceAcquiringMethod: "",
+    sourceProvider: "",
     keyFrames: [],
   },
   // 场景层数据
   scenesData: {
     id: "",
     menu: {
-      id: 0,
+      id: 1,
+      menuId: null,
+      catalogId: null,
       content: "",
       level: "",
-      check: 0,
-      parent: null,
+      parentId: null,
     },
     taskId: 1,
-    title: {
-      value: "",
-      check: 0,
-    },
-    description: {
-      value: "",
-      check: 0,
-    },
-    subtitleForm: {
-      value: "",
-      check: 0,
-    },
-    startPoint: {
-      value: "",
-      check: 0,
-    },
-    outPoint: {
-      value: "",
-      check: 0,
-    },
+    title: "",
+    description: "",
+    subtitleForm: "",
+    startPoint: "",
+    outPoint: "",
     keyFrames: [],
+  },
+  comment: {
+    value: ""
   },
 };

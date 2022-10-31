@@ -76,6 +76,17 @@
         <Scenes ref="scenes"></Scenes>
       </template>
     </div>
+    <el-drawer title="审核意见" :visible.sync="commentsVisible">
+      <div style="width: 90%; margin: 0 auto">
+        <el-input
+          type="textarea"
+          :rows="35"
+          placeholder="请输入审核意见"
+          v-model="comment.value"
+        >
+        </el-input>
+      </div>
+    </el-drawer>
   </div>
 </template>
 
@@ -141,6 +152,7 @@ export default {
       "fragmentData",
       "scenesData",
       "authority",
+      "comment",
     ]),
   },
   methods: {
@@ -150,6 +162,7 @@ export default {
       "setProgramData",
       "setFragmentData",
       "setScenesData",
+      "setCommentData"
     ]),
     // ==================== 菜单操作 =================================
     async handleMenuClick(data, node) {

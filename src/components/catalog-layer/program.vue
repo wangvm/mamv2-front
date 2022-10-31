@@ -6,7 +6,7 @@
     <el-row :gutter="10">
       <el-col :span="3" class="colLabel"> 正题名 </el-col>
       <el-col :span="20">
-        <el-input v-model="programData.title.value" size="medium"></el-input>
+        <el-input v-model="programData.title" size="medium"></el-input>
       </el-col>
     </el-row>
     <el-row :gutter="10">
@@ -14,7 +14,7 @@
       <el-col :span="20">
         <el-input
           type="textarea"
-          v-model="programData.description.value"
+          v-model="programData.description"
         ></el-input>
       </el-col>
     </el-row>
@@ -22,7 +22,7 @@
       <el-col :span="3" class="colLabel">首播日期</el-col>
       <el-col :span="6">
         <el-date-picker
-          v-model="programData.debutDate.value"
+          v-model="programData.debutDate"
           type="date"
           placeholder="选择日期"
         >
@@ -32,7 +32,7 @@
       <el-col :span="2" class="colLabel">节目类型</el-col>
       <el-col :span="6">
         <el-select
-          v-model="programData.programType.value"
+          v-model="programData.programType"
           placeholder="请选择节目类型"
         >
           <el-option label="新闻" value="新闻"></el-option>
@@ -46,7 +46,7 @@
       <el-col :span="3" class="colLabel">字幕形式</el-col>
       <el-col :span="6">
         <el-select
-          v-model="programData.subtitleForm.value"
+          v-model="programData.subtitleForm"
           placeholder="请选择字幕形式"
         >
           <el-option label="无字幕" value="无字幕"></el-option>
@@ -64,7 +64,7 @@
       <el-col :span="2" class="colLabel">节目形态</el-col>
       <el-col :span="6">
         <el-select
-          v-model="programData.programForm.value"
+          v-model="programData.programForm"
           placeholder="请选择节目形态"
         >
           <el-option label="口播新闻" value="口播新闻"></el-option>
@@ -88,23 +88,23 @@
     <el-row :gutter="10">
       <el-col :span="3" class="colLabel">创建者名称</el-col>
       <el-col :span="20">
-        <el-input v-model="programData.creator.value"></el-input>
+        <el-input v-model="programData.creator"></el-input>
       </el-col>
     </el-row>
     <el-row :gutter="10">
       <el-col :span="3" class="colLabel">其他责任者</el-col>
       <el-col :span="20">
-        <el-input v-model="programData.contributor.value" />
+        <el-input v-model="programData.contributor" />
       </el-col>
     </el-row>
     <el-row :gutter="10">
       <el-col :span="3" class="colLabel">栏目</el-col>
       <el-col :span="6">
-        <el-input v-model="programData.column.value" />
+        <el-input v-model="programData.column" />
       </el-col>
       <el-col :span="2" class="colLabel">色彩</el-col>
       <el-col :span="6">
-        <el-radio-group v-model="programData.color.value" class="colLabel">
+        <el-radio-group v-model="programData.color" class="colLabel">
           <el-radio label="彩色" value="1"></el-radio>
           <el-radio label="黑白" value="2"></el-radio>
         </el-radio-group>
@@ -113,7 +113,7 @@
     <el-row :gutter="10">
       <el-col :span="3" class="colLabel">制式</el-col>
       <el-col :span="7">
-        <el-radio-group v-model="programData.system.value" class="colLabel">
+        <el-radio-group v-model="programData.system" class="colLabel">
           <el-radio label="PAL" value="1"></el-radio>
           <el-radio label="NTSC" value="2"></el-radio>
           <el-radio label="SECAM" value="3"></el-radio>
@@ -122,7 +122,7 @@
       <el-col :span="2" class="colLabel">声道格式</el-col>
       <el-col :span="8">
         <el-radio-group
-          v-model="programData.audioChannel.value"
+          v-model="programData.audioChannel"
           class="colLabel"
         >
           <el-radio label="单声道" value="1"></el-radio>
@@ -135,7 +135,7 @@
       <el-col :span="3" class="colLabel">画面宽高比</el-col>
       <el-col :span="7">
         <el-radio-group
-          v-model="programData.aspectRatio.value"
+          v-model="programData.aspectRatio"
           class="colLabel"
         >
           <el-radio label="4:3" value="1"></el-radio>
@@ -165,11 +165,11 @@
     <el-row :gutter="10">
       <el-col :span="3" class="colLabel">资料获取方式</el-col>
       <el-col :span="6">
-        <el-input v-model="programData.sourceAcquiringMethod.value" />
+        <el-input v-model="programData.sourceAcquiringMethod" />
       </el-col>
       <el-col :span="3" class="colLabel">资料提供者</el-col>
       <el-col :span="6">
-        <el-input v-model="programData.sourceProvider.value" />
+        <el-input v-model="programData.sourceProvider" />
       </el-col>
     </el-row>
     <el-row :gutter="10">
@@ -245,14 +245,14 @@ export default {
     },
     startPoint() {
       let time = timeFormat(
-        this.programData.startPoint.value,
+        this.programData.startPoint,
         this.videoInfo.frameRate
       );
       return time;
     },
     outPoint() {
       let time = timeFormat(
-        this.programData.outPoint.value,
+        this.programData.outPoint,
         this.videoInfo.frameRate
       );
       return time;

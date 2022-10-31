@@ -178,9 +178,16 @@ export default {
     this.playerPreview = this.$refs.playerPreview;
     this.player.addEventListener("keydown", this.videoPlayerKeyEvent);
   },
+  beforeDestroy() {
+    if (this.timer) {
+      clearInterval(this.timer);
+    }
+  },
   destroyed() {
     //离开页面假如视频再播放，销毁定时器
-    clearInterval(this.timer);
+    if (this.timer) {
+      clearInterval(this.timer);
+    }
     this.timer = null;
     document.removeEventListener("keydown", this.videoPlayerKeyEvent);
     this.setStartPoint("0");

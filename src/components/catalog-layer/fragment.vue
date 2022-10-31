@@ -6,7 +6,7 @@
     <el-row :gutter="10">
       <el-col :span="3" class="colLabel"> 题名 </el-col>
       <el-col :span="20">
-        <el-input v-model="fragmentData.title.value" size="medium"></el-input>
+        <el-input v-model="fragmentData.title" size="medium"></el-input>
       </el-col>
     </el-row>
     <el-row :gutter="10">
@@ -14,7 +14,7 @@
       <el-col :span="20">
         <el-input
           type="textarea"
-          v-model="fragmentData.description.value"
+          v-model="fragmentData.description"
         ></el-input>
       </el-col>
     </el-row>
@@ -22,7 +22,7 @@
       <el-col :span="3" class="colLabel">字幕形式</el-col>
       <el-col :span="6">
         <el-select
-          v-model="fragmentData.subtitleForm.value"
+          v-model="fragmentData.subtitleForm"
           placeholder="请选择字幕形式"
         >
           <el-option label="无字幕" value="无字幕"></el-option>
@@ -60,11 +60,11 @@
     <el-row :gutter="10">
       <el-col :span="3" class="colLabel">资料获取方式</el-col>
       <el-col :span="6">
-        <el-input v-model="fragmentData.sourceAcquiringMethod.value" />
+        <el-input v-model="fragmentData.sourceAcquiringMethod" />
       </el-col>
       <el-col :span="3" class="colLabel">资料提供者</el-col>
       <el-col :span="6">
-        <el-input v-model="fragmentData.sourceProvider.value" />
+        <el-input v-model="fragmentData.sourceProvider" />
       </el-col>
     </el-row>
     <el-row :gutter="10">
@@ -124,14 +124,14 @@ export default {
     },
     startPoint() {
       let time = timeFormat(
-        this.fragmentData.startPoint.value,
+        this.fragmentData.startPoint,
         this.videoInfo.frameRate
       );
       return time;
     },
     outPoint() {
       let time = timeFormat(
-        this.fragmentData.outPoint.value,
+        this.fragmentData.outPoint,
         this.videoInfo.frameRate
       );
       return time;
