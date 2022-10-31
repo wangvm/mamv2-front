@@ -30,8 +30,8 @@
           label="审核员"
         ></el-table-column>
         <el-table-column prop="createTime" label="创建时间" show-overflow-tooltip></el-table-column>
-        <el-table-column prop="status" label="项目状态"></el-table-column>
-        <el-table-column label="" min-width="100%">
+        <el-table-column prop="status" width="80" label="项目状态"></el-table-column>
+        <el-table-column label="" width="235px">
           <template slot-scope="scope">
             <el-button
               size="mini"
@@ -368,7 +368,7 @@ export default {
       // 等待编目界面完成
       // 获取并视频信息
       // 修改接口实现获取视频信息
-      let res = await API.getVideoInfo(row.id);
+      let res = await API.getVideoInfo(row.taskId);
       if (res.code === 200) {
         this.setVideoInfo(res.data);
       } else {
@@ -377,11 +377,11 @@ export default {
       // 保存当前任务信息
       this.storedTaskInfo({
         currentPage: this.currentPage,
-        id: row.id,
-        name: row.name,
+        taskId: row.taskId,
+        taskName: row.taskName,
         status: row.status,
       });
-      this.$router.push({ path: "/catalog/edit", query: { task: row.id } });
+      this.$router.push({ path: "/catalog/edit", query: { task: row.taskId } });
     },
     // 控制分页切换逻辑
     handleCurrentChange() {
@@ -430,12 +430,12 @@ export default {
     this.currentPage = this.currentTaskPage;
     this.getTaskData();
   },
-  beforeRouteLeave(to, from, next) {
-    if (to.name === "editCatalog") {
-      this.getProgramData(to.query.task);
-    }
-    next();
-  },
+  // beforeRouteLeave(to, from, next) {
+  //   if (to.name === "editCatalog") {
+  //     this.getProgramRecord(to.query.task);
+  //   }
+  //   next();
+  // },
 };
 </script>
 

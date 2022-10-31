@@ -288,7 +288,7 @@ export default {
 
     // 初始化界面数据
     async getMenuData() {
-      let taskId = this.currentTask.id;
+      let taskId = this.currentTask.taskId;
       let res = await API.getMenu(taskId);
       if (res.code === 200) {
         let menuList = [];

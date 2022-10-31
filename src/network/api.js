@@ -16,8 +16,7 @@ export default {
   addUser: (user) => request("/user/add", user, "POST"),
   deleteUser: (account) => request("/user/delete", { account }, "POST"),
   updateUserInfo: (user) => request("/user/update", user, "POST"),
-  queryUserList: (current = 1, pageSize = 5) =>
-    request("/user/list", { current, pageSize }),
+  queryUserList: (pageNum = 1, pageSize = 5) => request("/user/list", { pageNum, pageSize }),
   queryUserByName: (username, current, pageSize) => request("/user/list", { username, current, pageSize }),
   // 文件接口
 
@@ -34,7 +33,7 @@ export default {
   deleteBulkScenes: (scenesIds) => request("/catalog/delete/bulk/scenes", scenesIds, "POST"),
   getCatalogRecord: (record, catalogId) => request("/catalog/get/" + record, { catalogId: catalogId }),
   getProgramRecord: (catalogId, taskId) => request("/catalog/get/program", { catalogId: catalogId, taskId: taskId }),
-  getMenu: (taskId) => request("/catalog/get/menu", { taskId }),
+  getMenu: (taskId) => request("/catalog/get/menu/" + taskId),
   getVideoInfo: (taskId) => request("/file/videoInfo", { taskId }),
   updateProgramRecord: (programData) => request("/catalog/update/program", programData, "POST"),
   updateFragmentRecord: (fragmentData) => request("/catalog/update/fragment", fragmentData, "POST"),
