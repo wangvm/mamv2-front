@@ -32,14 +32,17 @@
     <el-dialog :visible.sync="dialogVisible" width="450px" destroy-on-close>
       <el-upload
         class="upload-demo"
+        action="#"
         drag
         multiple
-        :action="uploadAction"
+        accept="video/mp4"
+        :before-upload="beforeUpload"
+        :headers="uploadHeader"
         :on-error="handleError"
-        :limit="5"
         :on-exceed="handleExceed"
         :file-list="fileList"
         :on-success="handleSuccess"
+        :http-request="handleUpload"
         with-credentials
       >
         <i class="el-icon-upload"></i>
@@ -80,6 +83,9 @@ export default {
       // 上传文件url
       uploadAction: "http://mams.cuz.edu.cn/api" + "/file/upload/video",
       fileList: [],
+      uploadHeader: { "Content-Type": "video/mp4" },
+      uploadUrl: "",
+      uploadFileAddress: "",
     };
   },
   computed: {
@@ -90,17 +96,34 @@ export default {
     },
   },
   methods: {
+    // 上传前获取预上传链接
+    async beforeUpload(file) {
+      let res = await Api.getPreSignedObjectUrl(file.name);
+      if (res.code === 200) {
+        this.uploadUrl = res.data.url;
+        this.uploadFileAddress = res.data.address;
+      } else {
+        message.error(res.message);
+      }
+    },
+    // 上传逻辑实现
+    async handleUpload(data) {
+      let res = await Api.uploadAction(this.uploadUrl, data.file);
+      if (res.status === 200) {
+        data.onSuccess();
+      } else {
+        data.onError();
+      }
+    },
     handleSuccess() {
+      console.log("上传成功");
       this.getVideoList();
     },
     handleError(err, file, fileList) {
-      message.error(err.message);
+      message.error("上传失败，请重试");
     },
-    handleExceed(files) {
-      if (files.length > 5) {
-        message.error("最多允许上传5个文件");
-        return false;
-      }
+    handleExceed(files, fileList) {
+      fileList.pop();
     },
     async handleDelete(row) {
       // 删除视频

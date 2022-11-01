@@ -35,19 +35,28 @@ export default function (url, data, method = "GET") {
         withCredentials: true,
       });
     } else if (method === "PUT") {
-      promise = $http.put(url, data);
+      promise = $http.put(url, data, {
+        headers: {
+          'Content-Type': 'video/mp4'
+        }
+      });
     } else {
       promise = $http.post(baseUrl + url, data, { withCredentials: true });
     }
     promise
       .then((res) => {
-        if (res.data.code === 200) {
-          res.data.message !== "成功" ? message.success(res.data.message) : null;
-        } else {
-          message.error(res.data.message);
-        }
 
-        resolve(res.data);
+        if (res.data === "") {
+          resolve(res)
+        } else {
+          if (res.data.code === 200) {
+            res.data.message !== "成功" ? message.success(res.data.message) : null;
+          }
+          else {
+            message.error(res.data.message);
+          }
+          resolve(res.data);
+        }
       })
       .catch((err) => {
         reject(err.data);

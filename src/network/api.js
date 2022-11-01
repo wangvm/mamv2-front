@@ -19,8 +19,10 @@ export default {
   queryUserList: (pageNum = 1, pageSize = 5) => request("/user/list", { pageNum, pageSize }),
   queryUserByName: (username, current, pageSize) => request("/user/list", { username, current, pageSize }),
   // 文件接口
-
   uploadVideo: (file) => request("/file/upload/video", file, "POST"),
+  uploadAction: (url, file) => request(url, file, "PUT"),
+  getPreSignedObjectUrl: (fileName) => request("/file/preSigned", fileName),
+  saveVideoInfo: (fileName, address) => request("/file/saveVideoInfo", { fileName, address }),
   uploadKeyFrame: (file) => request("file/upload/keyframe", file, "POST"),
   getVideoList: (pageSize = 5, pageIndex = 1) => request("/file/videoList", { pageSize, pageIndex }),
   searchVideoByName: (filename, pageSize = 5, pageIndex = 1) =>
