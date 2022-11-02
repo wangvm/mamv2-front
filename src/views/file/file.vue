@@ -34,14 +34,9 @@
         class="upload-demo"
         action="#"
         drag
-        multiple
         accept="video/mp4"
         :before-upload="beforeUpload"
-        :headers="uploadHeader"
-        :on-error="handleError"
-        :on-exceed="handleExceed"
         :file-list="fileList"
-        :on-success="handleSuccess"
         :http-request="handleUpload"
         with-credentials
       >
@@ -110,17 +105,18 @@ export default {
     async handleUpload(data) {
       let res = await Api.uploadAction(this.uploadUrl, data.file);
       if (res.status === 200) {
-        data.onSuccess();
+        let res = await Api.saveVideoInfo(
+          data.file.name,
+          this.uploadFileAddress
+        );
+        if (res.code === 200) {
+          this.getVideoList();
+        } else {
+          this.$throw(res);
+        }
       } else {
-        data.onError();
+        this.$throw(res);
       }
-    },
-    handleSuccess() {
-      console.log("上传成功");
-      this.getVideoList();
-    },
-    handleError(err, file, fileList) {
-      message.error("上传失败，请重试");
     },
     handleExceed(files, fileList) {
       fileList.pop();

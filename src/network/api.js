@@ -22,7 +22,7 @@ export default {
   uploadVideo: (file) => request("/file/upload/video", file, "POST"),
   uploadAction: (url, file) => request(url, file, "PUT"),
   getPreSignedObjectUrl: (fileName) => request("/file/preSigned", fileName),
-  saveVideoInfo: (fileName, address) => request("/file/saveVideoInfo", { fileName, address }),
+  saveVideoInfo: (fileName, address) => request("/file/saveVideoInfo", { fileName, address }, "POST"),
   uploadKeyFrame: (file) => request("file/upload/keyframe", file, "POST"),
   getVideoList: (pageSize = 5, pageIndex = 1) => request("/file/videoList", { pageSize, pageIndex }),
   searchVideoByName: (filename, pageSize = 5, pageIndex = 1) =>
